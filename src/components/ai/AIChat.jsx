@@ -504,7 +504,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 }
               }}
               placeholder="Ask me anything about Bible study, theology, or your projects..."
-              className="min-h-[150px] bg-slate-800 border-slate-700 text-slate-200"
+              className="min-h-[60px] bg-slate-800 border-slate-700 text-slate-200 resize-none"
               disabled={loading}
             />
             <Button
