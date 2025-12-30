@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Bible Search', icon: BookOpen, page: 'BibleSearch' },
     { name: 'My Notes', icon: FileText, page: 'Notes' },
     { name: 'Studies', icon: GraduationCap, page: 'Studies' },
-    { name: 'Payments', icon: FileText, page: 'Payments' }
+    { name: 'Donate', icon: FileText, page: 'Payments' }
   ];
 
   return (
@@ -59,10 +59,9 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex justify-between items-center h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/dfa220c63_image.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/1f6c58f14_Designer.png"
                   alt="Alpha Omega"
-                  className="h-20 w-20 object-cover object-top group-hover:opacity-90 transition-opacity"
-                  style={{ objectPosition: 'center 15%' }}
+                  className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity"
                 />
               </Link>
 
