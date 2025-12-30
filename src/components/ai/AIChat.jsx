@@ -52,21 +52,106 @@ export default function AIChat({ conversation, onUpdate }) {
         .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
         .join('\n');
 
-      const prompt = `You are a helpful AI assistant for Alpha Omega Team, a Christian educational platform. 
-You help with Bible study, theological questions, project collaboration, and general Christian education.
+      // First, check for mental health concerns and offensive content
+      const safetyCheck = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this message for:
+1. Signs of depression, suicidal ideation, or self-harm
+2. Offensive, hateful, or inappropriate content
+
+User message: "${input}"
+
+Respond with your analysis.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            has_mental_health_concern: { type: "boolean" },
+            has_offensive_content: { type: "boolean" },
+            concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] }
+          }
+        }
+      });
+
+      // Handle mental health concerns
+      if (safetyCheck.has_mental_health_concern && safetyCheck.concern_level === "severe") {
+        const crisisResponse = {
+          role: 'assistant',
+          content: `I'm truly concerned about what you're sharing. Please know that you're not alone, and help is available right now.
+
+**National Suicide Prevention Lifeline:**
+📞 Call or text: **988**
+Available 24/7 for free, confidential support
+
+**Crisis Text Line:**
+📱 Text HOME to **741741**
+
+**International Association for Suicide Prevention:**
+🌍 Visit: https://www.iasp.info/resources/Crisis_Centres/
+
+You matter, and there are people who care and want to help. Please reach out to one of these resources - they're trained to support you through this difficult time.
+
+If you're in immediate danger, please call 911 or go to your nearest emergency room.
+
+I'm here to chat, but these professionals are specifically trained to help in crisis situations. Would you like to talk about something else, or would you prefer some encouraging Scripture passages?`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+
+        const updatedMessages = [...newMessages, crisisResponse];
+        setMessages(updatedMessages);
+        
+        if (onUpdate) {
+          onUpdate({
+            messages: updatedMessages,
+            current_provider: currentProvider
+          });
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Handle offensive content
+      if (safetyCheck.has_offensive_content) {
+        const warningResponse = {
+          role: 'assistant',
+          content: `I'm here to provide helpful, respectful conversation. Let's keep our discussion positive and constructive. How can I assist you with your studies, projects, or other questions?`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+
+        const updatedMessages = [...newMessages, warningResponse];
+        setMessages(updatedMessages);
+        
+        if (onUpdate) {
+          onUpdate({
+            messages: updatedMessages,
+            current_provider: currentProvider
+          });
+        }
+        setLoading(false);
+        return;
+      }
+
+      const prompt = `You are a helpful, friendly AI assistant for Alpha Omega Team, a Christian educational platform.
+
+IMPORTANT GUIDELINES:
+- You can discuss any topic (Bible study, homework help, general questions, projects, etc.)
+- Always be respectful, encouraging, and constructive
+- Keep responses clean and family-friendly
+- Be conversational and helpful
+- If asked about faith topics, be thoughtful and biblically grounded
+- For general questions, provide clear and helpful information
 
 Previous conversation context:
 ${conversationContext}
 
-Please respond to the user's latest message in a helpful, thoughtful, and biblically sound manner.`;
+Respond naturally and helpfully to the user's message.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",
           properties: {
-            response: { type: "string" },
-            needs_provider_switch: { type: "boolean" }
+            response: { type: "string" }
           }
         }
       });
