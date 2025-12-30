@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus } from 'lucide-react';
+import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus, FileText, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -285,6 +285,51 @@ I'm here to chat, but these professionals are specifically trained to help in cr
     }
   };
 
+  const handleSaveAsStudy = async (message) => {
+    try {
+      const title = prompt('Enter a title for this Bible study:');
+      if (!title) return;
+
+      await base44.entities.BibleStudy.create({
+        title: title,
+        content: message.content,
+        description: 'Created from AI conversation',
+        level: 'intermediate',
+        category: 'exegesis',
+        is_public: false
+      });
+
+      alert('Bible study created successfully!');
+    } catch (error) {
+      console.error('Error creating study:', error);
+      alert('Failed to create study');
+    }
+  };
+
+  const handleSaveEntireConversation = async () => {
+    try {
+      const title = prompt('Enter a title for this saved conversation:');
+      if (!title) return;
+
+      const conversationText = messages
+        .map(m => `**${m.role === 'user' ? 'User' : 'Assistant'}**: ${m.content}`)
+        .join('\n\n');
+
+      await base44.entities.SavedAIContent.create({
+        title: title,
+        content: conversationText,
+        content_type: 'study',
+        conversation_id: conversation?.id,
+        tags: ['conversation']
+      });
+
+      alert('Entire conversation saved successfully!');
+    } catch (error) {
+      console.error('Error saving conversation:', error);
+      alert('Failed to save conversation');
+    }
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-12rem)]">
       {/* Header with Provider Info */}
@@ -300,6 +345,16 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 <Sparkles className="h-3 w-3 mr-1" />
                 {getCurrentProviderInfo().name}
               </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSaveEntireConversation}
+                disabled={messages.length === 0}
+                className="h-8 text-slate-400 hover:text-amber-400"
+              >
+                <Save className="h-4 w-4 mr-1" />
+                Save All
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -367,14 +422,26 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                     : 'bg-slate-800 text-slate-200 border border-slate-700'
                 }`}>
                   {message.role === 'assistant' && (
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleSaveContent(message)}
-                      className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover/msg:opacity-100 bg-amber-600 hover:bg-amber-700 text-white"
-                    >
-                      <BookmarkPlus className="h-4 w-4" />
-                    </Button>
+                    <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover/msg:opacity-100">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleSaveContent(message)}
+                        className="h-7 w-7 bg-amber-600 hover:bg-amber-700 text-white"
+                        title="Save to Saved Content"
+                      >
+                        <BookmarkPlus className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleSaveAsStudy(message)}
+                        className="h-7 w-7 bg-blue-600 hover:bg-blue-700 text-white"
+                        title="Save as Bible Study"
+                      >
+                        <BookOpen className="h-4 w-4" />
+                      </Button>
+                    </div>
                   )}
                   {message.role === 'assistant' ? (
                     <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
