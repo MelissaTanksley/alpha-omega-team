@@ -59,7 +59,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex justify-between items-center h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/1f6c58f14_Designer.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/d70fd8659_Designer.png"
                   alt="Alpha Omega"
                   className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity"
                 />
