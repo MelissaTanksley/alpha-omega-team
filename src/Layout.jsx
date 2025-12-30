@@ -56,13 +56,15 @@ export default function Layout({ children, currentPageName }) {
         <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-amber-500/30 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <Link to={createPageUrl('Home')} className="flex items-center gap-3 group">
-                <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg shadow-lg group-hover:shadow-amber-500/50 transition-all">
-                  <BookOpen className="h-6 w-6 text-white" />
+              <Link to={createPageUrl('Home')} className="flex items-center group">
+                <div className="h-16 overflow-hidden">
+                  <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/dfa220c63_image.png"
+                    alt="Alpha Omega"
+                    className="h-24 object-cover object-top group-hover:opacity-90 transition-opacity"
+                    style={{ marginTop: '-8px' }}
+                  />
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                  Alpha Omega Team
-                </h1>
               </Link>
 
               {/* Desktop Navigation */}
