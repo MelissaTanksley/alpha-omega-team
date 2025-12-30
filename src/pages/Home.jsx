@@ -93,10 +93,10 @@ export default function Home() {
         className="text-center space-y-3"
       >
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">
-          Welcome to Alpha&Omega AI
+          Welcome to Alpha Omega Team
         </h1>
         <p className="text-slate-300 text-lg">
-          Your daily journey through Scripture, starting from Genesis 1:1
+          Christians working together • Daily Scripture • AI-powered collaboration
         </p>
       </motion.div>
 

@@ -28,10 +28,11 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { name: 'Daily Verse', icon: BookOpen, page: 'Home' },
+    { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
+    { name: 'Team Projects', icon: FileText, page: 'TeamProjects' },
     { name: 'Bible Search', icon: BookOpen, page: 'BibleSearch' },
     { name: 'My Notes', icon: FileText, page: 'Notes' },
-    { name: 'Bible Studies', icon: GraduationCap, page: 'Studies' },
-    { name: 'Sermons', icon: Church, page: 'Sermons' }
+    { name: 'Studies', icon: GraduationCap, page: 'Studies' }
   ];
 
   return (
@@ -60,7 +61,7 @@ export default function Layout({ children, currentPageName }) {
                   <BookOpen className="h-6 w-6 text-white" />
                 </div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                  Alpha&Omega AI
+                  Alpha Omega Team
                 </h1>
               </Link>
 
@@ -172,7 +173,7 @@ export default function Layout({ children, currentPageName }) {
         <footer className="mt-16 border-t border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <p className="text-center text-slate-400 text-sm">
-              © 2024 Alpha&Omega AI - Biblical Education Platform
+              © 2024 Alpha Omega Team - Christians Working Together in Biblical Education
             </p>
           </div>
         </footer>
