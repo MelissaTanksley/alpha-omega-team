@@ -32,7 +32,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Team Projects', icon: FileText, page: 'TeamProjects' },
     { name: 'Bible Search', icon: BookOpen, page: 'BibleSearch' },
     { name: 'My Notes', icon: FileText, page: 'Notes' },
-    { name: 'Studies', icon: GraduationCap, page: 'Studies' }
+    { name: 'Studies', icon: GraduationCap, page: 'Studies' },
+    { name: 'Payments', icon: FileText, page: 'Payments' }
   ];
 
   return (
@@ -65,11 +66,51 @@ export default function Layout({ children, currentPageName }) {
                 />
               </Link>
 
-              {/* Hamburger Menu Button */}
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex items-center gap-1">
+                {navigation.map((item) => {
+                  const isActive = currentPageName === item.page;
+                  return (
+                    <Link key={item.page} to={createPageUrl(item.page)}>
+                      <Button
+                        variant="ghost"
+                        className={`flex items-center gap-2 ${
+                          isActive 
+                            ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30' 
+                            : 'text-slate-300 hover:text-amber-400 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.name}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* User Menu */}
+              <div className="hidden md:flex items-center gap-3">
+                {user && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
+                    <User className="h-4 w-4 text-amber-400" />
+                    <span className="text-sm text-slate-300">{user.full_name || user.email}</span>
+                  </div>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="text-slate-300 hover:text-red-400"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Mobile Hamburger Menu Button */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white"
+                className="md:hidden text-white"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -77,9 +118,9 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </div>
 
-          {/* Navigation Menu */}
+          {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="border-t border-slate-800 bg-slate-900/95 backdrop-blur-sm">
+            <div className="md:hidden border-t border-slate-800 bg-slate-900/95 backdrop-blur-sm">
               <nav className="px-4 py-4 space-y-2">
                 {navigation.map((item) => {
                   const isActive = currentPageName === item.page;
