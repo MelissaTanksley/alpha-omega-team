@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -23,6 +23,8 @@ export default function AIChat({ conversation, onUpdate }) {
   const [loading, setLoading] = useState(false);
   const [currentProvider, setCurrentProvider] = useState(conversation?.current_provider || 'chatgpt');
   const [showProviderSwitch, setShowProviderSwitch] = useState(false);
+  const [userContext, setUserContext] = useState(null);
+  const [loadingContext, setLoadingContext] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -30,6 +32,33 @@ export default function AIChat({ conversation, onUpdate }) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    loadUserContext();
+  }, []);
+
+  const loadUserContext = async () => {
+    setLoadingContext(true);
+    try {
+      const user = await base44.auth.me();
+      const [progress, notes, studies] = await Promise.all([
+        base44.entities.UserBibleProgress.filter({ created_by: user.email }),
+        base44.entities.Note.filter({ created_by: user.email }, '-updated_date', 10),
+        base44.entities.BibleStudy.filter({ created_by: user.email }, '-updated_date', 5)
+      ]);
+      
+      setUserContext({
+        progress: progress[0],
+        recentNotes: notes,
+        recentStudies: studies,
+        userEmail: user.email,
+        userName: user.full_name
+      });
+    } catch (error) {
+      console.error('Error loading context:', error);
+    }
+    setLoadingContext(false);
+  };
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -131,20 +160,39 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         return;
       }
 
+      // Build user context for personalization
+      let contextInfo = '';
+      if (userContext) {
+        contextInfo = `\n\nUSER CONTEXT (use this to personalize your response):
+      - Currently reading: ${userContext.progress?.current_book} ${userContext.progress?.current_chapter}:${userContext.progress?.current_verse}
+      - Preferred translation: ${userContext.progress?.preferred_translation || 'KJV'}
+      - Total verses read: ${userContext.progress?.verses_read || 0}`;
+
+        if (userContext.recentNotes?.length > 0) {
+          contextInfo += `\n- Recent study topics: ${userContext.recentNotes.map(n => n.title).slice(0, 3).join(', ')}`;
+        }
+
+        if (userContext.recentStudies?.length > 0) {
+          contextInfo += `\n- Recent studies: ${userContext.recentStudies.map(s => s.title).slice(0, 2).join(', ')}`;
+        }
+      }
+
       const prompt = `You are a helpful, friendly AI assistant for Alpha Omega Team, a Christian educational platform.
 
-IMPORTANT GUIDELINES:
-- You can discuss any topic (Bible study, homework help, general questions, projects, etc.)
-- Always be respectful, encouraging, and constructive
-- Keep responses clean and family-friendly
-- Be conversational and helpful
-- If asked about faith topics, be thoughtful and biblically grounded
-- For general questions, provide clear and helpful information
+      IMPORTANT GUIDELINES:
+      - You can discuss any topic (Bible study, homework help, general questions, projects, etc.)
+      - Always be respectful, encouraging, and constructive
+      - Keep responses clean and family-friendly
+      - Be conversational and helpful
+      - If asked about faith topics, be thoughtful and biblically grounded
+      - For general questions, provide clear and helpful information
+      - Use the user context to provide PERSONALIZED suggestions and insights
+      ${contextInfo}
 
-Previous conversation context:
-${conversationContext}
+      Previous conversation context:
+      ${conversationContext}
 
-Respond naturally and helpfully to the user's message.`;
+      Respond naturally and helpfully to the user's message.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
@@ -215,6 +263,26 @@ Respond naturally and helpfully to the user's message.`;
 
   const getCurrentProviderInfo = () => {
     return AI_PROVIDERS.find(p => p.id === currentProvider) || AI_PROVIDERS[0];
+  };
+
+  const handleSaveContent = async (message) => {
+    try {
+      const title = prompt('Enter a title for this saved content:');
+      if (!title) return;
+
+      await base44.entities.SavedAIContent.create({
+        title: title,
+        content: message.content,
+        content_type: 'study',
+        conversation_id: conversation?.id,
+        tags: []
+      });
+
+      alert('Content saved successfully!');
+    } catch (error) {
+      console.error('Error saving content:', error);
+      alert('Failed to save content');
+    }
   };
 
   return (
@@ -293,11 +361,21 @@ Respond naturally and helpfully to the user's message.`;
                   </div>
                 )}
                 
-                <div className={`max-w-[80%] rounded-2xl p-4 ${
+                <div className={`max-w-[80%] rounded-2xl p-4 relative group/msg ${
                   message.role === 'user'
                     ? 'bg-amber-600 text-white'
                     : 'bg-slate-800 text-slate-200 border border-slate-700'
                 }`}>
+                  {message.role === 'assistant' && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleSaveContent(message)}
+                      className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover/msg:opacity-100 bg-amber-600 hover:bg-amber-700 text-white"
+                    >
+                      <BookmarkPlus className="h-4 w-4" />
+                    </Button>
+                  )}
                   {message.role === 'assistant' ? (
                     <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
                       {message.content}

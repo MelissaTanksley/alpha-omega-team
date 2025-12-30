@@ -5,6 +5,8 @@ import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SignIn from './pages/SignIn';
 import TeamProjects from './pages/TeamProjects';
+import Forum from './pages/Forum';
+import SavedContent from './pages/SavedContent';
 import __Layout from './Layout.jsx';
 
 
@@ -16,6 +18,8 @@ export const PAGES = {
     "Payments": Payments,
     "SignIn": SignIn,
     "TeamProjects": TeamProjects,
+    "Forum": Forum,
+    "SavedContent": SavedContent,
 }
 
 export const pagesConfig = {
