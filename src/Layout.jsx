@@ -28,8 +28,8 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
-    { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Bible Search', icon: BookOpen, page: 'BibleSearch' },
+    { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Donate', icon: FileText, page: 'Payments' }
   ];
 
