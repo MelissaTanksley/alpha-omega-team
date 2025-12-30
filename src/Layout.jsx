@@ -170,7 +170,7 @@ export default function Layout({ children, currentPageName }) {
         <footer className="mt-16 border-t border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <p className="text-center text-slate-400 text-sm">
-              © 2024 Alpha Omega Team - Christians Working Together
+              © 2024 Alpha Omega Team
             </p>
           </div>
         </footer>
