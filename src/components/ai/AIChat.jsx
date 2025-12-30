@@ -347,6 +347,14 @@ I'm here to chat, but these professionals are specifically trained to help in cr
               </Badge>
               <Button
                 variant="ghost"
+                size="icon"
+                onClick={rotateProvider}
+                className="h-8 w-8 text-slate-400 hover:text-amber-400"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={handleSaveEntireConversation}
                 disabled={messages.length === 0}
@@ -354,14 +362,6 @@ I'm here to chat, but these professionals are specifically trained to help in cr
               >
                 <Save className="h-4 w-4 mr-1" />
                 Save All
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={rotateProvider}
-                className="h-8 w-8 text-slate-400 hover:text-amber-400"
-              >
-                <RefreshCw className="h-4 w-4" />
               </Button>
             </div>
           </div>
