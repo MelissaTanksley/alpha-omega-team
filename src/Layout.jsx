@@ -27,14 +27,9 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navigation = [
-    { name: 'Daily Verse', icon: BookOpen, page: 'Home' },
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
-    { name: 'Saved Content', icon: FileText, page: 'SavedContent' },
     { name: 'Community', icon: Church, page: 'Forum' },
-    { name: 'Team Projects', icon: FileText, page: 'TeamProjects' },
     { name: 'Bible Search', icon: BookOpen, page: 'BibleSearch' },
-    { name: 'My Notes', icon: FileText, page: 'Notes' },
-    { name: 'Studies', icon: GraduationCap, page: 'Studies' },
     { name: 'Donate', icon: FileText, page: 'Payments' }
   ];
 
