@@ -241,7 +241,7 @@ export default function HomeSpanish() {
       )}
 
       {/* Daily Verse */}
-      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
+      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} language="es" />
 
       {/* Quick Info */}
       <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">

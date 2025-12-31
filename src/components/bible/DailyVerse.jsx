@@ -7,7 +7,7 @@ import { BookOpen, Sparkles, ChevronRight, Volume2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
-export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
+export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, language = 'en' }) {
   const [verse, setVerse] = useState(null);
   const [hebrewGreek, setHebrewGreek] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,8 +43,11 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
   const fetchVerse = async () => {
     setLoading(true);
     try {
+      const translation = language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV');
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Provide the Bible verse ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} in the ${progress.preferred_translation || 'KJV'} translation. Return ONLY the verse text, nothing else.`,
+        prompt: language === 'es' 
+          ? `Proporciona el versículo bíblico ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} en la traducción ${translation} (Nueva Traducción Viviente). Devuelve SOLO el texto del versículo, nada más.`
+          : `Provide the Bible verse ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} in the ${translation} translation. Return ONLY the verse text, nothing else.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -64,16 +67,25 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
     setLoadingMeaning(true);
     try {
       const isOT = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi'].includes(progress.current_book);
-      
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} providing college-level biblical scholarship:
+        prompt: language === 'es'
+          ? `Analiza ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} proporcionando análisis bíblico de nivel universitario EN ESPAÑOL:
 
-      1. Original Language: Provide key words in ${isOT ? 'Hebrew' : 'Greek'} with transliteration
-      2. Word Study: Explain the meaning of 2-3 significant words with their root meanings
-      3. Theological Significance: What does this verse teach theologically?
-      4. Historical Context: Include the author(s) of ${progress.current_book}, where the book was written, and relevant historical background
+  1. Idioma Original: Proporciona palabras clave en ${isOT ? 'Hebreo' : 'Griego'} con transliteración
+  2. Estudio de Palabras: Explica el significado de 2-3 palabras significativas con sus raíces
+  3. Significado Teológico: ¿Qué enseña este versículo teológicamente?
+  4. Contexto Histórico: Incluye el/los autor(es) de ${progress.current_book}, dónde se escribió el libro, y trasfondo histórico relevante
 
-      Make it academic yet accessible, similar to BIOLA University level.`,
+  Hazlo académico pero accesible, similar al nivel de universidad BIOLA.`
+          : `Analyze ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} providing college-level biblical scholarship:
+
+  1. Original Language: Provide key words in ${isOT ? 'Hebrew' : 'Greek'} with transliteration
+  2. Word Study: Explain the meaning of 2-3 significant words with their root meanings
+  3. Theological Significance: What does this verse teach theologically?
+  4. Historical Context: Include the author(s) of ${progress.current_book}, where the book was written, and relevant historical background
+
+  Make it academic yet accessible, similar to BIOLA University level.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -149,19 +161,19 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                 <CardTitle className={isDarkMode 
                   ? "text-lg font-semibold text-blue-900" 
                   : "text-lg font-semibold text-amber-900"
-                }>Today's Verse</CardTitle>
+                }>{language === 'es' ? 'Versículo del Día' : "Today's Verse"}</CardTitle>
                 <p className={isDarkMode 
                   ? "text-sm text-blue-800/80" 
                   : "text-sm text-amber-700/70"
                 }>{progress.current_book} {progress.current_chapter}:{progress.current_verse}</p>
               </div>
-            </div>
-            <Badge variant="outline" className={isDarkMode 
+              </div>
+              <Badge variant="outline" className={isDarkMode 
               ? "bg-blue-700/50 text-blue-900 border-blue-600" 
               : "bg-amber-100/50 text-amber-800 border-amber-300"
-            }>
-              {progress.preferred_translation || 'KJV'}
-            </Badge>
+              }>
+              {language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV')}
+              </Badge>
           </div>
         </CardHeader>
         
@@ -187,7 +199,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                   }
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
-                  {loadingMeaning ? 'Loading...' : 'Hebrew/Greek Study'}
+                  {loadingMeaning ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Estudio Hebreo/Griego' : 'Hebrew/Greek Study')}
                 </Button>
 
                 <Button 
@@ -200,7 +212,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                     : "bg-white/50 border-amber-300 text-amber-800 hover:bg-amber-100"
                   }
                 >
-                  Go Back
+                  {language === 'es' ? 'Regresar' : 'Go Back'}
                 </Button>
 
                 <Button 
@@ -210,7 +222,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                     : "bg-amber-600 hover:bg-amber-700 text-white"
                   }
                 >
-                  Next Verse
+                  {language === 'es' ? 'Siguiente Versículo' : 'Next Verse'}
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
@@ -229,7 +241,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                     : "font-semibold text-amber-900 flex items-center gap-2"
                   }>
                     <BookOpen className="h-4 w-4" />
-                    Original Language Study
+                    {language === 'es' ? 'Estudio del Idioma Original' : 'Original Language Study'}
                   </h4>
                   
                   <div className="grid gap-4">
@@ -257,7 +269,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                       <h5 className={isDarkMode 
                         ? "font-medium text-blue-900 mb-1"
                         : "font-medium text-amber-900 mb-1"
-                      }>Theological Significance</h5>
+                      }>{language === 'es' ? 'Significado Teológico' : 'Theological Significance'}</h5>
                       <p className={isDarkMode 
                         ? "text-sm text-blue-800/80"
                         : "text-sm text-amber-800/80"
@@ -267,18 +279,18 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
                       <h5 className={isDarkMode 
                         ? "font-medium text-blue-900 mb-1"
                         : "font-medium text-amber-900 mb-1"
-                      }>Historical Context</h5>
+                      }>{language === 'es' ? 'Contexto Histórico' : 'Historical Context'}</h5>
                       {hebrewGreek.author && (
                         <p className={isDarkMode 
                           ? "text-sm text-blue-800/80 mb-2"
                           : "text-sm text-amber-800/80 mb-2"
-                        }><strong>Author:</strong> {hebrewGreek.author}</p>
+                        }><strong>{language === 'es' ? 'Autor' : 'Author'}:</strong> {hebrewGreek.author}</p>
                       )}
                       {hebrewGreek.location_written && (
                         <p className={isDarkMode 
                           ? "text-sm text-blue-800/80 mb-2"
                           : "text-sm text-amber-800/80 mb-2"
-                        }><strong>Location Written:</strong> {hebrewGreek.location_written}</p>
+                        }><strong>{language === 'es' ? 'Lugar Escrito' : 'Location Written'}:</strong> {hebrewGreek.location_written}</p>
                       )}
                       <p className={isDarkMode 
                         ? "text-sm text-blue-800/80"
