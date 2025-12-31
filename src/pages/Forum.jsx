@@ -41,6 +41,8 @@ export default function Forum() {
       if (isAuthenticated) {
         const userData = await base44.auth.me();
         setUser(userData);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       // User not authenticated
@@ -48,10 +50,18 @@ export default function Forum() {
     }
   };
 
-  const { data: posts = [], isLoading } = useQuery({
+  const { data: posts = [], isLoading, error } = useQuery({
     queryKey: ['forumPosts'],
-    queryFn: () => base44.entities.ForumPost.list('-updated_date', 100),
-    enabled: true
+    queryFn: async () => {
+      try {
+        return await base44.entities.ForumPost.list('-updated_date', 100);
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        return [];
+      }
+    },
+    enabled: true,
+    retry: false
   });
 
   useEffect(() => {
@@ -140,7 +150,7 @@ export default function Forum() {
 
   const handleCreatePost = () => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      alert('Please sign in to create a post');
       return;
     }
     if (!newPost.title.trim() || !newPost.content.trim()) return;
@@ -164,7 +174,7 @@ export default function Forum() {
 
   const handleVote = (post, voteType) => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      alert('Please sign in to vote');
       return;
     }
     const upvotes = post.upvotes || [];
@@ -197,7 +207,7 @@ export default function Forum() {
 
   const handleReply = (post) => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      alert('Please sign in to reply');
       return;
     }
     if (!replyContent.trim()) return;
@@ -227,7 +237,7 @@ export default function Forum() {
 
   const handleReplyVote = (post, replyId, voteType) => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname);
+      alert('Please sign in to vote');
       return;
     }
     const replies = post.replies || [];
