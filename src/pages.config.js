@@ -2,15 +2,15 @@ import AIChat from './pages/AIChat';
 import AISettings from './pages/AISettings';
 import BibleAssistant from './pages/BibleAssistant';
 import BibleSearch from './pages/BibleSearch';
+import ContactUs from './pages/ContactUs';
 import Forum from './pages/Forum';
 import Home from './pages/Home';
+import HomeSpanish from './pages/HomeSpanish';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
-import HomeSpanish from './pages/HomeSpanish';
-import ContactUs from './pages/ContactUs';
 import __Layout from './Layout.jsx';
 
 
@@ -19,15 +19,15 @@ export const PAGES = {
     "AISettings": AISettings,
     "BibleAssistant": BibleAssistant,
     "BibleSearch": BibleSearch,
+    "ContactUs": ContactUs,
     "Forum": Forum,
     "Home": Home,
+    "HomeSpanish": HomeSpanish,
     "Notes": Notes,
     "Payments": Payments,
     "SavedContent": SavedContent,
     "SignIn": SignIn,
     "Store": Store,
-    "HomeSpanish": HomeSpanish,
-    "ContactUs": ContactUs,
 }
 
 export const pagesConfig = {

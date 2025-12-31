@@ -7,7 +7,7 @@ import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookM
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     loadUser();
