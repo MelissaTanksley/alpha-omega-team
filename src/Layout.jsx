@@ -9,9 +9,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     loadUser();
+    loadAllUsers();
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
@@ -60,6 +62,15 @@ export default function Layout({ children, currentPageName }) {
     } catch (error) {
       // User not authenticated, this is normal for public apps
       setUser(null);
+    }
+  };
+
+  const loadAllUsers = async () => {
+    try {
+      const users = await base44.entities.User.list('-updated_date', 20);
+      setAllUsers(users);
+    } catch (error) {
+      console.error('Error loading users:', error);
     }
   };
 
@@ -155,7 +166,7 @@ export default function Layout({ children, currentPageName }) {
                               <ChevronDown className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent>
+                          <DropdownMenuContent className="w-64">
                             {item.name === 'Community' && user && (
                               <>
                                 <div className="px-2 py-1.5 text-xs text-slate-500 border-b">
@@ -171,6 +182,30 @@ export default function Layout({ children, currentPageName }) {
                                 </Link>
                               </DropdownMenuItem>
                             ))}
+                            {item.name === 'Community' && user && allUsers.length > 0 && (
+                              <>
+                                <div className="px-2 py-1.5 text-xs text-slate-500 border-t mt-1">
+                                  Active Members ({allUsers.length})
+                                </div>
+                                <div className="max-h-48 overflow-y-auto">
+                                  {allUsers.slice(0, 10).map((u) => (
+                                    <div key={u.id} className="px-2 py-1.5 text-xs flex items-center gap-2 hover:bg-slate-50">
+                                      {u.profile_picture_url ? (
+                                        <img src={u.profile_picture_url} alt={u.full_name} className="w-5 h-5 rounded-full object-cover" />
+                                      ) : (
+                                        <div className="w-5 h-5 rounded-full bg-slate-300 flex items-center justify-center">
+                                          <User className="w-3 h-3 text-slate-600" />
+                                        </div>
+                                      )}
+                                      <span className="text-slate-700 truncate">{u.full_name || u.email}</span>
+                                      {u.reputation !== undefined && (
+                                        <span className="text-amber-600 ml-auto">⭐ {u.reputation}</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       );
