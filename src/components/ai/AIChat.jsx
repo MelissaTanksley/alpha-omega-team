@@ -63,7 +63,7 @@ export default function AIChat({ conversation, onUpdate }) {
     setLoadingContext(false);
   };
 
-  const handleSend = async () => {
+  const handleSend = async (retryCount = 0) => {
     if (!input.trim() || loading) return;
 
     const userMessage = {
@@ -77,6 +77,8 @@ export default function AIChat({ conversation, onUpdate }) {
     setInput('');
     setLoading(true);
 
+    const maxRetries = AI_PROVIDERS.length;
+    
     try {
       // Build context from conversation
       const conversationContext = newMessages
