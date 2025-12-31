@@ -386,7 +386,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 }
               }}
             >
-              <SelectTrigger className="w-[140px] h-8 text-sm border-slate-300">
+              <SelectTrigger className="w-[180px] h-8 text-sm border-slate-300">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
