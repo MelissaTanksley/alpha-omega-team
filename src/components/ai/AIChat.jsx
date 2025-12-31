@@ -13,12 +13,25 @@ import ReactMarkdown from 'react-markdown';
 const AI_PROVIDERS = [
   { id: 'chatgpt', name: 'ChatGPT', color: 'bg-green-500' },
   { id: 'claude', name: 'Claude', color: 'bg-purple-500' },
-  { id: 'copilot', name: 'Copilot', color: 'bg-blue-500' },
-  { id: 'grok', name: 'Grok', color: 'bg-orange-500' },
+  { id: 'llama', name: 'Llama 3', color: 'bg-pink-500' },
   { id: 'gemini', name: 'Gemini', color: 'bg-cyan-500' },
   { id: 'perplexity', name: 'Perplexity', color: 'bg-teal-500' },
-  { id: 'deepseek', name: 'DeepSeek', color: 'bg-indigo-500' },
-  { id: 'llama', name: 'Llama', color: 'bg-pink-500' }
+  { id: 'synthesia', name: 'Synthesia', color: 'bg-violet-500' },
+  { id: 'elevenlabs', name: 'ElevenLabs', color: 'bg-emerald-500' },
+  { id: 'grok', name: 'Grok', color: 'bg-orange-500' },
+  { id: 'mistral', name: 'Mistral AI', color: 'bg-slate-500' },
+  { id: 'copyai', name: 'CopyAI', color: 'bg-sky-500' },
+  { id: 'midjourney', name: 'Midjourney', color: 'bg-fuchsia-500' },
+  { id: 'firefly', name: 'Firefly', color: 'bg-yellow-500' },
+  { id: 'copilot', name: 'Copilot', color: 'bg-blue-500' },
+  { id: 'runway', name: 'Runway', color: 'bg-rose-500' },
+  { id: 'mm1', name: 'MM1', color: 'bg-gray-500' },
+  { id: 'huggingface', name: 'Hugging Face', color: 'bg-amber-500' },
+  { id: 'gamma', name: 'Gamma', color: 'bg-lime-500' },
+  { id: 'pika', name: 'Pika', color: 'bg-red-500' },
+  { id: 'jasper', name: 'Jasper', color: 'bg-indigo-600' },
+  { id: 'techpresso', name: 'Techpresso', color: 'bg-neutral-500' },
+  { id: 'deepseek', name: 'DeepSeek', color: 'bg-indigo-500' }
 ];
 
 export default function AIChat({ conversation, onUpdate }) {
