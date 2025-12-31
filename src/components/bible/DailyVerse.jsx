@@ -7,7 +7,7 @@ import { BookOpen, Sparkles, ChevronRight, Volume2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
-export default function DailyVerse({ progress, onVerseAdvance }) {
+export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
   const [verse, setVerse] = useState(null);
   const [hebrewGreek, setHebrewGreek] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -181,7 +181,20 @@ Make it academic yet accessible, similar to BIOLA University level.`,
                   <BookOpen className="h-4 w-4 mr-2" />
                   {loadingMeaning ? 'Loading...' : 'Hebrew/Greek Study'}
                 </Button>
-                
+
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={onVerseBack}
+                  disabled={progress.current_verse <= 1}
+                  className={isDarkMode 
+                    ? "bg-white/50 border-blue-600 text-blue-900 hover:bg-blue-200"
+                    : "bg-white/50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                  }
+                >
+                  Go Back
+                </Button>
+
                 <Button 
                   onClick={onVerseAdvance}
                   className={isDarkMode 

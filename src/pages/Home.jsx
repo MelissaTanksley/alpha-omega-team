@@ -66,6 +66,14 @@ export default function Home() {
     });
   };
 
+  const handleVerseBack = async () => {
+    if (progress.current_verse > 1) {
+      await updateProgressMutation.mutateAsync({
+        current_verse: progress.current_verse - 1
+      });
+    }
+  };
+
   const handleTranslationChange = async (translation) => {
     await updateProgressMutation.mutateAsync({
       preferred_translation: translation
@@ -197,7 +205,7 @@ export default function Home() {
       )}
 
       {/* Daily Verse */}
-      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} />
+      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
 
       {/* Quick Info */}
       <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
