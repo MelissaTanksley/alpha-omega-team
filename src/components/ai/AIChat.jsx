@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus, FileText, BookOpen } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -363,9 +364,26 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <h1 className="text-lg font-semibold text-slate-800">{conversation?.title || 'New Conversation'}</h1>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-slate-600 border-slate-300">
-              {getCurrentProviderInfo().name}
-            </Badge>
+            <Select
+              value={currentProvider}
+              onValueChange={(value) => {
+                setCurrentProvider(value);
+                if (onUpdate) {
+                  onUpdate({ current_provider: value });
+                }
+              }}
+            >
+              <SelectTrigger className="w-[140px] h-8 text-sm border-slate-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {AI_PROVIDERS.map((provider) => (
+                  <SelectItem key={provider.id} value={provider.id}>
+                    {provider.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               variant="ghost"
               size="sm"
