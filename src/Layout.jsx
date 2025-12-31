@@ -7,7 +7,6 @@ import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookM
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadUser();
