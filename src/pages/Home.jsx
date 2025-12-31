@@ -211,8 +211,7 @@ export default function Home() {
               <p className="text-slate-400 leading-relaxed">
                 You're reading through the entire Bible, one verse at a time. Each time you log in, 
                 you'll receive the next verse in sequence, starting from Genesis 1:1. Explore deep word 
-                studies, take notes, and grow in your understanding of God's Word with college-level 
-                theological insights.
+                studies, take notes, and grow in your understanding of God's Word.
               </p>
             </div>
           </div>

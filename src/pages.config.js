@@ -1,25 +1,25 @@
 import AIChat from './pages/AIChat';
+import BibleAssistant from './pages/BibleAssistant';
 import BibleSearch from './pages/BibleSearch';
+import Forum from './pages/Forum';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
-import SignIn from './pages/SignIn';
-import Forum from './pages/Forum';
 import SavedContent from './pages/SavedContent';
-import BibleAssistant from './pages/BibleAssistant';
+import SignIn from './pages/SignIn';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIChat": AIChat,
+    "BibleAssistant": BibleAssistant,
     "BibleSearch": BibleSearch,
+    "Forum": Forum,
     "Home": Home,
     "Notes": Notes,
     "Payments": Payments,
-    "SignIn": SignIn,
-    "Forum": Forum,
     "SavedContent": SavedContent,
-    "BibleAssistant": BibleAssistant,
+    "SignIn": SignIn,
 }
 
 export const pagesConfig = {
