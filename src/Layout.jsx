@@ -86,8 +86,15 @@ export default function Layout({ children, currentPageName }) {
         { name: 'Saved Content', icon: Save, page: 'SavedContent' }
       ]
     },
-    { name: 'Community', icon: Church, page: 'Forum' },
-    { name: 'Messages', icon: BookOpen, page: 'Messages' },
+    { 
+      name: 'Community', 
+      icon: Church, 
+      page: 'Forum',
+      dropdown: [
+        { name: 'Forum', icon: Church, page: 'Forum' },
+        { name: 'Messages', icon: BookOpen, page: 'Messages' }
+      ]
+    },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
   ];
 
