@@ -54,10 +54,10 @@ export default function Layout({ children, currentPageName }) {
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-amber-500/30 shadow-lg">
+        <header className="bg-slate-900/95 backdrop-blur-sm border-b border-amber-500/30 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link to={createPageUrl('Home')} className="flex items-center group">
+            <div className="flex items-center gap-4 h-16">
+              <Link to={createPageUrl('Home')} className="flex items-center group flex-shrink-0">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/d70fd8659_Designer.png"
                   alt="Alpha Omega"
@@ -65,32 +65,34 @@ export default function Layout({ children, currentPageName }) {
                 />
               </Link>
 
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex items-center gap-1">
-                {navigation.map((item) => {
-                  const isActive = currentPageName === item.page;
-                  return (
-                    <Link key={item.page} to={createPageUrl(item.page)}>
-                      <Button
-                        variant="ghost"
-                        className={`flex items-center gap-2 ${
-                          isActive 
-                            ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30' 
-                            : 'text-slate-300 hover:text-amber-400 hover:bg-slate-800/50'
-                        }`}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.name}
-                      </Button>
-                    </Link>
-                  );
-                })}
+              {/* Scrollable Navigation */}
+              <nav className="flex-1 overflow-x-auto scrollbar-hide">
+                <div className="flex items-center gap-1 min-w-max">
+                  {navigation.map((item) => {
+                    const isActive = currentPageName === item.page;
+                    return (
+                      <Link key={item.page} to={createPageUrl(item.page)}>
+                        <Button
+                          variant="ghost"
+                          className={`flex items-center gap-2 whitespace-nowrap ${
+                            isActive 
+                              ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30' 
+                              : 'text-slate-300 hover:text-amber-400 hover:bg-slate-800/50'
+                          }`}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.name}
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </div>
               </nav>
 
               {/* User Menu */}
-              <div className="hidden md:flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-shrink-0">
                 {user && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
                     <User className="h-4 w-4 text-amber-400" />
                     <span className="text-sm text-slate-300">{user.full_name || user.email}</span>
                   </div>
@@ -104,16 +106,6 @@ export default function Layout({ children, currentPageName }) {
                   <LogOut className="h-5 w-5" />
                 </Button>
               </div>
-
-              {/* Mobile Hamburger Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-white"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </Button>
             </div>
           </div>
 
