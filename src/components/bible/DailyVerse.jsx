@@ -14,6 +14,81 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
   const [loadingMeaning, setLoadingMeaning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
+  const bibleBookTranslations = {
+    'Genesis': 'Génesis',
+    'Exodus': 'Éxodo',
+    'Leviticus': 'Levítico',
+    'Numbers': 'Números',
+    'Deuteronomy': 'Deuteronomio',
+    'Joshua': 'Josué',
+    'Judges': 'Jueces',
+    'Ruth': 'Rut',
+    '1 Samuel': '1 Samuel',
+    '2 Samuel': '2 Samuel',
+    '1 Kings': '1 Reyes',
+    '2 Kings': '2 Reyes',
+    '1 Chronicles': '1 Crónicas',
+    '2 Chronicles': '2 Crónicas',
+    'Ezra': 'Esdras',
+    'Nehemiah': 'Nehemías',
+    'Esther': 'Ester',
+    'Job': 'Job',
+    'Psalms': 'Salmos',
+    'Proverbs': 'Proverbios',
+    'Ecclesiastes': 'Eclesiastés',
+    'Song of Solomon': 'Cantar de los Cantares',
+    'Isaiah': 'Isaías',
+    'Jeremiah': 'Jeremías',
+    'Lamentations': 'Lamentaciones',
+    'Ezekiel': 'Ezequiel',
+    'Daniel': 'Daniel',
+    'Hosea': 'Oseas',
+    'Joel': 'Joel',
+    'Amos': 'Amós',
+    'Obadiah': 'Abdías',
+    'Jonah': 'Jonás',
+    'Micah': 'Miqueas',
+    'Nahum': 'Nahúm',
+    'Habakkuk': 'Habacuc',
+    'Zephaniah': 'Sofonías',
+    'Haggai': 'Hageo',
+    'Zechariah': 'Zacarías',
+    'Malachi': 'Malaquías',
+    'Matthew': 'Mateo',
+    'Mark': 'Marcos',
+    'Luke': 'Lucas',
+    'John': 'Juan',
+    'Acts': 'Hechos',
+    'Romans': 'Romanos',
+    '1 Corinthians': '1 Corintios',
+    '2 Corinthians': '2 Corintios',
+    'Galatians': 'Gálatas',
+    'Ephesians': 'Efesios',
+    'Philippians': 'Filipenses',
+    'Colossians': 'Colosenses',
+    '1 Thessalonians': '1 Tesalonicenses',
+    '2 Thessalonians': '2 Tesalonicenses',
+    '1 Timothy': '1 Timoteo',
+    '2 Timothy': '2 Timoteo',
+    'Titus': 'Tito',
+    'Philemon': 'Filemón',
+    'Hebrews': 'Hebreos',
+    'James': 'Santiago',
+    '1 Peter': '1 Pedro',
+    '2 Peter': '2 Pedro',
+    '1 John': '1 Juan',
+    '2 John': '2 Juan',
+    '3 John': '3 Juan',
+    'Jude': 'Judas',
+    'Revelation': 'Apocalipsis'
+  };
+
+  const getBookName = (bookName) => {
+    return language === 'es' && bibleBookTranslations[bookName] 
+      ? bibleBookTranslations[bookName] 
+      : bookName;
+  };
+
   useEffect(() => {
     if (progress) {
       fetchVerse();
@@ -165,23 +240,15 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                 <p className={isDarkMode 
                   ? "text-sm text-blue-800/80" 
                   : "text-sm text-amber-700/70"
-                }>{progress.current_book} {progress.current_chapter}:{progress.current_verse}</p>
+                }>{getBookName(progress.current_book)} {progress.current_chapter}:{progress.current_verse}</p>
               </div>
               </div>
-              <div className="flex flex-col items-end gap-1">
-                <Badge variant="outline" className={isDarkMode 
-                  ? "bg-blue-700/50 text-blue-900 border-blue-600" 
-                  : "bg-amber-100/50 text-amber-800 border-amber-300"
-                }>
-                  {language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV')}
-                </Badge>
-                {language === 'es' && (
-                  <p className={isDarkMode 
-                    ? "text-xs text-blue-800/70" 
-                    : "text-xs text-amber-700/60"
-                  }>Traducción NTV</p>
-                )}
-              </div>
+              <Badge variant="outline" className={isDarkMode 
+                ? "bg-blue-700/50 text-blue-900 border-blue-600" 
+                : "bg-amber-100/50 text-amber-800 border-amber-300"
+              }>
+                {language === 'es' ? 'Traducción NTV' : (progress.preferred_translation || 'KJV')}
+              </Badge>
           </div>
         </CardHeader>
         
