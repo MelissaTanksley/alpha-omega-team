@@ -19,10 +19,14 @@ export default function Layout({ children, currentPageName }) {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      if (isAuthenticated) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      }
     } catch (error) {
-      console.error('Error loading user:', error);
+      // User not authenticated, this is normal for public apps
+      setUser(null);
     }
   };
 
