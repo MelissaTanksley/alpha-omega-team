@@ -17,6 +17,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
   useEffect(() => {
     if (progress) {
       fetchVerse();
+      setHebrewGreek(null); // Close Hebrew/Greek study when verse changes
     }
   }, [progress]);
 
