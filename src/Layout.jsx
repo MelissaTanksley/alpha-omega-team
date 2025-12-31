@@ -87,8 +87,6 @@ export default function Layout({ children, currentPageName }) {
     },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Store', icon: BookMarked, page: 'Store' },
-    { name: 'Contact Us', icon: FileText, page: 'ContactUs' },
-    { name: 'Donate', icon: FileText, page: 'Payments' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
   ];
@@ -225,9 +223,19 @@ export default function Layout({ children, currentPageName }) {
         {/* Footer */}
         <footer className="mt-16 border-t border-transparent bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <p className={`text-center text-sm ${isDarkMode ? 'text-blue-400' : 'text-slate-600'}`}>
-                © 2025 Alpha Omega Team
-              </p>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-slate-600'}`}>
+                  © 2025 Alpha Omega Team
+                </p>
+                <div className="flex gap-4">
+                  <Link to={createPageUrl('ContactUs')} className={`text-sm hover:underline ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-slate-600 hover:text-slate-900'}`}>
+                    Contact Us
+                  </Link>
+                  <Link to={createPageUrl('Payments')} className={`text-sm hover:underline ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-slate-600 hover:text-slate-900'}`}>
+                    Donate
+                  </Link>
+                </div>
+              </div>
             </div>
           </footer>
       </div>
