@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Sparkles, ChevronRight, Volume2 } from 'lucide-react';
+import { BookOpen, Sparkles, ChevronRight, Volume2, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
@@ -276,6 +278,20 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                   <BookOpen className="h-4 w-4 mr-2" />
                   {loadingMeaning ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Estudio Hebreo/Griego' : 'Hebrew/Greek Study')}
                 </Button>
+
+                <Link to={createPageUrl('Forum')}>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className={isDarkMode 
+                      ? "bg-white/50 border-blue-600 text-blue-900 hover:bg-blue-200"
+                      : "bg-white/50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                    }
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    {language === 'es' ? 'Discutir' : 'Discuss'}
+                  </Button>
+                </Link>
 
                 <Button 
                   variant="outline"
