@@ -26,7 +26,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navigation = [
-    { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
+    // { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Notes', icon: BookMarked, page: 'Notes' },
