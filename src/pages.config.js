@@ -7,6 +7,7 @@ import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
+import AISettings from './pages/AISettings';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "Payments": Payments,
     "SavedContent": SavedContent,
     "SignIn": SignIn,
+    "AISettings": AISettings,
 }
 
 export const pagesConfig = {
