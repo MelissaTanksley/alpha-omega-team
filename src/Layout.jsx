@@ -35,7 +35,7 @@ export default function Layout({ children, currentPageName }) {
         ogImage.setAttribute('property', 'og:image');
         document.head.appendChild(ogImage);
       }
-      ogImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+      ogImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/83ee761b2_Designer2.png';
 
       // Twitter card image
       let twitterImage = document.querySelector("meta[name='twitter:image']");
@@ -44,7 +44,7 @@ export default function Layout({ children, currentPageName }) {
         twitterImage.setAttribute('name', 'twitter:image');
         document.head.appendChild(twitterImage);
       }
-      twitterImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+      twitterImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/83ee761b2_Designer2.png';
     };
 
     setMetaTags();
