@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown, Search } from 'lucide-react';
+import NotificationBell from './components/notifications/NotificationBell';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function Layout({ children, currentPageName }) {
@@ -103,7 +104,8 @@ export default function Layout({ children, currentPageName }) {
       page: 'Forum',
       dropdown: [
         { name: 'Forum', icon: Church, page: 'Forum' },
-        { name: 'Messages', icon: BookOpen, page: 'Messages' }
+        { name: 'Messages', icon: BookOpen, page: 'Messages' },
+        { name: 'Search', icon: Search, page: 'Search' }
       ]
     },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
@@ -234,12 +236,21 @@ export default function Layout({ children, currentPageName }) {
               {/* User Menu */}
               <div className="flex items-center gap-3 flex-shrink-0">
                 {user && (
-                  <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                    isDarkMode ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-300'
-                  }`}>
-                    <User className={`h-4 w-4 ${isDarkMode ? 'text-blue-600' : 'text-slate-600'}`} />
-                    <span className="text-sm text-slate-700">{user.full_name || user.email}</span>
-                  </div>
+                  <>
+                    <NotificationBell userEmail={user.email} />
+                    <Link to={createPageUrl('UserProfile') + '?email=' + user.email}>
+                      <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer hover:border-amber-500 transition-colors ${
+                        isDarkMode ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-300'
+                      }`}>
+                        {user.profile_picture_url ? (
+                          <img src={user.profile_picture_url} alt={user.full_name} className="h-6 w-6 rounded-full object-cover" />
+                        ) : (
+                          <User className={`h-4 w-4 ${isDarkMode ? 'text-blue-600' : 'text-slate-600'}`} />
+                        )}
+                        <span className="text-sm text-slate-700">{user.full_name || user.email}</span>
+                      </div>
+                    </Link>
+                  </>
                 )}
                 <Button
                   variant="ghost"

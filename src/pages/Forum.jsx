@@ -105,7 +105,7 @@ export default function Forum() {
   const createPostMutation = useMutation({
     mutationFn: async (data) => {
       const newPost = await base44.entities.ForumPost.create(data);
-      
+
       // Send email notification to admin
       try {
         await base44.integrations.Core.SendEmail({
@@ -113,22 +113,22 @@ export default function Forum() {
           subject: `New Forum Post: ${data.title}`,
           body: `
             A new post has been created in the Alpha Omega community forum.
-            
+
             Title: ${data.title}
             Category: ${data.category}
             Author: ${data.author_name}
             ${data.scripture_reference ? `Scripture: ${data.scripture_reference}` : ''}
-            
+
             Content:
             ${data.content}
-            
+
             View and moderate: ${window.location.origin}${window.location.pathname}
           `
         });
       } catch (error) {
         console.error('Error sending email notification:', error);
       }
-      
+
       return newPost;
     },
     onSuccess: () => {
@@ -137,6 +137,22 @@ export default function Forum() {
       setNewPost({ title: '', content: '', category: 'discussion', scripture_reference: '', tags: [] });
     }
   });
+
+  const createNotification = async (recipientEmail, type, title, content, relatedId, fromUser) => {
+    try {
+      await base44.entities.Notification.create({
+        user_email: recipientEmail,
+        type,
+        title,
+        content,
+        related_id: relatedId,
+        related_type: 'forum',
+        from_user: fromUser
+      });
+    } catch (error) {
+      console.error('Error creating notification:', error);
+    }
+  };
 
   const updatePostMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ForumPost.update(id, data),
@@ -313,7 +329,7 @@ export default function Forum() {
       return;
     }
     if (!replyContent.trim()) return;
-    
+
     const newReply = {
       id: Date.now().toString(),
       author_name: user.full_name || user.email,
@@ -325,14 +341,26 @@ export default function Forum() {
       downvotes: [],
       parent_reply_id: replyToId
     };
-    
+
     updatePostMutation.mutate({
       id: post.id,
       data: {
         replies: [...(post.replies || []), newReply]
       }
     });
-    
+
+    // Create notification for post author
+    if (post.author_email !== user.email) {
+      createNotification(
+        post.author_email,
+        'reply',
+        'New reply to your post',
+        `${user.full_name || user.email} replied: "${replyContent.substring(0, 100)}..."`,
+        post.id,
+        user.full_name || user.email
+      );
+    }
+
     setReplyContent('');
     setReplyToId(null);
   };

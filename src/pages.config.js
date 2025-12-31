@@ -13,6 +13,8 @@ import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
+import UserProfile from './pages/UserProfile';
+import Search from './pages/Search';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +34,8 @@ export const PAGES = {
     "SignIn": SignIn,
     "Store": Store,
     "TopicalStudies": TopicalStudies,
+    "UserProfile": UserProfile,
+    "Search": Search,
 }
 
 export const pagesConfig = {
