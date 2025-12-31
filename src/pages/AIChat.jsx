@@ -70,7 +70,7 @@ export default function AIChatPage() {
       title: newChatTitle.trim() || 'New Conversation',
       messages: [],
       current_provider: 'chatgpt',
-      provider_rotation: ['chatgpt', 'claude', 'copilot', 'grok', 'gemini']
+      provider_rotation: ['chatgpt', 'claude', 'copilot', 'grok', 'gemini', 'perplexity', 'deepseek', 'llama']
     });
   };
 
@@ -190,11 +190,11 @@ export default function AIChatPage() {
               <h3 className="text-xl font-semibold text-slate-200 mb-2">Multi-AI Assistant</h3>
               <p className="text-slate-400 mb-6 max-w-md mx-auto">
                 Start a conversation with our intelligent assistant that automatically switches between 
-                ChatGPT, Claude, Copilot, Grok, and Gemini for uninterrupted service.
+                ChatGPT, Claude, Copilot, Grok, Gemini, Perplexity, DeepSeek, and Llama for uninterrupted service.
               </p>
               <Button 
                 onClick={() => setShowNewChat(true)}
-                className="bg-amber-600 hover:bg-amber-700"
+                className="bg-amber-600 hover:bg-amber-700 mb-20"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Start New Conversation

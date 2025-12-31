@@ -14,7 +14,10 @@ const AI_PROVIDERS = [
   { id: 'claude', name: 'Claude', color: 'bg-purple-500' },
   { id: 'copilot', name: 'Copilot', color: 'bg-blue-500' },
   { id: 'grok', name: 'Grok', color: 'bg-orange-500' },
-  { id: 'gemini', name: 'Gemini', color: 'bg-cyan-500' }
+  { id: 'gemini', name: 'Gemini', color: 'bg-cyan-500' },
+  { id: 'perplexity', name: 'Perplexity', color: 'bg-teal-500' },
+  { id: 'deepseek', name: 'DeepSeek', color: 'bg-indigo-500' },
+  { id: 'llama', name: 'Llama', color: 'bg-pink-500' }
 ];
 
 export default function AIChat({ conversation, onUpdate }) {
