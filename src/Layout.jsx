@@ -37,6 +37,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navigation = [
+    { name: 'Home', icon: BookOpen, page: 'Home' },
     // { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
