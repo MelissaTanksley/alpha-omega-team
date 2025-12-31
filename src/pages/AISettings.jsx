@@ -18,7 +18,22 @@ export default function AISettings() {
     grok_key: '',
     gemini_key: '',
     perplexity_key: '',
-    deepseek_key: ''
+    deepseek_key: '',
+    llama_key: '',
+    synthesia_key: '',
+    elevenlabs_key: '',
+    mistral_key: '',
+    copyai_key: '',
+    midjourney_key: '',
+    firefly_key: '',
+    copilot_key: '',
+    runway_key: '',
+    mm1_key: '',
+    huggingface_key: '',
+    gamma_key: '',
+    pika_key: '',
+    jasper_key: '',
+    techpresso_key: ''
   });
   const [preferredProvider, setPreferredProvider] = useState('default');
   const [saving, setSaving] = useState(false);
@@ -74,9 +89,24 @@ export default function AISettings() {
     { id: 'default', name: 'Default (Free)', icon: '🆓' },
     { id: 'chatgpt', name: 'ChatGPT', icon: '🤖', keyField: 'openai_key' },
     { id: 'claude', name: 'Claude', icon: '🧠', keyField: 'anthropic_key' },
-    { id: 'grok', name: 'Grok', icon: '⚡', keyField: 'grok_key' },
+    { id: 'llama', name: 'Llama 3', icon: '🦙', keyField: 'llama_key' },
     { id: 'gemini', name: 'Gemini', icon: '💎', keyField: 'gemini_key' },
     { id: 'perplexity', name: 'Perplexity', icon: '🔍', keyField: 'perplexity_key' },
+    { id: 'synthesia', name: 'Synthesia', icon: '🎬', keyField: 'synthesia_key' },
+    { id: 'elevenlabs', name: 'ElevenLabs', icon: '🎙️', keyField: 'elevenlabs_key' },
+    { id: 'grok', name: 'Grok', icon: '⚡', keyField: 'grok_key' },
+    { id: 'mistral', name: 'Mistral AI', icon: '🌪️', keyField: 'mistral_key' },
+    { id: 'copyai', name: 'CopyAI', icon: '📝', keyField: 'copyai_key' },
+    { id: 'midjourney', name: 'Midjourney', icon: '🎨', keyField: 'midjourney_key' },
+    { id: 'firefly', name: 'Firefly', icon: '✨', keyField: 'firefly_key' },
+    { id: 'copilot', name: 'Copilot', icon: '🚀', keyField: 'copilot_key' },
+    { id: 'runway', name: 'Runway', icon: '🎥', keyField: 'runway_key' },
+    { id: 'mm1', name: 'MM1', icon: '🍎', keyField: 'mm1_key' },
+    { id: 'huggingface', name: 'Hugging Face', icon: '🤗', keyField: 'huggingface_key' },
+    { id: 'gamma', name: 'Gamma', icon: '📊', keyField: 'gamma_key' },
+    { id: 'pika', name: 'Pika', icon: '🎞️', keyField: 'pika_key' },
+    { id: 'jasper', name: 'Jasper', icon: '💼', keyField: 'jasper_key' },
+    { id: 'techpresso', name: 'Techpresso', icon: '📰', keyField: 'techpresso_key' },
     { id: 'deepseek', name: 'DeepSeek', icon: '🌊', keyField: 'deepseek_key' }
   ];
 
@@ -278,14 +308,33 @@ export default function AISettings() {
           <h3 className="font-semibold text-lg text-blue-300">
             How to Get API Keys
           </h3>
-          <ul className="space-y-2 text-blue-200 text-sm">
-            <li>• <strong>ChatGPT:</strong> Get your API key from platform.openai.com</li>
-            <li>• <strong>Claude:</strong> Sign up at console.anthropic.com</li>
-            <li>• <strong>Grok:</strong> Available through x.ai developer portal</li>
-            <li>• <strong>Gemini:</strong> Get your key from ai.google.dev</li>
-            <li>• <strong>Perplexity:</strong> Access via perplexity.ai API</li>
-            <li>• <strong>DeepSeek:</strong> Register at platform.deepseek.com</li>
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-blue-200 text-sm">
+            <div>
+              <li>• <strong>ChatGPT:</strong> platform.openai.com</li>
+              <li>• <strong>Claude:</strong> console.anthropic.com</li>
+              <li>• <strong>Llama 3:</strong> meta.ai/llama</li>
+              <li>• <strong>Gemini:</strong> ai.google.dev</li>
+              <li>• <strong>Perplexity:</strong> perplexity.ai</li>
+              <li>• <strong>Synthesia:</strong> synthesia.io</li>
+              <li>• <strong>ElevenLabs:</strong> elevenlabs.io</li>
+              <li>• <strong>Grok:</strong> x.ai</li>
+              <li>• <strong>Mistral AI:</strong> mistral.ai</li>
+              <li>• <strong>CopyAI:</strong> copy.ai</li>
+              <li>• <strong>Midjourney:</strong> midjourney.com</li>
+            </div>
+            <div>
+              <li>• <strong>Firefly:</strong> adobe.com/firefly</li>
+              <li>• <strong>Copilot:</strong> microsoft.com/copilot</li>
+              <li>• <strong>Runway:</strong> runwayml.com</li>
+              <li>• <strong>MM1:</strong> apple.com/ml</li>
+              <li>• <strong>Hugging Face:</strong> huggingface.co</li>
+              <li>• <strong>Gamma:</strong> gamma.app</li>
+              <li>• <strong>Pika:</strong> pika.art</li>
+              <li>• <strong>Jasper:</strong> jasper.ai</li>
+              <li>• <strong>Techpresso:</strong> techpresso.ai</li>
+              <li>• <strong>DeepSeek:</strong> deepseek.com</li>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
