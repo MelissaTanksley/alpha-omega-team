@@ -70,7 +70,29 @@ export default function AIChatPage() {
       title: newChatTitle.trim() || 'New Conversation',
       messages: [],
       current_provider: 'chatgpt',
-      provider_rotation: ['chatgpt', 'claude', 'copilot', 'grok', 'gemini', 'perplexity', 'deepseek', 'llama']
+      provider_rotation: [
+        'chatgpt',
+        'claude',
+        'llama',
+        'gemini',
+        'perplexity',
+        'synthesia',
+        'elevenlabs',
+        'grok',
+        'mistral',
+        'copyai',
+        'midjourney',
+        'firefly',
+        'copilot',
+        'runway',
+        'mm1',
+        'huggingface',
+        'gamma',
+        'pika',
+        'jasper',
+        'techpresso',
+        'deepseek'
+      ]
     });
   };
 
