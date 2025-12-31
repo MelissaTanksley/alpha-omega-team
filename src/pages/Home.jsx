@@ -96,7 +96,7 @@ export default function Home() {
           <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">Welcome to </span>
           <span className="text-[#A14A3A]">Alpha Omega!</span>
         </h1>
-        <p className="text-amber-800 text-lg">
+        <p className="text-blue-400 text-lg">
           Christians working together • Daily Scripture • AI-powered collaboration
         </p>
       </motion.div>
