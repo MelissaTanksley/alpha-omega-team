@@ -73,7 +73,9 @@ export default function Layout({ children, currentPageName }) {
   const loadAllUsers = async () => {
     try {
       const users = await base44.entities.User.list('-updated_date', 20);
-      setAllUsers(users);
+      // Only show users who have is_visible set to true
+      const visibleUsers = users.filter(u => u.is_visible !== false);
+      setAllUsers(visibleUsers);
     } catch (error) {
       console.error('Error loading users:', error);
     }

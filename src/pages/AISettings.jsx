@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Key, Save, AlertCircle, CheckCircle2, Eye, EyeOff, Upload, User as UserIcon } from 'lucide-react';
+import { Key, Save, AlertCircle, CheckCircle2, Eye, EyeOff, Upload, User as UserIcon, UserCheck, UserX } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
 import { motion } from 'framer-motion';
 
 export default function AISettings() {
@@ -25,6 +26,7 @@ export default function AISettings() {
   const [showKeys, setShowKeys] = useState({});
   const [uploadingPicture, setUploadingPicture] = useState(false);
   const [profilePicture, setProfilePicture] = useState('');
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     loadUserData();
@@ -43,17 +45,21 @@ export default function AISettings() {
       if (userData.profile_picture_url) {
         setProfilePicture(userData.profile_picture_url);
       }
-    } catch (error) {
+      if (userData.is_visible !== undefined) {
+        setIsVisible(userData.is_visible);
+      }
+      } catch (error) {
       console.error('Error loading user:', error);
-    }
-  };
+      }
+      };
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await base44.auth.updateMe({
         api_keys: apiKeys,
-        preferred_ai_provider: preferredProvider
+        preferred_ai_provider: preferredProvider,
+        is_visible: isVisible
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -149,9 +155,39 @@ export default function AISettings() {
             </div>
           </div>
         </CardContent>
-      </Card>
+        </Card>
 
-      <Alert className="bg-blue-500/20 border-blue-500/50">
+        <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-slate-200">Privacy Settings</CardTitle>
+          <CardDescription>Control your visibility in the community</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {isVisible ? (
+                <UserCheck className="h-5 w-5 text-green-400" />
+              ) : (
+                <UserX className="h-5 w-5 text-slate-400" />
+              )}
+              <div>
+                <Label className="text-slate-300">Show me in Active Members</Label>
+                <p className="text-sm text-slate-400">
+                  {isVisible 
+                    ? "You're visible in the Community dropdown" 
+                    : "You're hidden from the Active Members list"}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={isVisible}
+              onCheckedChange={setIsVisible}
+            />
+          </div>
+        </CardContent>
+        </Card>
+
+        <Alert className="bg-blue-500/20 border-blue-500/50">
         <AlertCircle className="h-4 w-4 text-blue-400" />
         <AlertDescription className="text-blue-200">
           <strong>Note:</strong> Using your own API keys requires backend functions to be enabled. 
