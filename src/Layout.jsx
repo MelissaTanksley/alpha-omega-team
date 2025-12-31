@@ -156,6 +156,13 @@ export default function Layout({ children, currentPageName }) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
+                            {item.name === 'Community' && user && (
+                              <>
+                                <div className="px-2 py-1.5 text-xs text-slate-500 border-b">
+                                  Logged in as: <span className="font-semibold text-slate-700">{user.full_name || user.email}</span>
+                                </div>
+                              </>
+                            )}
                             {item.dropdown.map((dropItem) => (
                               <DropdownMenuItem key={dropItem.page} asChild>
                                 <Link to={createPageUrl(dropItem.page)} className="flex items-center gap-2 cursor-pointer">
