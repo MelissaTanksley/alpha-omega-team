@@ -200,6 +200,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
