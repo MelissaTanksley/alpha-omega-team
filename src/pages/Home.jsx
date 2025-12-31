@@ -58,9 +58,12 @@ export default function Home() {
   });
 
   const handleVerseAdvance = async () => {
-    const newVerseCount = (progress.verses_read || 0) + 1;
+    const nextVerse = progress.current_verse + 1;
+    const currentCount = progress.verses_read || 0;
+    // Only increment if moving to a new verse we haven't read before
+    const newVerseCount = nextVerse > currentCount ? nextVerse : currentCount;
     await updateProgressMutation.mutateAsync({
-      current_verse: progress.current_verse + 1,
+      current_verse: nextVerse,
       verses_read: newVerseCount,
       last_login_date: format(new Date(), 'yyyy-MM-dd')
     });
