@@ -67,7 +67,7 @@ export default function Forum() {
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['forumPosts'],
     queryFn: () => base44.entities.ForumPost.list('-updated_date', 100),
-    enabled: !!user
+    enabled: true
   });
 
   const createPostMutation = useMutation({
@@ -87,6 +87,10 @@ export default function Forum() {
   });
 
   const handleCreatePost = () => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     if (!newPost.title.trim() || !newPost.content.trim()) return;
     
     createPostMutation.mutate({
@@ -106,6 +110,10 @@ export default function Forum() {
   };
 
   const handleVote = (post, voteType) => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     const upvotes = post.upvotes || [];
     const downvotes = post.downvotes || [];
     
@@ -135,6 +143,10 @@ export default function Forum() {
   };
 
   const handleReply = (post) => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     if (!replyContent.trim()) return;
     
     const newReply = {
@@ -160,6 +172,10 @@ export default function Forum() {
   };
 
   const handleReplyVote = (post, replyId, voteType) => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     const replies = post.replies || [];
     const updatedReplies = replies.map(reply => {
       if (reply.id !== replyId) return reply;
