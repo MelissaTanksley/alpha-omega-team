@@ -10,6 +10,7 @@ import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import HomeSpanish from './pages/HomeSpanish';
+import ContactUs from './pages/ContactUs';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "SignIn": SignIn,
     "Store": Store,
     "HomeSpanish": HomeSpanish,
+    "ContactUs": ContactUs,
 }
 
 export const pagesConfig = {

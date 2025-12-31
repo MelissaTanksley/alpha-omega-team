@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DailyVerse from '../components/bible/DailyVerse';
 import TranslationSelector from '../components/bible/TranslationSelector';
-import ContactForm from '../components/contact/ContactForm';
 import { BookOpen, TrendingUp, CheckCircle2, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
@@ -265,9 +264,6 @@ export default function Home() {
             </div>
             </CardContent>
             </Card>
-
-            {/* Contact Form */}
-            <ContactForm language="en" />
             </div>
             );
             }
