@@ -234,19 +234,40 @@ I'm here to chat, but these professionals are specifically trained to help in cr
       }
 
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error(`Error with ${getCurrentProviderInfo().name}:`, error);
       
-      // If error, try switching provider automatically
-      setShowProviderSwitch(true);
-      rotateProvider();
-      
-      const errorMessage = {
-        role: 'assistant',
-        content: 'I encountered an issue. Switching to another AI provider to continue our conversation...',
-        provider: currentProvider,
-        timestamp: new Date().toISOString()
-      };
-      setMessages([...newMessages, errorMessage]);
+      // Try next provider if retries remain
+      if (retryCount < maxRetries - 1) {
+        setShowProviderSwitch(true);
+        rotateProvider();
+        
+        // Show switching message briefly
+        const switchingMessage = {
+          role: 'assistant',
+          content: `${getCurrentProviderInfo().name} is unavailable. Automatically switching to the next provider...`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+        setMessages([...newMessages, switchingMessage]);
+        
+        // Wait for state to update, then retry
+        setTimeout(() => {
+          setInput(userMessage.content);
+          setMessages(messages); // Reset to before user message
+          handleSend(retryCount + 1);
+        }, 1500);
+      } else {
+        // All providers failed
+        const errorMessage = {
+          role: 'assistant',
+          content: 'All AI providers are currently experiencing issues. Please try again in a moment.',
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+        setMessages([...newMessages, errorMessage]);
+        setLoading(false);
+      }
+      return;
     }
 
     setLoading(false);
