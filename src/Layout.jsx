@@ -3,13 +3,18 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     loadUser();
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+    }
   }, []);
 
   const loadUser = async () => {
@@ -25,6 +30,12 @@ export default function Layout({ children, currentPageName }) {
     base44.auth.logout();
   };
 
+  const toggleTheme = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
+
   const navigation = [
     // { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
@@ -35,12 +46,14 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   return (
-    <div className="min-h-screen relative">
+    <div className={`min-h-screen relative ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       {/* Background Image with Overlay */}
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/6cd0d3412_image.png)',
+          backgroundImage: isDarkMode 
+            ? 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/6cd0d3412_image.png)'
+            : 'linear-gradient(to bottom right, #f8fafc, #e0e7ff)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -89,11 +102,21 @@ export default function Layout({ children, currentPageName }) {
               {/* User Menu */}
               <div className="flex items-center gap-3 flex-shrink-0">
                 {user && (
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
-                    <User className="h-4 w-4 text-blue-600" />
+                  <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                    isDarkMode ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-300'
+                  }`}>
+                    <User className={`h-4 w-4 ${isDarkMode ? 'text-blue-600' : 'text-slate-600'}`} />
                     <span className="text-sm text-slate-700">{user.full_name || user.email}</span>
                   </div>
                 )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  className={`${isDarkMode ? 'text-slate-600 hover:text-amber-400' : 'text-slate-700 hover:text-amber-500'} hover:bg-amber-50`}
+                >
+                  {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -117,7 +140,7 @@ export default function Layout({ children, currentPageName }) {
         {/* Footer */}
         <footer className="mt-16 border-t border-transparent bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <p className="text-center text-blue-400 text-sm">
+              <p className={`text-center text-sm ${isDarkMode ? 'text-blue-400' : 'text-slate-600'}`}>
                 © 2025 Alpha Omega Team
               </p>
             </div>
