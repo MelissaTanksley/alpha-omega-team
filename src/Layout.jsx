@@ -117,7 +117,7 @@ export default function Layout({ children, currentPageName }) {
         {/* Footer */}
         <footer className="mt-16 border-t border-transparent bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <p className="text-center text-crimson text-sm" style={{color: '#DC143C'}}>
+              <p className="text-center text-blue-600 text-sm">
                 © 2025 Alpha Omega Team
               </p>
             </div>
