@@ -12,6 +12,7 @@ import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
+import Messages from './pages/Messages';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +31,7 @@ export const PAGES = {
     "SignIn": SignIn,
     "Store": Store,
     "TopicalStudies": TopicalStudies,
+    "Messages": Messages,
 }
 
 export const pagesConfig = {

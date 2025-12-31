@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus, Trash2, User as UserIcon } from 'lucide-react';
+import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus, Trash2, User as UserIcon, ThumbsUp, ThumbsDown, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
@@ -29,6 +29,9 @@ export default function Forum() {
     scripture_reference: '',
     tags: []
   });
+  const [messageRecipient, setMessageRecipient] = useState(null);
+  const [messageContent, setMessageContent] = useState('');
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -147,6 +150,83 @@ export default function Forum() {
       setSelectedPost(null);
     }
   });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: (data) => base44.entities.DirectMessage.create(data),
+    onSuccess: () => {
+      setShowMessageDialog(false);
+      setMessageContent('');
+      setMessageRecipient(null);
+      alert('Message sent!');
+    }
+  });
+
+  const handleSendMessage = () => {
+    if (!user) {
+      alert('Please sign in to send messages');
+      return;
+    }
+    if (!messageContent.trim()) return;
+    
+    sendMessageMutation.mutate({
+      sender_email: user.email,
+      sender_name: user.full_name || user.email,
+      recipient_email: messageRecipient.email,
+      recipient_name: messageRecipient.name,
+      message: messageContent
+    });
+  };
+
+  const handleReputation = async (post, reputationType) => {
+    if (!user) {
+      alert('Please sign in to give reputation');
+      return;
+    }
+    
+    const reputation = post.reputation || { thumbs_up: [], thumbs_down: [] };
+    let newThumbsUp = [...(reputation.thumbs_up || [])];
+    let newThumbsDown = [...(reputation.thumbs_down || [])];
+    let reputationChange = 0;
+    
+    if (reputationType === 'up') {
+      if (newThumbsUp.includes(user.email)) {
+        newThumbsUp = newThumbsUp.filter(email => email !== user.email);
+        reputationChange = -1;
+      } else {
+        newThumbsUp.push(user.email);
+        newThumbsDown = newThumbsDown.filter(email => email !== user.email);
+        reputationChange = newThumbsDown.includes(user.email) ? 2 : 1;
+      }
+    } else {
+      if (newThumbsDown.includes(user.email)) {
+        newThumbsDown = newThumbsDown.filter(email => email !== user.email);
+        reputationChange = 1;
+      } else {
+        newThumbsDown.push(user.email);
+        newThumbsUp = newThumbsUp.filter(email => email !== user.email);
+        reputationChange = newThumbsUp.includes(user.email) ? -2 : -1;
+      }
+    }
+    
+    await updatePostMutation.mutateAsync({
+      id: post.id,
+      data: { reputation: { thumbs_up: newThumbsUp, thumbs_down: newThumbsDown } }
+    });
+    
+    // Update author's reputation
+    try {
+      const authorResults = await base44.entities.User.filter({ email: post.author_email });
+      if (authorResults.length > 0) {
+        const author = authorResults[0];
+        const currentRep = author.reputation || 0;
+        await base44.entities.User.update(author.id, {
+          reputation: currentRep + reputationChange
+        });
+      }
+    } catch (error) {
+      console.error('Error updating reputation:', error);
+    }
+  };
 
   const handleCreatePost = () => {
     if (!user) {
@@ -482,6 +562,32 @@ export default function Forum() {
         </CardContent>
       </Card>
 
+      {/* Message Dialog */}
+      {showMessageDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowMessageDialog(false)}>
+          <Card className="bg-slate-900 border-slate-700 w-full max-w-md m-4" onClick={(e) => e.stopPropagation()}>
+            <CardHeader>
+              <CardTitle className="text-slate-200">Send Message to {messageRecipient?.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea
+                placeholder="Type your message..."
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+                className="bg-slate-800 border-slate-700 text-slate-200 min-h-[120px]"
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setShowMessageDialog(false)}>Cancel</Button>
+                <Button onClick={handleSendMessage} className="bg-amber-600 hover:bg-amber-700">
+                  <Send className="h-4 w-4 mr-2" />
+                  Send
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Posts */}
       <div className="space-y-4">
         {filteredPosts.map((post) => {
@@ -545,6 +651,42 @@ export default function Forum() {
                               </div>
                             )}
                             <span>Posted by {post.author_name} • {format(new Date(post.created_date), 'MMM d, yyyy')}</span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-2">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleReputation(post, 'up')}
+                                className={`h-7 ${(post.reputation?.thumbs_up || []).includes(user?.email) ? 'text-green-500' : 'text-slate-500 hover:text-green-500'}`}
+                              >
+                                <ThumbsUp className="h-3 w-3 mr-1" />
+                                {(post.reputation?.thumbs_up || []).length}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleReputation(post, 'down')}
+                                className={`h-7 ${(post.reputation?.thumbs_down || []).includes(user?.email) ? 'text-red-500' : 'text-slate-500 hover:text-red-500'}`}
+                              >
+                                <ThumbsDown className="h-3 w-3 mr-1" />
+                                {(post.reputation?.thumbs_down || []).length}
+                              </Button>
+                            </div>
+                            {user && user.email !== post.author_email && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setMessageRecipient({ email: post.author_email, name: post.author_name });
+                                  setShowMessageDialog(true);
+                                }}
+                                className="h-7 text-slate-500 hover:text-amber-400"
+                              >
+                                <Mail className="h-3 w-3 mr-1" />
+                                Message
+                              </Button>
+                            )}
                           </div>
                         </div>
                         {user?.role === 'admin' && (
