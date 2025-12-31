@@ -51,7 +51,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <header className="bg-white/95 backdrop-blur-sm border-b border-blue-200 shadow-lg">
+        <header className="bg-orange-500/95 backdrop-blur-sm border-b border-orange-300 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group flex-shrink-0">
