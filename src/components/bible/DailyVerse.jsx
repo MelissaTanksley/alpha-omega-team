@@ -231,14 +231,9 @@ Make it academic yet accessible, similar to BIOLA University level.`,
                         : "p-4 bg-amber-50 rounded-lg"
                       }>
                         <div className="flex items-baseline gap-3 mb-2">
-                          <span className={isDarkMode 
-                            ? "text-2xl font-bold text-blue-800"
-                            : "text-2xl font-bold text-amber-800"
-                          }>{word.original}</span>
-                          <span className={isDarkMode 
-                            ? "text-sm text-blue-700"
-                            : "text-sm text-amber-600"
-                          }>({word.transliteration})</span>
+                          <span className="text-2xl font-bold text-black">
+                            {word.transliteration}
+                          </span>
                           <span className="text-sm font-medium">"{word.word}"</span>
                         </div>
                         <p className={isDarkMode 
