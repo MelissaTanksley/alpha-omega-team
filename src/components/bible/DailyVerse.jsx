@@ -68,12 +68,12 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Analyze ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} providing college-level biblical scholarship:
 
-1. Original Language: Provide key words in ${isOT ? 'Hebrew' : 'Greek'} with transliteration
-2. Word Study: Explain the meaning of 2-3 significant words with their root meanings
-3. Theological Significance: What does this verse teach theologically?
-4. Historical Context: Brief background information
+      1. Original Language: Provide key words in ${isOT ? 'Hebrew' : 'Greek'} with transliteration
+      2. Word Study: Explain the meaning of 2-3 significant words with their root meanings
+      3. Theological Significance: What does this verse teach theologically?
+      4. Historical Context: Include the author(s) of ${progress.current_book}, where the book was written, and relevant historical background
 
-Make it academic yet accessible, similar to BIOLA University level.`,
+      Make it academic yet accessible, similar to BIOLA University level.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -91,7 +91,9 @@ Make it academic yet accessible, similar to BIOLA University level.`,
               }
             },
             theological_significance: { type: "string" },
-            historical_context: { type: "string" }
+            historical_context: { type: "string" },
+            author: { type: "string" },
+            location_written: { type: "string" }
           }
         }
       });
@@ -266,6 +268,18 @@ Make it academic yet accessible, similar to BIOLA University level.`,
                         ? "font-medium text-blue-900 mb-1"
                         : "font-medium text-amber-900 mb-1"
                       }>Historical Context</h5>
+                      {hebrewGreek.author && (
+                        <p className={isDarkMode 
+                          ? "text-sm text-blue-800/80 mb-2"
+                          : "text-sm text-amber-800/80 mb-2"
+                        }><strong>Author:</strong> {hebrewGreek.author}</p>
+                      )}
+                      {hebrewGreek.location_written && (
+                        <p className={isDarkMode 
+                          ? "text-sm text-blue-800/80 mb-2"
+                          : "text-sm text-amber-800/80 mb-2"
+                        }><strong>Location Written:</strong> {hebrewGreek.location_written}</p>
+                      )}
                       <p className={isDarkMode 
                         ? "text-sm text-blue-800/80"
                         : "text-sm text-amber-800/80"
