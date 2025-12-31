@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -74,12 +75,18 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { name: 'Home', icon: BookOpen, page: 'Home' },
-    // { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
-    { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
+    { 
+      name: 'AI Assistant', 
+      icon: BookOpen, 
+      page: 'AIChat',
+      dropdown: [
+        { name: 'AI Chat', icon: BookOpen, page: 'AIChat' },
+        { name: 'Notes', icon: BookMarked, page: 'Notes' },
+        { name: 'Saved Content', icon: Save, page: 'SavedContent' }
+      ]
+    },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Store', icon: BookMarked, page: 'Store' },
-    { name: 'Notes', icon: BookMarked, page: 'Notes' },
-    { name: 'Saved Content', icon: Save, page: 'SavedContent' },
     { name: 'Contact Us', icon: FileText, page: 'ContactUs' },
     { name: 'Donate', icon: FileText, page: 'Payments' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
@@ -125,6 +132,38 @@ export default function Layout({ children, currentPageName }) {
               <nav className="flex-1 overflow-x-auto scrollbar-hide">
                 <div className="flex items-center gap-1 min-w-max">
                   {navigation.map((item) => {
+                    if (item.dropdown) {
+                      const isActive = item.dropdown.some(d => d.page === currentPageName);
+                      return (
+                        <DropdownMenu key={item.name}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className={`flex items-center gap-2 whitespace-nowrap ${
+                                isActive 
+                                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                                  : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                              }`}
+                            >
+                              <item.icon className="h-4 w-4" />
+                              {item.name}
+                              <ChevronDown className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            {item.dropdown.map((dropItem) => (
+                              <DropdownMenuItem key={dropItem.page} asChild>
+                                <Link to={createPageUrl(dropItem.page)} className="flex items-center gap-2 cursor-pointer">
+                                  <dropItem.icon className="h-4 w-4" />
+                                  {dropItem.name}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      );
+                    }
+
                     const isActive = currentPageName === item.page;
                     return (
                       <Link key={item.page} to={createPageUrl(item.page)}>
