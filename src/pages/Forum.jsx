@@ -441,7 +441,7 @@ export default function Forum() {
 
                       {/* Post Content */}
                       <div className="text-slate-300 leading-relaxed">
-                        {post.content.length > 300 && !selectedPost?.id === post.id ? (
+                        {post.content.length > 300 && selectedPost?.id !== post.id ? (
                           <>
                             {post.content.substring(0, 300)}...
                             <Button

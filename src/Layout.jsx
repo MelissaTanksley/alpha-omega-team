@@ -15,6 +15,38 @@ export default function Layout({ children, currentPageName }) {
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
     }
+
+    // Set favicon and meta tags for search engines
+    const setMetaTags = () => {
+      // Favicon
+      let favicon = document.querySelector("link[rel*='icon']");
+      if (!favicon) {
+        favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        document.head.appendChild(favicon);
+      }
+      favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+
+      // Open Graph image for search results
+      let ogImage = document.querySelector("meta[property='og:image']");
+      if (!ogImage) {
+        ogImage = document.createElement('meta');
+        ogImage.setAttribute('property', 'og:image');
+        document.head.appendChild(ogImage);
+      }
+      ogImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+
+      // Twitter card image
+      let twitterImage = document.querySelector("meta[name='twitter:image']");
+      if (!twitterImage) {
+        twitterImage = document.createElement('meta');
+        twitterImage.setAttribute('name', 'twitter:image');
+        document.head.appendChild(twitterImage);
+      }
+      twitterImage.content = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+    };
+
+    setMetaTags();
   }, []);
 
   const loadUser = async () => {
