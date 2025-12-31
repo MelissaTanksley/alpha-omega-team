@@ -89,16 +89,17 @@ export default function Layout({ children, currentPageName }) {
                 />
               </Link>
 
-              {/* Scrollable Navigation */}
-              <nav className="flex-1 overflow-x-auto scrollbar-hide">
-                <div className="flex items-center gap-1 min-w-max">
+              {/* Navigation */}
+              <nav className="flex-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   {navigation.map((item) => {
                     const isActive = currentPageName === item.page;
                     return (
                       <Link key={item.page} to={createPageUrl(item.page)}>
                         <Button
                           variant="ghost"
-                          className={`flex items-center gap-2 whitespace-nowrap ${
+                          size="sm"
+                          className={`flex items-center gap-1 whitespace-nowrap ${
                             isActive 
                               ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                               : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
