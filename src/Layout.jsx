@@ -57,7 +57,8 @@ export default function Layout({ children, currentPageName }) {
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/d70fd8659_Designer.png"
                   alt="Alpha Omega"
-                  className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity"
+                  className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity border-2 border-white rounded-lg"
+                  style={{filter: 'brightness(0) invert(1)'}}
                 />
               </Link>
 
