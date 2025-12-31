@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus, Trash2, User as UserIcon, ThumbsUp, ThumbsDown, Mail } from 'lucide-react';
+import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus, Trash2, User as UserIcon, ThumbsUp, ThumbsDown, Mail, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
@@ -32,6 +32,8 @@ export default function Forum() {
   const [messageRecipient, setMessageRecipient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
   const [showMessageDialog, setShowMessageDialog] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [editedContent, setEditedContent] = useState({ title: '', content: '' });
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -175,6 +177,26 @@ export default function Forum() {
       recipient_name: messageRecipient.name,
       message: messageContent
     });
+  };
+
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+    setEditedContent({ title: post.title, content: post.content });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editedContent.title.trim() || !editedContent.content.trim()) return;
+    
+    await updatePostMutation.mutateAsync({
+      id: editingPost.id,
+      data: { 
+        title: editedContent.title, 
+        content: editedContent.content 
+      }
+    });
+    
+    setEditingPost(null);
+    setEditedContent({ title: '', content: '' });
   };
 
   const handleReputation = async (post, reputationType) => {
@@ -689,41 +711,78 @@ export default function Forum() {
                             )}
                           </div>
                         </div>
-                        {user?.role === 'admin' && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              if (confirm('Delete this post? This action cannot be undone.')) {
-                                deletePostMutation.mutate(post.id);
-                              }
-                            }}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
+                        <div className="flex gap-2">
+                          {user?.email === post.author_email && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditPost(post)}
+                              className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {user?.role === 'admin' && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                if (confirm('Delete this post? This action cannot be undone.')) {
+                                  deletePostMutation.mutate(post.id);
+                                }
+                              }}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        </div>
 
                       {/* Post Content */}
-                      <div className="text-slate-300 leading-relaxed">
-                        {post.content.length > 300 && selectedPost?.id !== post.id ? (
-                          <>
-                            {post.content.substring(0, 300)}...
-                            <Button
-                              variant="link"
-                              onClick={() => setSelectedPost(post)}
-                              className="text-amber-400 p-0 h-auto ml-2"
-                            >
-                              Read more
+                      {editingPost?.id === post.id ? (
+                        <div className="space-y-3">
+                          <Input
+                            value={editedContent.title}
+                            onChange={(e) => setEditedContent({ ...editedContent, title: e.target.value })}
+                            className="bg-slate-800 border-slate-700 text-slate-200"
+                            placeholder="Post title"
+                          />
+                          <Textarea
+                            value={editedContent.content}
+                            onChange={(e) => setEditedContent({ ...editedContent, content: e.target.value })}
+                            className="bg-slate-800 border-slate-700 text-slate-200 min-h-[120px]"
+                            placeholder="Post content"
+                          />
+                          <div className="flex gap-2">
+                            <Button onClick={handleSaveEdit} className="bg-amber-600 hover:bg-amber-700">
+                              Save Changes
                             </Button>
-                          </>
-                        ) : (
-                          <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
-                            {post.content}
-                          </ReactMarkdown>
-                        )}
-                      </div>
+                            <Button variant="outline" onClick={() => setEditingPost(null)}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-slate-300 leading-relaxed">
+                          {post.content.length > 300 && selectedPost?.id !== post.id ? (
+                            <>
+                              {post.content.substring(0, 300)}...
+                              <Button
+                                variant="link"
+                                onClick={() => setSelectedPost(post)}
+                                className="text-amber-400 p-0 h-auto ml-2"
+                              >
+                                Read more
+                              </Button>
+                            </>
+                          ) : (
+                            <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
+                              {post.content}
+                            </ReactMarkdown>
+                          )}
+                        </div>
+                      )}
 
                       {/* Discussion Prompts */}
                       {post.category === 'bible_study' && selectedPost?.id === post.id && (
