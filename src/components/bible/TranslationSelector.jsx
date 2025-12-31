@@ -24,7 +24,7 @@ export default function TranslationSelector({ value, onChange, showLabel = true 
         </Label>
       )}
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full md:w-64 text-white [&>span]:text-white">
+        <SelectTrigger className="w-full md:w-64 text-white [&>span]:text-white [&_span]:text-white">
           <SelectValue placeholder="Select translation" />
         </SelectTrigger>
         <SelectContent>
