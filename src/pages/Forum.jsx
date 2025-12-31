@@ -33,23 +33,37 @@ export default function Forum() {
 
   useEffect(() => {
     loadUser();
-    
-    // Check for verse parameter in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const verse = urlParams.get('verse');
-    const verseText = urlParams.get('verseText');
-    
-    if (verse && verseText) {
-      setShowNewPost(true);
-      setNewPost({
-        title: `Discussion: ${verse}`,
-        content: `"${verseText}"\n\nWhat are your thoughts on this verse?`,
-        category: 'bible_study',
-        scripture_reference: verse,
-        tags: []
-      });
-    }
   }, []);
+
+  useEffect(() => {
+    // Check for verse parameter in URL and find or create discussion
+    if (posts.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verse = urlParams.get('verse');
+      const verseText = urlParams.get('verseText');
+      
+      if (verse && verseText) {
+        // Look for existing post with this scripture reference
+        const existingPost = posts.find(p => p.scripture_reference === verse);
+        
+        if (existingPost) {
+          // Open existing post
+          setSelectedPost(existingPost);
+          setShowNewPost(false);
+        } else {
+          // Show new post form pre-filled
+          setShowNewPost(true);
+          setNewPost({
+            title: `Discussion: ${verse}`,
+            content: `"${verseText}"\n\nWhat are your thoughts on this verse?`,
+            category: 'bible_study',
+            scripture_reference: verse,
+            tags: []
+          });
+        }
+      }
+    }
+  }, [posts]);
 
   const loadUser = async () => {
     try {
