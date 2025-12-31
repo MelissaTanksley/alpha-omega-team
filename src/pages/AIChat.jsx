@@ -84,10 +84,11 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-[calc(100vh-8rem)]">
-      {/* Sidebar */}
-      <div className="lg:col-span-1 space-y-4">
-        <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+    <div className="h-[calc(100vh-8rem)]">
+      {/* Sidebar - Hidden when conversation is selected */}
+      {!selectedConversation && (
+        <div className="max-w-2xl mx-auto space-y-4">
+          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
           <CardHeader className="pb-3">
             <CardTitle className="text-slate-200 flex items-center justify-between">
               <span>Conversations</span>
@@ -172,37 +173,18 @@ export default function AIChatPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      )}
 
       {/* Chat Area */}
-      <div className="lg:col-span-4">
-        {selectedConversation ? (
+      {selectedConversation && (
+        <div className="h-full">
           <AIChat 
             conversation={selectedConversation} 
             onUpdate={handleUpdateConversation}
           />
-        ) : (
-          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700 h-full flex items-center justify-center">
-            <CardContent className="text-center py-16">
-              <div className="p-4 bg-amber-500/20 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <MessageSquare className="h-8 w-8 text-amber-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-200 mb-2">Multi-AI Assistant</h3>
-              <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                Start a conversation with our intelligent assistant that automatically switches between 
-                ChatGPT, Claude, Copilot, Grok, Gemini, Perplexity, DeepSeek, and Llama for uninterrupted service.
-              </p>
-              <Button 
-                onClick={() => setShowNewChat(true)}
-                className="bg-amber-600 hover:bg-amber-700 mb-20"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Start New Conversation
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
