@@ -11,6 +11,7 @@ import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
+import TopicalStudies from './pages/TopicalStudies';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "SavedContent": SavedContent,
     "SignIn": SignIn,
     "Store": Store,
+    "TopicalStudies": TopicalStudies,
 }
 
 export const pagesConfig = {

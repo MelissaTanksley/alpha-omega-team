@@ -85,6 +85,7 @@ export default function Layout({ children, currentPageName }) {
         { name: 'Saved Content', icon: Save, page: 'SavedContent' }
       ]
     },
+    { name: 'Topical Studies', icon: GraduationCap, page: 'TopicalStudies' },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }

@@ -505,6 +505,42 @@ export default function Forum() {
                         )}
                       </div>
 
+                      {/* Discussion Prompts */}
+                      {post.category === 'bible_study' && selectedPost?.id === post.id && (
+                        <div className="mt-4 p-4 bg-blue-900/30 rounded-lg border border-blue-500/30">
+                          <h4 className="text-sm font-semibold text-blue-300 mb-2">💡 Discussion Prompts</h4>
+                          <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>What is the main message or theme of this passage?</li>
+                            <li>How does this verse apply to your life today?</li>
+                            <li>What questions does this raise for you?</li>
+                            <li>How does this connect to other parts of Scripture?</li>
+                            <li>What action steps can you take based on this verse?</li>
+                          </ul>
+                        </div>
+                      )}
+                      {post.category === 'theology' && selectedPost?.id === post.id && (
+                        <div className="mt-4 p-4 bg-purple-900/30 rounded-lg border border-purple-500/30">
+                          <h4 className="text-sm font-semibold text-purple-300 mb-2">🧠 Theological Discussion Points</h4>
+                          <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>What does this reveal about God's character?</li>
+                            <li>How does this align with core Christian doctrine?</li>
+                            <li>What are different theological perspectives on this?</li>
+                            <li>How has church history interpreted this?</li>
+                          </ul>
+                        </div>
+                      )}
+                      {post.category === 'prayer_requests' && selectedPost?.id === post.id && (
+                        <div className="mt-4 p-4 bg-green-900/30 rounded-lg border border-green-500/30">
+                          <h4 className="text-sm font-semibold text-green-300 mb-2">🙏 Prayer Guidelines</h4>
+                          <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>Pray specifically and compassionately</li>
+                            <li>Share relevant Scripture verses for encouragement</li>
+                            <li>Follow up with updates when possible</li>
+                            <li>Maintain confidentiality and respect</li>
+                          </ul>
+                        </div>
+                      )}
+
                       {/* Post Actions */}
                       <div className="flex items-center gap-4 pt-2 border-t border-slate-700">
                         <Button

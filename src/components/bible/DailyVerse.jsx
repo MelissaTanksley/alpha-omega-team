@@ -12,8 +12,12 @@ import { motion } from 'framer-motion';
 export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, language = 'en' }) {
   const [verse, setVerse] = useState(null);
   const [hebrewGreek, setHebrewGreek] = useState(null);
+  const [crossReferences, setCrossReferences] = useState(null);
+  const [verseComparison, setVerseComparison] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMeaning, setLoadingMeaning] = useState(false);
+  const [loadingCrossRef, setLoadingCrossRef] = useState(false);
+  const [loadingComparison, setLoadingComparison] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   const bibleBookTranslations = {
@@ -94,13 +98,16 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
   useEffect(() => {
     if (progress) {
       fetchVerse();
-      setHebrewGreek(null); // Close Hebrew/Greek study when verse changes
+      setHebrewGreek(null);
+      setCrossReferences(null);
+      setVerseComparison(null);
     }
   }, [progress]);
 
   useEffect(() => {
-    // Close Hebrew/Greek study when component mounts
     setHebrewGreek(null);
+    setCrossReferences(null);
+    setVerseComparison(null);
   }, []);
 
   useEffect(() => {
@@ -138,9 +145,83 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
       console.error('Error fetching verse:', error);
     }
     setLoading(false);
-  };
+    };
 
-  const fetchHebrewGreekMeaning = async () => {
+    const fetchCrossReferences = async () => {
+    setLoadingCrossRef(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'es'
+          ? `Para ${progress.current_book} ${progress.current_chapter}:${progress.current_verse}, proporciona 5 referencias cruzadas bíblicas relevantes con sus textos completos. Incluye versículos que:
+    1. Tratan temas similares
+    2. Usan lenguaje o imágenes similares
+    3. Proporcionan contexto adicional
+    4. Muestran cumplimiento profético (si aplica)`
+          : `For ${progress.current_book} ${progress.current_chapter}:${progress.current_verse}, provide 5 relevant Bible cross-references with their full text. Include verses that:
+    1. Address similar themes
+    2. Use similar language or imagery
+    3. Provide additional context
+    4. Show prophetic fulfillment (if applicable)`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            references: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  reference: { type: "string" },
+                  text: { type: "string" },
+                  connection: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+      setCrossReferences(result);
+    } catch (error) {
+      console.error('Error fetching cross-references:', error);
+    }
+    setLoadingCrossRef(false);
+    };
+
+    const fetchVerseComparison = async () => {
+    setLoadingComparison(true);
+    try {
+      const translations = language === 'es' 
+        ? ['NTV', 'RVR1960', 'NVI'] 
+        : ['KJV', 'NIV', 'ESV', 'NLT'];
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'es'
+          ? `Proporciona ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} en las siguientes traducciones: ${translations.join(', ')}. Incluye una breve nota sobre diferencias clave.`
+          : `Provide ${progress.current_book} ${progress.current_chapter}:${progress.current_verse} in the following translations: ${translations.join(', ')}. Include a brief note on key differences.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            translations: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  text: { type: "string" }
+                }
+              }
+            },
+            key_differences: { type: "string" }
+          }
+        }
+      });
+      setVerseComparison(result);
+    } catch (error) {
+      console.error('Error fetching verse comparison:', error);
+    }
+    setLoadingComparison(false);
+    };
+
+    const fetchHebrewGreekMeaning = async () => {
     setLoadingMeaning(true);
     try {
       const isOT = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi'].includes(progress.current_book);
@@ -279,6 +360,34 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                   {loadingMeaning ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Estudio Hebreo/Griego' : 'Hebrew/Greek Study')}
                 </Button>
 
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={fetchCrossReferences}
+                  disabled={loadingCrossRef}
+                  className={isDarkMode 
+                    ? "bg-white/50 border-blue-600 text-blue-900 hover:bg-blue-200"
+                    : "bg-white/50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                  }
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  {loadingCrossRef ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Referencias Cruzadas' : 'Cross References')}
+                </Button>
+
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={fetchVerseComparison}
+                  disabled={loadingComparison}
+                  className={isDarkMode 
+                    ? "bg-white/50 border-blue-600 text-blue-900 hover:bg-blue-200"
+                    : "bg-white/50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                  }
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  {loadingComparison ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Comparar Traducciones' : 'Compare Translations')}
+                </Button>
+
                 <Link to={`${createPageUrl('Forum')}?verse=${encodeURIComponent(`${progress.current_book} ${progress.current_chapter}:${progress.current_verse}`)}&verseText=${encodeURIComponent(verse.verse_text)}`}>
                   <Button 
                     variant="outline" 
@@ -389,12 +498,96 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                       }>{hebrewGreek.historical_context}</p>
                     </div>
                   </div>
-                </motion.div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-}
+                  </motion.div>
+                  )}
+
+                  {crossReferences && (
+                  <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className={isDarkMode 
+                    ? "mt-6 p-6 bg-white/80 rounded-xl border border-blue-400 space-y-4"
+                    : "mt-6 p-6 bg-white/70 rounded-xl border border-amber-200 space-y-4"
+                  }
+                  >
+                  <h4 className={isDarkMode 
+                    ? "font-semibold text-blue-900 flex items-center gap-2"
+                    : "font-semibold text-amber-900 flex items-center gap-2"
+                  }>
+                    <BookOpen className="h-4 w-4" />
+                    {language === 'es' ? 'Referencias Cruzadas' : 'Cross References'}
+                  </h4>
+
+                  <div className="space-y-3">
+                    {crossReferences.references?.map((ref, idx) => (
+                      <div key={idx} className={isDarkMode 
+                        ? "p-3 bg-blue-100 rounded-lg"
+                        : "p-3 bg-amber-50 rounded-lg"
+                      }>
+                        <div className="font-semibold text-sm mb-1">{ref.reference}</div>
+                        <p className={isDarkMode 
+                          ? "text-sm text-blue-900/90 italic mb-2"
+                          : "text-sm text-amber-900/90 italic mb-2"
+                        }>"{ref.text}"</p>
+                        <p className={isDarkMode 
+                          ? "text-xs text-blue-800/80"
+                          : "text-xs text-amber-800/80"
+                        }>{ref.connection}</p>
+                      </div>
+                    ))}
+                  </div>
+                  </motion.div>
+                  )}
+
+                  {verseComparison && (
+                  <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className={isDarkMode 
+                    ? "mt-6 p-6 bg-white/80 rounded-xl border border-blue-400 space-y-4"
+                    : "mt-6 p-6 bg-white/70 rounded-xl border border-amber-200 space-y-4"
+                  }
+                  >
+                  <h4 className={isDarkMode 
+                    ? "font-semibold text-blue-900 flex items-center gap-2"
+                    : "font-semibold text-amber-900 flex items-center gap-2"
+                  }>
+                    <BookOpen className="h-4 w-4" />
+                    {language === 'es' ? 'Comparación de Traducciones' : 'Translation Comparison'}
+                  </h4>
+
+                  <div className="space-y-3">
+                    {verseComparison.translations?.map((trans, idx) => (
+                      <div key={idx} className={isDarkMode 
+                        ? "p-3 bg-blue-100 rounded-lg"
+                        : "p-3 bg-amber-50 rounded-lg"
+                      }>
+                        <div className="font-semibold text-sm mb-1">{trans.name}</div>
+                        <p className={isDarkMode 
+                          ? "text-sm text-blue-900/90 italic"
+                          : "text-sm text-amber-900/90 italic"
+                        }>"{trans.text}"</p>
+                      </div>
+                    ))}
+                    {verseComparison.key_differences && (
+                      <div className={isDarkMode 
+                        ? "p-3 bg-blue-50 rounded-lg border-l-4 border-blue-600"
+                        : "p-3 bg-amber-50 rounded-lg border-l-4 border-amber-600"
+                      }>
+                        <div className="font-medium text-sm mb-1">{language === 'es' ? 'Diferencias Clave' : 'Key Differences'}</div>
+                        <p className={isDarkMode 
+                          ? "text-xs text-blue-800/80"
+                          : "text-xs text-amber-800/80"
+                        }>{verseComparison.key_differences}</p>
+                      </div>
+                    )}
+                  </div>
+                  </motion.div>
+                  )}
+                  </div>
+                  )}
+                  </CardContent>
+                  </Card>
+                  </motion.div>
+                  );
+                  }
