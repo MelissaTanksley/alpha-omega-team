@@ -56,7 +56,7 @@ export default function Forum() {
 
   useEffect(() => {
     // Check for verse parameter in URL and find or create discussion
-    if (posts.length > 0) {
+    if (!isLoading && posts.length >= 0) {
       const urlParams = new URLSearchParams(window.location.search);
       const verse = urlParams.get('verse');
       const verseText = urlParams.get('verseText');
@@ -80,9 +80,12 @@ export default function Forum() {
             tags: []
           });
         }
+        
+        // Clear URL parameters after processing
+        window.history.replaceState({}, '', window.location.pathname);
       }
     }
-  }, [posts]);
+  }, [posts, isLoading]);
 
   const createPostMutation = useMutation({
     mutationFn: async (data) => {
