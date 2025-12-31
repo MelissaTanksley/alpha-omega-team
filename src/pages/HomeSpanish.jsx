@@ -202,7 +202,7 @@ export default function HomeSpanish() {
                 <div>
                   <p className="text-slate-400 text-sm font-medium">Traducción</p>
                   <p className="text-2xl font-bold text-blue-400 mt-1">
-                    {progress.preferred_translation || 'KJV'}
+                    NTV
                   </p>
                 </div>
                 <Button
