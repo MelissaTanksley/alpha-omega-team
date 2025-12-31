@@ -10,11 +10,11 @@ import Messages from './pages/Messages';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
+import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
 import UserProfile from './pages/UserProfile';
-import Search from './pages/Search';
 import __Layout from './Layout.jsx';
 
 
@@ -31,11 +31,11 @@ export const PAGES = {
     "Notes": Notes,
     "Payments": Payments,
     "SavedContent": SavedContent,
+    "Search": Search,
     "SignIn": SignIn,
     "Store": Store,
     "TopicalStudies": TopicalStudies,
     "UserProfile": UserProfile,
-    "Search": Search,
 }
 
 export const pagesConfig = {

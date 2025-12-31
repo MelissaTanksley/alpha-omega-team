@@ -295,7 +295,7 @@ export default function HomeSpanish() {
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
         >
-          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700 shadow-xl">
+          <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
             <CardHeader>
               <CardTitle className="text-slate-200">Preferencias de Lectura</CardTitle>
             </CardHeader>
