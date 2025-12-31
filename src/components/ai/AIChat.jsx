@@ -58,18 +58,23 @@ export default function AIChat({ conversation, onUpdate }) {
     setLoadingContext(true);
     try {
       const user = await base44.auth.me();
-      const [progress, notes, studies] = await Promise.all([
+      const [progress, notes, studies, posts, savedContent] = await Promise.all([
         base44.entities.UserBibleProgress.filter({ created_by: user.email }),
         base44.entities.Note.filter({ created_by: user.email }, '-updated_date', 10),
-        base44.entities.BibleStudy.filter({ created_by: user.email }, '-updated_date', 5)
+        base44.entities.BibleStudy.filter({ created_by: user.email }, '-updated_date', 5),
+        base44.entities.ForumPost.filter({ author_email: user.email }, '-updated_date', 5),
+        base44.entities.SavedAIContent.filter({ created_by: user.email }, '-updated_date', 10)
       ]);
       
       setUserContext({
         progress: progress[0],
         recentNotes: notes,
         recentStudies: studies,
+        recentPosts: posts,
+        savedContent: savedContent,
         userEmail: user.email,
-        userName: user.full_name
+        userName: user.full_name,
+        aiSettings: user.ai_assistant_settings || {}
       });
     } catch (error) {
       console.error('Error loading context:', error);
@@ -182,6 +187,8 @@ I'm here to chat, but these professionals are specifically trained to help in cr
       // Build user context for personalization
       let contextInfo = '';
       if (userContext) {
+        const aiSettings = userContext.aiSettings || {};
+        
         contextInfo = `\n\nUSER CONTEXT (use this to personalize your response):
       - Currently reading: ${userContext.progress?.current_book} ${userContext.progress?.current_chapter}:${userContext.progress?.current_verse}
       - Preferred translation: ${userContext.progress?.preferred_translation || 'KJV'}
@@ -193,6 +200,32 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
         if (userContext.recentStudies?.length > 0) {
           contextInfo += `\n- Recent studies: ${userContext.recentStudies.map(s => s.title).slice(0, 2).join(', ')}`;
+        }
+
+        if (userContext.recentPosts?.length > 0) {
+          contextInfo += `\n- Recent forum topics: ${userContext.recentPosts.map(p => p.title).slice(0, 2).join(', ')}`;
+        }
+
+        if (userContext.savedContent?.length > 0) {
+          contextInfo += `\n- Saved AI content topics: ${userContext.savedContent.map(c => c.title).slice(0, 3).join(', ')}`;
+        }
+
+        // Add AI settings preferences
+        if (aiSettings.response_length) {
+          contextInfo += `\n\nUSER PREFERENCES:
+      - Response length: ${aiSettings.response_length} (adjust your response length accordingly)`;
+        }
+
+        if (aiSettings.personality) {
+          contextInfo += `\n- Preferred tone: ${aiSettings.personality}`;
+        }
+
+        if (aiSettings.use_scripture === false) {
+          contextInfo += `\n- User prefers minimal scripture references`;
+        }
+
+        if (aiSettings.custom_instructions) {
+          contextInfo += `\n- Custom instructions: ${aiSettings.custom_instructions}`;
         }
       }
 

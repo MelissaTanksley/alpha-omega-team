@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Key, Save, AlertCircle, CheckCircle2, Eye, EyeOff, Upload, User as UserIcon, UserCheck, UserX } from 'lucide-react';
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from 'framer-motion';
+import AIAssistantSettings from '../components/ai/AIAssistantSettings';
 
 export default function AISettings() {
   const [user, setUser] = useState(null);
@@ -147,196 +150,212 @@ export default function AISettings() {
       >
         <h1 className="text-4xl font-bold text-white flex items-center justify-center gap-3">
           <Key className="h-10 w-10 text-amber-400" />
-          AI Service Settings
+          AI Settings
         </h1>
-        <p className="text-slate-300 text-lg">Connect your paid AI services for enhanced features</p>
+        <p className="text-slate-300 text-lg">Customize your AI experience and connect services</p>
       </motion.div>
 
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-slate-200">Profile Picture</CardTitle>
-          <CardDescription>Upload a profile picture for forum posts</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-6">
-            {profilePicture ? (
-              <img src={profilePicture} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-amber-500" />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-700">
-                <UserIcon className="w-12 h-12 text-slate-500" />
-              </div>
-            )}
-            <div className="flex-1">
-              <Label htmlFor="profile-picture" className="cursor-pointer">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors">
-                  <Upload className="h-4 w-4" />
-                  {uploadingPicture ? 'Uploading...' : 'Upload Picture'}
+      <Tabs defaultValue="assistant" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-900/70">
+          <TabsTrigger value="assistant">AI Assistant</TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="api-keys">API Keys</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="assistant" className="space-y-6 mt-6">
+          <AIAssistantSettings />
+        </TabsContent>
+
+        <TabsContent value="profile" className="space-y-6 mt-6">
+          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-slate-200">Profile Picture</CardTitle>
+              <CardDescription>Upload a profile picture for forum posts</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-6">
+                {profilePicture ? (
+                  <img src={profilePicture} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-amber-500" />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-700">
+                    <UserIcon className="w-12 h-12 text-slate-500" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Label htmlFor="profile-picture" className="cursor-pointer">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors">
+                      <Upload className="h-4 w-4" />
+                      {uploadingPicture ? 'Uploading...' : 'Upload Picture'}
+                    </div>
+                    <Input
+                      id="profile-picture"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleProfilePictureUpload}
+                      disabled={uploadingPicture}
+                    />
+                  </Label>
+                  <p className="text-sm text-slate-400 mt-2">Recommended: Square image, at least 200x200px</p>
                 </div>
-                <Input
-                  id="profile-picture"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleProfilePictureUpload}
-                  disabled={uploadingPicture}
-                />
-              </Label>
-              <p className="text-sm text-slate-400 mt-2">Recommended: Square image, at least 200x200px</p>
-            </div>
-          </div>
-        </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-slate-200">Privacy Settings</CardTitle>
-          <CardDescription>Control your visibility in the community</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {isVisible ? (
-                <UserCheck className="h-5 w-5 text-green-400" />
-              ) : (
-                <UserX className="h-5 w-5 text-slate-400" />
-              )}
-              <div>
-                <Label className="text-slate-300">Show me in Active Members</Label>
-                <p className="text-sm text-slate-400">
-                  {isVisible 
-                    ? "You're visible in the Community dropdown" 
-                    : "You're hidden from the Active Members list"}
-                </p>
               </div>
-            </div>
-            <Switch
-              checked={isVisible}
-              onCheckedChange={setIsVisible}
-            />
-          </div>
-        </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <Alert className="bg-blue-500/20 border-blue-500/50">
-        <AlertCircle className="h-4 w-4 text-blue-400" />
-        <AlertDescription className="text-blue-200">
-          <strong>Note:</strong> Using your own API keys requires backend functions to be enabled. 
-          Contact support if you need this feature activated.
-        </AlertDescription>
-      </Alert>
+        <TabsContent value="api-keys" className="space-y-6 mt-6">
+          <Alert className="bg-blue-500/20 border-blue-500/50">
+            <AlertCircle className="h-4 w-4 text-blue-400" />
+            <AlertDescription className="text-blue-200">
+              <strong>Note:</strong> Using your own API keys requires backend functions to be enabled. 
+              Contact support if you need this feature activated.
+            </AlertDescription>
+          </Alert>
 
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-slate-200">Preferred AI Provider</CardTitle>
-          <CardDescription>Choose which AI service to use by default</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Select value={preferredProvider} onValueChange={setPreferredProvider}>
-            <SelectTrigger className="bg-slate-800 border-slate-700 text-slate-200">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {providers.map(provider => (
-                <SelectItem key={provider.id} value={provider.id}>
-                  {provider.icon} {provider.name}
-                </SelectItem>
+          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-slate-200">Privacy Settings</CardTitle>
+              <CardDescription>Control your visibility in the community</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {isVisible ? (
+                    <UserCheck className="h-5 w-5 text-green-400" />
+                  ) : (
+                    <UserX className="h-5 w-5 text-slate-400" />
+                  )}
+                  <div>
+                    <Label className="text-slate-300">Show me in Active Members</Label>
+                    <p className="text-sm text-slate-400">
+                      {isVisible 
+                        ? "You're visible in the Community dropdown" 
+                        : "You're hidden from the Active Members list"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={isVisible}
+                  onCheckedChange={setIsVisible}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-slate-200">Preferred AI Provider</CardTitle>
+              <CardDescription>Choose which AI service to use by default</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Select value={preferredProvider} onValueChange={setPreferredProvider}>
+                <SelectTrigger className="bg-slate-800 border-slate-700 text-slate-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {providers.map(provider => (
+                    <SelectItem key={provider.id} value={provider.id}>
+                      {provider.icon} {provider.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-slate-200">API Keys</CardTitle>
+              <CardDescription>
+                Enter your personal API keys to use your paid subscriptions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {providers.filter(p => p.keyField).map(provider => (
+                <div key={provider.keyField} className="space-y-2">
+                  <Label className="text-slate-300">
+                    {provider.icon} {provider.name} API Key
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type={showKeys[provider.keyField] ? "text" : "password"}
+                      value={apiKeys[provider.keyField] || ''}
+                      onChange={(e) => setApiKeys({ ...apiKeys, [provider.keyField]: e.target.value })}
+                      placeholder={`sk-...`}
+                      className="bg-slate-800 border-slate-700 text-slate-200 pr-10"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full text-slate-400 hover:text-slate-200"
+                      onClick={() => toggleShowKey(provider.keyField)}
+                    >
+                      {showKeys[provider.keyField] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
               ))}
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
 
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-slate-200">API Keys</CardTitle>
-          <CardDescription>
-            Enter your personal API keys to use your paid subscriptions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {providers.filter(p => p.keyField).map(provider => (
-            <div key={provider.keyField} className="space-y-2">
-              <Label className="text-slate-300">
-                {provider.icon} {provider.name} API Key
-              </Label>
-              <div className="relative">
-                <Input
-                  type={showKeys[provider.keyField] ? "text" : "password"}
-                  value={apiKeys[provider.keyField] || ''}
-                  onChange={(e) => setApiKeys({ ...apiKeys, [provider.keyField]: e.target.value })}
-                  placeholder={`sk-...`}
-                  className="bg-slate-800 border-slate-700 text-slate-200 pr-10"
-                />
+              <div className="pt-4 flex items-center gap-3">
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full text-slate-400 hover:text-slate-200"
-                  onClick={() => toggleShowKey(provider.keyField)}
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-amber-600 hover:bg-amber-700"
                 >
-                  {showKeys[provider.keyField] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <Save className="h-4 w-4 mr-2" />
+                  {saving ? 'Saving...' : 'Save Settings'}
                 </Button>
+                
+                {saved && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-2 text-green-400"
+                  >
+                    <CheckCircle2 className="h-5 w-5" />
+                    <span>Saved successfully!</span>
+                  </motion.div>
+                )}
               </div>
-            </div>
-          ))}
+            </CardContent>
+          </Card>
 
-          <div className="pt-4 flex items-center gap-3">
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {saving ? 'Saving...' : 'Save Settings'}
-            </Button>
-            
-            {saved && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2 text-green-400"
-              >
-                <CheckCircle2 className="h-5 w-5" />
-                <span>Saved successfully!</span>
-              </motion.div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30">
-        <CardContent className="p-6 space-y-3">
-          <h3 className="font-semibold text-lg text-blue-300">
-            How to Get API Keys
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-blue-200 text-sm">
-            <div>
-              <li>• <strong>ChatGPT:</strong> platform.openai.com</li>
-              <li>• <strong>Claude:</strong> console.anthropic.com</li>
-              <li>• <strong>Llama 3:</strong> meta.ai/llama</li>
-              <li>• <strong>Gemini:</strong> ai.google.dev</li>
-              <li>• <strong>Perplexity:</strong> perplexity.ai</li>
-              <li>• <strong>Synthesia:</strong> synthesia.io</li>
-              <li>• <strong>ElevenLabs:</strong> elevenlabs.io</li>
-              <li>• <strong>Grok:</strong> x.ai</li>
-              <li>• <strong>Mistral AI:</strong> mistral.ai</li>
-              <li>• <strong>CopyAI:</strong> copy.ai</li>
-              <li>• <strong>Midjourney:</strong> midjourney.com</li>
-            </div>
-            <div>
-              <li>• <strong>Firefly:</strong> adobe.com/firefly</li>
-              <li>• <strong>Copilot:</strong> microsoft.com/copilot</li>
-              <li>• <strong>Runway:</strong> runwayml.com</li>
-              <li>• <strong>MM1:</strong> apple.com/ml</li>
-              <li>• <strong>Hugging Face:</strong> huggingface.co</li>
-              <li>• <strong>Gamma:</strong> gamma.app</li>
-              <li>• <strong>Pika:</strong> pika.art</li>
-              <li>• <strong>Jasper:</strong> jasper.ai</li>
-              <li>• <strong>Techpresso:</strong> techpresso.ai</li>
-              <li>• <strong>DeepSeek:</strong> deepseek.com</li>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30">
+            <CardContent className="p-6 space-y-3">
+              <h3 className="font-semibold text-lg text-blue-300">
+                How to Get API Keys
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-blue-200 text-sm">
+                <div>
+                  <li>• <strong>ChatGPT:</strong> platform.openai.com</li>
+                  <li>• <strong>Claude:</strong> console.anthropic.com</li>
+                  <li>• <strong>Llama 3:</strong> meta.ai/llama</li>
+                  <li>• <strong>Gemini:</strong> ai.google.dev</li>
+                  <li>• <strong>Perplexity:</strong> perplexity.ai</li>
+                  <li>• <strong>Synthesia:</strong> synthesia.io</li>
+                  <li>• <strong>ElevenLabs:</strong> elevenlabs.io</li>
+                  <li>• <strong>Grok:</strong> x.ai</li>
+                  <li>• <strong>Mistral AI:</strong> mistral.ai</li>
+                  <li>• <strong>CopyAI:</strong> copy.ai</li>
+                  <li>• <strong>Midjourney:</strong> midjourney.com</li>
+                </div>
+                <div>
+                  <li>• <strong>Firefly:</strong> adobe.com/firefly</li>
+                  <li>• <strong>Copilot:</strong> microsoft.com/copilot</li>
+                  <li>• <strong>Runway:</strong> runwayml.com</li>
+                  <li>• <strong>MM1:</strong> apple.com/ml</li>
+                  <li>• <strong>Hugging Face:</strong> huggingface.co</li>
+                  <li>• <strong>Gamma:</strong> gamma.app</li>
+                  <li>• <strong>Pika:</strong> pika.art</li>
+                  <li>• <strong>Jasper:</strong> jasper.ai</li>
+                  <li>• <strong>Techpresso:</strong> techpresso.ai</li>
+                  <li>• <strong>DeepSeek:</strong> deepseek.com</li>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

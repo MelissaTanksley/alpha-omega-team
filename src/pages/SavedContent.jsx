@@ -6,15 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookmarkPlus, Search, Trash2, Star, Copy } from 'lucide-react';
+import { BookmarkPlus, Search, Trash2, Star, Copy, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+import ContentOrganizer from '../components/ai/ContentOrganizer';
 
 export default function SavedContent() {
   const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all');
+  const [selectedTag, setSelectedTag] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -62,12 +65,39 @@ export default function SavedContent() {
     alert('Content copied to clipboard!');
   };
 
-  const filteredContent = savedContent.filter(item => {
+  const handleFilter = ({ search, type, tag }) => {
+    setSearchQuery(search);
+    setSelectedType(type);
+    setSelectedTag(tag);
+  };
+
+  const handleSort = (sortType) => {
+    setSortBy(sortType);
+  };
+
+  let filteredContent = savedContent.filter(item => {
     const matchesType = selectedType === 'all' || item.content_type === selectedType;
     const matchesSearch = !searchQuery || 
       item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.content?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSearch;
+    const matchesTag = selectedTag === 'all' || (item.tags || []).includes(selectedTag);
+    return matchesType && matchesSearch && matchesTag;
+  });
+
+  // Sort content
+  filteredContent = [...filteredContent].sort((a, b) => {
+    switch (sortBy) {
+      case 'recent':
+        return new Date(b.created_date) - new Date(a.created_date);
+      case 'oldest':
+        return new Date(a.created_date) - new Date(b.created_date);
+      case 'favorites':
+        return (b.is_favorite ? 1 : 0) - (a.is_favorite ? 1 : 0);
+      case 'alphabetical':
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
   });
 
   const contentTypes = [
@@ -92,31 +122,13 @@ export default function SavedContent() {
         </Badge>
       </div>
 
-      {/* Search and Filter */}
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search saved content..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-slate-800 border-slate-700 text-slate-200"
-              />
-            </div>
-            <Tabs value={selectedType} onValueChange={setSelectedType} className="w-full md:w-auto">
-              <TabsList className="grid grid-cols-4 md:grid-cols-7 w-full md:w-auto">
-                {contentTypes.map(type => (
-                  <TabsTrigger key={type.value} value={type.value} className="text-xs">
-                    {type.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Content Organizer */}
+      <ContentOrganizer 
+        content={savedContent}
+        onFilter={handleFilter}
+        onSort={handleSort}
+        onTagFilter={(tag) => setSelectedTag(tag)}
+      />
 
       {/* Content Grid */}
       <div className="grid gap-4">
