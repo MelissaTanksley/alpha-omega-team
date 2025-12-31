@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 
 export default function Payments() {
   const [amount, setAmount] = useState('');
+  const [showQR, setShowQR] = useState(false);
 
   const handlePayPalDonation = () => {
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
@@ -79,6 +80,45 @@ export default function Payments() {
             <Heart className="h-5 w-5 mr-2" />
             Donate with PayPal
           </Button>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-slate-500">or</span>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setShowQR(!showQR)}
+            variant="outline"
+            className="w-full h-12 text-base border-amber-300 hover:bg-amber-50"
+          >
+            {showQR ? 'Hide' : 'Show'} QR Code Scanner
+          </Button>
+
+          {showQR && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="pt-4 space-y-3"
+            >
+              <div className="bg-white p-6 rounded-lg border-2 border-amber-300 flex flex-col items-center">
+                <p className="text-sm text-slate-600 mb-4 text-center">
+                  Scan this QR code with your PayPal app to donate
+                </p>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.paypal.com/paypalme/YOUR_USERNAME/${amount || '10'}`}
+                  alt="PayPal QR Code"
+                  className="w-48 h-48"
+                />
+                <p className="text-xs text-slate-500 mt-4">
+                  Amount: ${amount || '10.00'}
+                </p>
+              </div>
+            </motion.div>
+          )}
 
           <div className="text-center text-sm text-slate-600">
             <p>You'll be redirected to PayPal to complete your donation</p>
