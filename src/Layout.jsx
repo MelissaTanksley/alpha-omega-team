@@ -164,7 +164,9 @@ export default function Layout({ children, currentPageName }) {
                               className={`flex items-center gap-2 whitespace-nowrap ${
                                 isActive 
                                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                                  : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                                  : isDarkMode 
+                                    ? 'text-slate-200 hover:text-blue-400 hover:bg-blue-900/20'
+                                    : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
                               }`}
                             >
                               <item.icon className="h-4 w-4" />
@@ -225,7 +227,9 @@ export default function Layout({ children, currentPageName }) {
                           className={`flex items-center gap-2 whitespace-nowrap ${
                             isActive 
                               ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                              : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                              : isDarkMode 
+                                ? 'text-slate-200 hover:text-blue-400 hover:bg-blue-900/20'
+                                : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
                           }`}
                         >
                           <item.icon className="h-4 w-4" />
