@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus } from 'lucide-react';
+import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
@@ -85,7 +85,34 @@ export default function Forum() {
   });
 
   const createPostMutation = useMutation({
-    mutationFn: (data) => base44.entities.ForumPost.create(data),
+    mutationFn: async (data) => {
+      const newPost = await base44.entities.ForumPost.create(data);
+      
+      // Send email notification to admin
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: 'alphaomega247help@gmail.com',
+          subject: `New Forum Post: ${data.title}`,
+          body: `
+            A new post has been created in the Alpha Omega community forum.
+            
+            Title: ${data.title}
+            Category: ${data.category}
+            Author: ${data.author_name}
+            ${data.scripture_reference ? `Scripture: ${data.scripture_reference}` : ''}
+            
+            Content:
+            ${data.content}
+            
+            View and moderate: ${window.location.origin}${window.location.pathname}
+          `
+        });
+      } catch (error) {
+        console.error('Error sending email notification:', error);
+      }
+      
+      return newPost;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['forumPosts']);
       setShowNewPost(false);
@@ -97,6 +124,14 @@ export default function Forum() {
     mutationFn: ({ id, data }) => base44.entities.ForumPost.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['forumPosts']);
+    }
+  });
+
+  const deletePostMutation = useMutation({
+    mutationFn: (id) => base44.entities.ForumPost.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['forumPosts']);
+      setSelectedPost(null);
     }
   });
 
@@ -483,6 +518,20 @@ export default function Forum() {
                             Posted by {post.author_name} • {format(new Date(post.created_date), 'MMM d, yyyy')}
                           </p>
                         </div>
+                        {user?.role === 'admin' && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              if (confirm('Delete this post? This action cannot be undone.')) {
+                                deletePostMutation.mutate(post.id);
+                              }
+                            }}
+                            className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
 
                       {/* Post Content */}
