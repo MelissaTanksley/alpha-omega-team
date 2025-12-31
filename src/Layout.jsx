@@ -114,9 +114,9 @@ export default function Layout({ children, currentPageName }) {
         </main>
 
         {/* Footer */}
-        <footer className="mt-16 border-t border-blue-200 bg-white/80 backdrop-blur-sm">
+        <footer className="mt-16 border-t border-transparent bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <p className="text-center text-slate-600 text-sm">
+              <p className="text-center text-crimson text-sm" style={{color: '#DC143C'}}>
                 © 2025 Alpha Omega Team
               </p>
             </div>
