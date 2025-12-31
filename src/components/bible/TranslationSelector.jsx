@@ -18,21 +18,21 @@ export default function TranslationSelector({ value, onChange, showLabel = true 
   return (
     <div className="space-y-2">
       {showLabel && (
-        <Label className="flex items-center gap-2 text-sm font-medium text-slate-800">
-          <BookOpen className="h-4 w-4 text-slate-800" />
+        <Label className="flex items-center gap-2 text-sm font-medium text-slate-200">
+          <BookOpen className="h-4 w-4 text-slate-200" />
           Preferred Translation
         </Label>
       )}
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full md:w-64 text-slate-800">
+        <SelectTrigger className="w-full md:w-64 text-slate-200">
           <SelectValue placeholder="Select translation" />
         </SelectTrigger>
         <SelectContent>
           {TRANSLATIONS.map(t => (
             <SelectItem key={t.value} value={t.value}>
               <div className="flex justify-between items-center w-full">
-                <span className="text-slate-800">{t.value}</span>
-                <span className="text-xs text-slate-700 ml-2">{t.label}</span>
+                <span className="text-slate-200">{t.value}</span>
+                <span className="text-xs text-slate-300 ml-2">{t.label}</span>
               </div>
             </SelectItem>
           ))}
