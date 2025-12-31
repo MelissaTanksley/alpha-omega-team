@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Key, Save, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { Key, Save, AlertCircle, CheckCircle2, Eye, EyeOff, Upload, User as UserIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AISettings() {
@@ -23,6 +23,8 @@ export default function AISettings() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showKeys, setShowKeys] = useState({});
+  const [uploadingPicture, setUploadingPicture] = useState(false);
+  const [profilePicture, setProfilePicture] = useState('');
 
   useEffect(() => {
     loadUserData();
@@ -37,6 +39,9 @@ export default function AISettings() {
       }
       if (userData.preferred_ai_provider) {
         setPreferredProvider(userData.preferred_ai_provider);
+      }
+      if (userData.profile_picture_url) {
+        setProfilePicture(userData.profile_picture_url);
       }
     } catch (error) {
       console.error('Error loading user:', error);
@@ -73,6 +78,30 @@ export default function AISettings() {
     setShowKeys({ ...showKeys, [field]: !showKeys[field] });
   };
 
+  const handleProfilePictureUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPicture(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      const pictureUrl = result.file_url;
+      
+      await base44.auth.updateMe({
+        profile_picture_url: pictureUrl
+      });
+      
+      setProfilePicture(pictureUrl);
+      setUser({ ...user, profile_picture_url: pictureUrl });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      alert('Failed to upload profile picture');
+    }
+    setUploadingPicture(false);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <motion.div
@@ -86,6 +115,41 @@ export default function AISettings() {
         </h1>
         <p className="text-slate-300 text-lg">Connect your paid AI services for enhanced features</p>
       </motion.div>
+
+      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-slate-200">Profile Picture</CardTitle>
+          <CardDescription>Upload a profile picture for forum posts</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-6">
+            {profilePicture ? (
+              <img src={profilePicture} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-amber-500" />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-700">
+                <UserIcon className="w-12 h-12 text-slate-500" />
+              </div>
+            )}
+            <div className="flex-1">
+              <Label htmlFor="profile-picture" className="cursor-pointer">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors">
+                  <Upload className="h-4 w-4" />
+                  {uploadingPicture ? 'Uploading...' : 'Upload Picture'}
+                </div>
+                <Input
+                  id="profile-picture"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfilePictureUpload}
+                  disabled={uploadingPicture}
+                />
+              </Label>
+              <p className="text-sm text-slate-400 mt-2">Recommended: Square image, at least 200x200px</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Alert className="bg-blue-500/20 border-blue-500/50">
         <AlertCircle className="h-4 w-4 text-blue-400" />
