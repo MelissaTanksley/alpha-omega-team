@@ -357,75 +357,37 @@ I'm here to chat, but these professionals are specifically trained to help in cr
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
-      {/* Header with Provider Info */}
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700 mb-4">
-        <CardHeader className="p-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-slate-200 flex items-center gap-2">
-              <Bot className="h-5 w-5 text-amber-400" />
-              AI Assistant
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <Badge className={`${getCurrentProviderInfo().color} text-white`}>
-                <Sparkles className="h-3 w-3 mr-1" />
-                {getCurrentProviderInfo().name}
-              </Badge>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={rotateProvider}
-                className="h-8 w-8 text-slate-400 hover:text-amber-400"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSaveEntireConversation}
-                disabled={messages.length === 0}
-                className="h-8 text-slate-400 hover:text-amber-400"
-              >
-                <Save className="h-4 w-4 mr-1" />
-                Save All
-              </Button>
-            </div>
+    <div className="flex flex-col h-full bg-white">
+      {/* Header */}
+      <div className="border-b border-slate-200 px-6 py-4">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <h1 className="text-lg font-semibold text-slate-800">{conversation?.title || 'New Conversation'}</h1>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-slate-600 border-slate-300">
+              {getCurrentProviderInfo().name}
+            </Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSaveEntireConversation}
+              disabled={messages.length === 0}
+              className="text-slate-600 hover:text-slate-900"
+            >
+              <Save className="h-4 w-4 mr-1" />
+              Save
+            </Button>
           </div>
-        </CardHeader>
-      </Card>
-
-      {/* Provider Switch Notification */}
-      <AnimatePresence>
-        {showProviderSwitch && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-4"
-          >
-            <Card className="bg-amber-500/20 border-amber-500/50">
-              <CardContent className="p-3 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-amber-400" />
-                <span className="text-sm text-amber-200">
-                  Switching to {getCurrentProviderInfo().name} to continue uninterrupted service...
-                </span>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      </div>
 
       {/* Messages */}
-      <Card className="flex-1 bg-slate-900/70 backdrop-blur-sm border-slate-700 overflow-hidden">
-        <ScrollArea className="h-full p-4" ref={scrollRef}>
-          <div className="space-y-4">
+      <div className="flex-1 overflow-y-auto" ref={scrollRef}>
+        <div className="max-w-3xl mx-auto px-6 py-8">
+          <div className="space-y-8">
             {messages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="p-4 bg-amber-500/20 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <Bot className="h-8 w-8 text-amber-400" />
-                </div>
-                <h3 className="text-lg font-medium text-slate-300 mb-2">Start a Conversation</h3>
-                <p className="text-slate-400">Ask me about Bible study, theology, or get help with your projects</p>
+              <div className="text-center py-16">
+                <h3 className="text-2xl font-medium text-slate-800 mb-2">How can I help you today?</h3>
+                <p className="text-slate-600">Ask me about Bible study, theology, or get help with your projects</p>
               </div>
             )}
 
@@ -434,63 +396,53 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 key={idx}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className="group"
               >
-                {message.role === 'assistant' && (
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0">
-                    <Bot className="h-5 w-5 text-white" />
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+                    {message.role === 'user' ? (
+                      <User className="h-5 w-5 text-slate-600" />
+                    ) : (
+                      <Bot className="h-5 w-5 text-slate-600" />
+                    )}
                   </div>
-                )}
-                
-                <div className={`max-w-[80%] rounded-2xl p-4 relative group/msg ${
-                  message.role === 'user'
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-slate-800 text-slate-200 border border-slate-700'
-                }`}>
-                  {message.role === 'assistant' && (
-                    <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover/msg:opacity-100">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleSaveContent(message)}
-                        className="h-7 w-7 bg-amber-600 hover:bg-amber-700 text-white"
-                        title="Save to Saved Content"
-                      >
-                        <BookmarkPlus className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleSaveAsStudy(message)}
-                        className="h-7 w-7 bg-blue-600 hover:bg-blue-700 text-white"
-                        title="Save as Bible Study"
-                      >
-                        <BookOpen className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
-                  {message.role === 'assistant' ? (
-                    <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
-                      {message.content}
-                    </ReactMarkdown>
-                  ) : (
-                    <p className="text-sm leading-relaxed">{message.content}</p>
-                  )}
                   
-                  {message.provider && (
-                    <div className="mt-2 pt-2 border-t border-slate-700/50">
-                      <span className="text-xs text-slate-500">
-                        via {AI_PROVIDERS.find(p => p.id === message.provider)?.name}
-                      </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-slate-900 mb-2 text-sm">
+                      {message.role === 'user' ? 'You' : 'Assistant'}
                     </div>
-                  )}
-                </div>
-
-                {message.role === 'user' && (
-                  <div className="h-8 w-8 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0">
-                    <User className="h-5 w-5 text-slate-300" />
+                    {message.role === 'assistant' ? (
+                      <ReactMarkdown className="prose prose-slate max-w-none text-slate-800 leading-relaxed">
+                        {message.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <p className="text-slate-800 leading-relaxed">{message.content}</p>
+                    )}
+                    
+                    {message.role === 'assistant' && (
+                      <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleSaveContent(message)}
+                          className="h-8 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        >
+                          <BookmarkPlus className="h-4 w-4 mr-1" />
+                          Save
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleSaveAsStudy(message)}
+                          className="h-8 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        >
+                          <BookOpen className="h-4 w-4 mr-1" />
+                          Study
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </motion.div>
             ))}
 
@@ -498,28 +450,29 @@ I'm here to chat, but these professionals are specifically trained to help in cr
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex gap-3"
+                className="flex gap-4"
               >
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                  <Bot className="h-5 w-5 text-white" />
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+                  <Bot className="h-5 w-5 text-slate-600" />
                 </div>
-                <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
-                  <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce delay-200" />
+                <div className="flex-1">
+                  <div className="font-medium text-slate-900 mb-2 text-sm">Assistant</div>
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200" />
                   </div>
                 </div>
               </motion.div>
             )}
           </div>
-        </ScrollArea>
-      </Card>
+        </div>
+      </div>
 
       {/* Input */}
-      <Card className="mt-4 bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardContent className="p-4">
-          <div className="flex gap-3">
+      <div className="border-t border-slate-200 bg-white">
+        <div className="max-w-3xl mx-auto px-6 py-4">
+          <div className="relative">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -529,23 +482,21 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                   handleSend();
                 }
               }}
-              placeholder="Ask me anything about Bible study, theology, or your projects..."
-              className="min-h-[60px] bg-slate-800 border-slate-700 text-slate-200 resize-none"
+              placeholder="Message Assistant..."
+              className="min-h-[80px] pr-12 resize-none border-slate-300 focus:border-slate-400 focus:ring-slate-400 text-slate-800 bg-white"
               disabled={loading}
             />
             <Button
               onClick={handleSend}
               disabled={!input.trim() || loading}
-              className="bg-amber-600 hover:bg-amber-700 h-auto px-6"
+              size="icon"
+              className="absolute bottom-3 right-3 h-8 w-8 bg-slate-800 hover:bg-slate-900 text-white"
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            Press Enter to send, Shift+Enter for new line • Using {getCurrentProviderInfo().name}
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
