@@ -168,12 +168,20 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                 }>{progress.current_book} {progress.current_chapter}:{progress.current_verse}</p>
               </div>
               </div>
-              <Badge variant="outline" className={isDarkMode 
-              ? "bg-blue-700/50 text-blue-900 border-blue-600" 
-              : "bg-amber-100/50 text-amber-800 border-amber-300"
-              }>
-              {language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV')}
-              </Badge>
+              <div className="flex flex-col items-end gap-1">
+                <Badge variant="outline" className={isDarkMode 
+                  ? "bg-blue-700/50 text-blue-900 border-blue-600" 
+                  : "bg-amber-100/50 text-amber-800 border-amber-300"
+                }>
+                  {language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV')}
+                </Badge>
+                {language === 'es' && (
+                  <p className={isDarkMode 
+                    ? "text-xs text-blue-800/70" 
+                    : "text-xs text-amber-700/60"
+                  }>Traducción NTV</p>
+                )}
+              </div>
           </div>
         </CardHeader>
         
