@@ -9,6 +9,7 @@ import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
 import Store from './pages/Store';
+import HomeSpanish from './pages/HomeSpanish';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "SavedContent": SavedContent,
     "SignIn": SignIn,
     "Store": Store,
+    "HomeSpanish": HomeSpanish,
 }
 
 export const pagesConfig = {

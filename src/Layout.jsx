@@ -45,7 +45,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Notes', icon: BookMarked, page: 'Notes' },
     { name: 'Saved Content', icon: Save, page: 'SavedContent' },
     { name: 'Donate', icon: FileText, page: 'Payments' },
-    { name: 'AI Settings', icon: User, page: 'AISettings' }
+    { name: 'AI Settings', icon: User, page: 'AISettings' },
+    { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
   ];
 
   return (
