@@ -40,12 +40,12 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', icon: BookOpen, page: 'Home' },
     // { name: 'Bible Assistant', icon: BookOpen, page: 'BibleAssistant' },
     { name: 'AI Assistant', icon: BookOpen, page: 'AIChat' },
-    { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Store', icon: BookMarked, page: 'Store' },
     { name: 'Notes', icon: BookMarked, page: 'Notes' },
     { name: 'Saved Content', icon: Save, page: 'SavedContent' },
-    { name: 'Donate', icon: FileText, page: 'Payments' }
+    { name: 'Donate', icon: FileText, page: 'Payments' },
+    { name: 'AI Settings', icon: User, page: 'AISettings' }
   ];
 
   return (
