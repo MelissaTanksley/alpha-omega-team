@@ -46,9 +46,7 @@ export default function Layout({ children, currentPageName }) {
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-blue-50/90 to-amber-50/85" />
-      </div>
+      />
 
       {/* Content */}
       <div className="relative z-10">
