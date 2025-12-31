@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Briefcase } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -32,7 +32,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'Notes', icon: BookMarked, page: 'Notes' },
     { name: 'Saved Content', icon: Save, page: 'SavedContent' },
-    { name: 'Team Projects', icon: Briefcase, page: 'TeamProjects' },
     { name: 'Donate', icon: FileText, page: 'Payments' }
   ];
 

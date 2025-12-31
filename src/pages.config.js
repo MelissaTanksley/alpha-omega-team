@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SignIn from './pages/SignIn';
-import TeamProjects from './pages/TeamProjects';
 import Forum from './pages/Forum';
 import SavedContent from './pages/SavedContent';
 import BibleAssistant from './pages/BibleAssistant';
@@ -18,7 +17,6 @@ export const PAGES = {
     "Notes": Notes,
     "Payments": Payments,
     "SignIn": SignIn,
-    "TeamProjects": TeamProjects,
     "Forum": Forum,
     "SavedContent": SavedContent,
     "BibleAssistant": BibleAssistant,
