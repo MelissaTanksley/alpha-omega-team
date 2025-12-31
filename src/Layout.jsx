@@ -75,6 +75,17 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { name: 'Home', icon: BookOpen, page: 'Home' },
+    { 
+      name: 'AI Assistant', 
+      icon: BookOpen, 
+      page: 'AIChat',
+      dropdown: [
+        { name: 'AI Chat', icon: BookOpen, page: 'AIChat' },
+        { name: 'Topical Studies', icon: GraduationCap, page: 'TopicalStudies' },
+        { name: 'Notes', icon: BookMarked, page: 'Notes' },
+        { name: 'Saved Content', icon: Save, page: 'SavedContent' }
+      ]
+    },
     { name: 'Community', icon: Church, page: 'Forum' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
@@ -212,36 +223,20 @@ export default function Layout({ children, currentPageName }) {
         {/* Footer */}
         <footer className="mt-16 border-t border-transparent bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className={`text-sm ${isDarkMode ? 'text-amber-400' : 'text-orange-600'}`}>
                   © 2025 Alpha Omega Team
                 </p>
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
-                  <div className="flex gap-4">
-                    <Link to={createPageUrl('AIChat')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      AI Chat
-                    </Link>
-                    <Link to={createPageUrl('TopicalStudies')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Topical Studies
-                    </Link>
-                    <Link to={createPageUrl('Notes')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Notes
-                    </Link>
-                    <Link to={createPageUrl('SavedContent')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Saved Content
-                    </Link>
-                  </div>
-                  <div className="flex gap-4">
-                    <Link to={createPageUrl('Store')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Store
-                    </Link>
-                    <Link to={createPageUrl('ContactUs')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Contact Us
-                    </Link>
-                    <Link to={createPageUrl('Payments')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
-                      Donate
-                    </Link>
-                  </div>
+                <div className="flex gap-4">
+                  <Link to={createPageUrl('Store')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
+                    Store
+                  </Link>
+                  <Link to={createPageUrl('ContactUs')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
+                    Contact Us
+                  </Link>
+                  <Link to={createPageUrl('Payments')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
+                    Donate
+                  </Link>
                 </div>
               </div>
             </div>
