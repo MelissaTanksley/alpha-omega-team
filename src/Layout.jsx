@@ -47,13 +47,13 @@ export default function Layout({ children, currentPageName }) {
           backgroundAttachment: 'fixed'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/85 via-slate-900/80 to-slate-800/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-blue-50/90 to-amber-50/85" />
       </div>
 
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <header className="bg-slate-900/95 backdrop-blur-sm border-b border-amber-500/30 shadow-lg">
+        <header className="bg-white/95 backdrop-blur-sm border-b border-blue-200 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group flex-shrink-0">
@@ -75,8 +75,8 @@ export default function Layout({ children, currentPageName }) {
                           variant="ghost"
                           className={`flex items-center gap-2 whitespace-nowrap ${
                             isActive 
-                              ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30' 
-                              : 'text-slate-300 hover:text-amber-400 hover:bg-slate-800/50'
+                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                              : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
                           }`}
                         >
                           <item.icon className="h-4 w-4" />
@@ -91,16 +91,16 @@ export default function Layout({ children, currentPageName }) {
               {/* User Menu */}
               <div className="flex items-center gap-3 flex-shrink-0">
                 {user && (
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
-                    <User className="h-4 w-4 text-amber-400" />
-                    <span className="text-sm text-slate-300">{user.full_name || user.email}</span>
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
+                    <User className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm text-slate-700">{user.full_name || user.email}</span>
                   </div>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleLogout}
-                  className="text-slate-300 hover:text-red-400"
+                  className="text-slate-600 hover:text-red-600 hover:bg-red-50"
                 >
                   <LogOut className="h-5 w-5" />
                 </Button>
@@ -117,13 +117,13 @@ export default function Layout({ children, currentPageName }) {
         </main>
 
         {/* Footer */}
-        <footer className="mt-16 border-t border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <p className="text-center text-slate-400 text-sm">
-              © 2025 Alpha Omega Team
-            </p>
-          </div>
-        </footer>
+        <footer className="mt-16 border-t border-blue-200 bg-white/80 backdrop-blur-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              <p className="text-center text-slate-600 text-sm">
+                © 2025 Alpha Omega Team
+              </p>
+            </div>
+          </footer>
       </div>
     </div>
   );
