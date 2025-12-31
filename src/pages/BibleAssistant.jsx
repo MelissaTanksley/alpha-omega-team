@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, BookOpen, User, Sparkles, Loader2, BookMarked } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Send, BookOpen, User, Sparkles, Loader2, BookMarked, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import BibleSearch from '../components/bible/BibleSearch';
 
 export default function BibleAssistant() {
   const [messages, setMessages] = useState([]);
@@ -123,9 +125,9 @@ Respond to the user's question with biblical insight and accuracy.`;
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
+    <div className="space-y-4">
       {/* Header */}
-      <Card className="bg-slate-900/70 backdrop-blur-sm border-amber-500/30 mb-4">
+      <Card className="bg-slate-900/70 backdrop-blur-sm border-amber-500/30">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -134,9 +136,9 @@ Respond to the user's question with biblical insight and accuracy.`;
               </div>
               <div>
                 <CardTitle className="text-slate-200 flex items-center gap-2">
-                  AI Bible Assistant
+                  Bible Study Tools
                 </CardTitle>
-                <p className="text-xs text-slate-400 mt-1">Ask questions about Scripture, theology, and biblical interpretation</p>
+                <p className="text-xs text-slate-400 mt-1">AI-powered assistant and Scripture search with Hebrew/Greek insights</p>
               </div>
             </div>
             <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
@@ -146,6 +148,22 @@ Respond to the user's question with biblical insight and accuracy.`;
           </div>
         </CardHeader>
       </Card>
+
+      {/* Tabs for Assistant and Search */}
+      <Tabs defaultValue="assistant" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-900/70 backdrop-blur-sm">
+          <TabsTrigger value="assistant" className="data-[state=active]:bg-amber-600">
+            <BookOpen className="h-4 w-4 mr-2" />
+            AI Assistant
+          </TabsTrigger>
+          <TabsTrigger value="search" className="data-[state=active]:bg-amber-600">
+            <Search className="h-4 w-4 mr-2" />
+            Search Scripture
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="assistant" className="mt-4">
+          <div className="flex flex-col h-[calc(100vh-20rem)]">
 
       {/* Messages */}
       <Card className="flex-1 bg-slate-900/70 backdrop-blur-sm border-slate-700 overflow-hidden">
@@ -232,36 +250,43 @@ Respond to the user's question with biblical insight and accuracy.`;
         </ScrollArea>
       </Card>
 
-      {/* Input */}
-      <Card className="mt-4 bg-slate-900/70 backdrop-blur-sm border-slate-700">
-        <CardContent className="p-4">
-          <div className="flex gap-3">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              placeholder="Ask about any Bible verse, theological concept, or biblical question..."
-              className="min-h-[60px] bg-slate-800 border-slate-700 text-slate-200 resize-none"
-              disabled={loading}
-            />
-            <Button
-              onClick={handleSend}
-              disabled={!input.trim() || loading}
-              className="bg-amber-600 hover:bg-amber-700 h-auto px-6"
-            >
-              <Send className="h-5 w-5" />
-            </Button>
+            {/* Input */}
+            <Card className="mt-4 bg-slate-900/70 backdrop-blur-sm border-slate-700">
+              <CardContent className="p-4">
+                <div className="flex gap-3">
+                  <Textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder="Ask about any Bible verse, theological concept, or biblical question..."
+                    className="min-h-[60px] bg-slate-800 border-slate-700 text-slate-200 resize-none"
+                    disabled={loading}
+                  />
+                  <Button
+                    onClick={handleSend}
+                    disabled={!input.trim() || loading}
+                    className="bg-amber-600 hover:bg-amber-700 h-auto px-6"
+                  >
+                    <Send className="h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="text-xs text-slate-500 mt-2">
+                  Press Enter to send, Shift+Enter for new line
+                </p>
+              </CardContent>
+            </Card>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            Press Enter to send, Shift+Enter for new line
-          </p>
-        </CardContent>
-      </Card>
+        </TabsContent>
+
+        <TabsContent value="search" className="mt-4">
+          <BibleSearch />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
