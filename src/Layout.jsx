@@ -52,8 +52,9 @@ export default function Layout({ children, currentPageName }) {
         className="fixed inset-0 z-0"
         style={{
           backgroundImage: isDarkMode 
-            ? 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/6cd0d3412_image.png)'
-            : 'linear-gradient(to bottom right, #f8fafc, #e0e7ff)',
+            ? 'none'
+            : 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/6cd0d3412_image.png)',
+          backgroundColor: isDarkMode ? '#0a1929' : 'transparent',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -63,7 +64,11 @@ export default function Layout({ children, currentPageName }) {
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <header className="bg-orange-500/95 backdrop-blur-sm border-b border-orange-300 shadow-lg">
+        <header className={`backdrop-blur-sm border-b shadow-lg ${
+          isDarkMode 
+            ? 'bg-slate-900/95 border-slate-700' 
+            : 'bg-orange-500/95 border-orange-300'
+        }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group flex-shrink-0">
