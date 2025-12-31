@@ -25,7 +25,7 @@ export default function TranslationSelector({ value, onChange, showLabel = true 
       )}
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full md:w-64 text-slate-200">
-          <SelectValue placeholder="Select translation" />
+          <SelectValue placeholder="Select translation" className="text-slate-200" />
         </SelectTrigger>
         <SelectContent>
           {TRANSLATIONS.map(t => (
