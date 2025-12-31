@@ -105,7 +105,7 @@ export default function Home() {
           <span className="text-[#A14A3A]">Alpha Omega!</span>
         </h1>
         <p className="text-blue-400 text-lg">
-          Daily Scripture - Christian AI Tool and Community
+          Daily Scripture • Christian AI Tool and Community
         </p>
       </motion.div>
 
