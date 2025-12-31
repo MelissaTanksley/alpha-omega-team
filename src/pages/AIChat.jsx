@@ -84,7 +84,7 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-8rem)]">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-[calc(100vh-8rem)]">
       {/* Sidebar */}
       <div className="lg:col-span-1 space-y-4">
         <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
@@ -175,7 +175,7 @@ export default function AIChatPage() {
       </div>
 
       {/* Chat Area */}
-      <div className="lg:col-span-3">
+      <div className="lg:col-span-4">
         {selectedConversation ? (
           <AIChat 
             conversation={selectedConversation} 
