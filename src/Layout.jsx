@@ -18,6 +18,10 @@ export default function Layout({ children, currentPageName }) {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
+    } else {
+      // Default to light mode
+      setIsDarkMode(false);
+      localStorage.setItem('theme', 'light');
     }
 
     // Set favicon and meta tags for search engines
