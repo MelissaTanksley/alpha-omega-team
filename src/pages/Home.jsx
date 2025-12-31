@@ -13,10 +13,25 @@ import { format } from 'date-fns';
 export default function Home() {
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
     initializeUser();
+    
+    // Listen for the beforeinstallprompt event
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+    
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
   const initializeUser = async () => {
@@ -83,6 +98,19 @@ export default function Home() {
     });
   };
 
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setShowInstallButton(false);
+    }
+    
+    setDeferredPrompt(null);
+  };
+
   if (isLoading || !progress) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -110,7 +138,15 @@ export default function Home() {
         <p className="text-blue-400 text-lg">
           Daily Scripture • Christian AI Tool and Community
         </p>
-      </motion.div>
+        {showInstallButton && (
+          <Button
+            onClick={handleInstallClick}
+            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold px-6 py-2 shadow-lg"
+          >
+            Add to Browser
+          </Button>
+        )}
+        </motion.div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

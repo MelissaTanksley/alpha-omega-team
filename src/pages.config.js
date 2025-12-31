@@ -1,4 +1,5 @@
 import AIChat from './pages/AIChat';
+import AISettings from './pages/AISettings';
 import BibleAssistant from './pages/BibleAssistant';
 import BibleSearch from './pages/BibleSearch';
 import Forum from './pages/Forum';
@@ -7,13 +8,13 @@ import Notes from './pages/Notes';
 import Payments from './pages/Payments';
 import SavedContent from './pages/SavedContent';
 import SignIn from './pages/SignIn';
-import AISettings from './pages/AISettings';
 import Store from './pages/Store';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIChat": AIChat,
+    "AISettings": AISettings,
     "BibleAssistant": BibleAssistant,
     "BibleSearch": BibleSearch,
     "Forum": Forum,
@@ -22,7 +23,6 @@ export const PAGES = {
     "Payments": Payments,
     "SavedContent": SavedContent,
     "SignIn": SignIn,
-    "AISettings": AISettings,
     "Store": Store,
 }
 
