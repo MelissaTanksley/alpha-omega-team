@@ -87,7 +87,6 @@ export default function Layout({ children, currentPageName }) {
       ]
     },
     { name: 'Community', icon: Church, page: 'Forum' },
-    { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
   ];
 
@@ -228,6 +227,9 @@ export default function Layout({ children, currentPageName }) {
                   © 2025 Alpha Omega Team
                 </p>
                 <div className="flex gap-4">
+                  <Link to={createPageUrl('AISettings')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
+                    AI Settings
+                  </Link>
                   <Link to={createPageUrl('Store')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
                     Store
                   </Link>
