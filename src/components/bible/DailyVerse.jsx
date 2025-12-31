@@ -279,7 +279,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                   {loadingMeaning ? (language === 'es' ? 'Cargando...' : 'Loading...') : (language === 'es' ? 'Estudio Hebreo/Griego' : 'Hebrew/Greek Study')}
                 </Button>
 
-                <Link to={createPageUrl('Forum')}>
+                <Link to={`${createPageUrl('Forum')}?verse=${encodeURIComponent(`${progress.current_book} ${progress.current_chapter}:${progress.current_verse}`)}&verseText=${encodeURIComponent(verse.verse_text)}`}>
                   <Button 
                     variant="outline" 
                     size="sm"

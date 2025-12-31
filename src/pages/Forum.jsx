@@ -33,6 +33,22 @@ export default function Forum() {
 
   useEffect(() => {
     loadUser();
+    
+    // Check for verse parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const verse = urlParams.get('verse');
+    const verseText = urlParams.get('verseText');
+    
+    if (verse && verseText) {
+      setShowNewPost(true);
+      setNewPost({
+        title: `Discussion: ${verse}`,
+        content: `"${verseText}"\n\nWhat are your thoughts on this verse?`,
+        category: 'bible_study',
+        scripture_reference: verse,
+        tags: []
+      });
+    }
   }, []);
 
   const loadUser = async () => {
