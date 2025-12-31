@@ -21,6 +21,11 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack }) {
   }, [progress]);
 
   useEffect(() => {
+    // Close Hebrew/Greek study when component mounts
+    setHebrewGreek(null);
+  }, []);
+
+  useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
