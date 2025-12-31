@@ -7,6 +7,7 @@ import SignIn from './pages/SignIn';
 import TeamProjects from './pages/TeamProjects';
 import Forum from './pages/Forum';
 import SavedContent from './pages/SavedContent';
+import BibleAssistant from './pages/BibleAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "TeamProjects": TeamProjects,
     "Forum": Forum,
     "SavedContent": SavedContent,
+    "BibleAssistant": BibleAssistant,
 }
 
 export const pagesConfig = {
