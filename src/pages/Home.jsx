@@ -36,16 +36,33 @@ export default function Home() {
 
   const initializeUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      if (isAuthenticated) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       console.error('Error loading user:', error);
+      setUser(null);
     }
   };
 
   const { data: progress, isLoading } = useQuery({
     queryKey: ['userProgress', user?.id],
     queryFn: async () => {
+      if (!user) {
+        // Return default progress for anonymous users
+        return {
+          current_book: 'Genesis',
+          current_chapter: 1,
+          current_verse: 1,
+          preferred_translation: 'KJV',
+          verses_read: 0,
+          last_login_date: format(new Date(), 'yyyy-MM-dd')
+        };
+      }
       const results = await base44.entities.UserBibleProgress.filter({ created_by: user.email });
       if (results.length === 0) {
         // Create initial progress
@@ -60,11 +77,15 @@ export default function Home() {
       }
       return results[0];
     },
-    enabled: !!user
+    enabled: true
   });
 
   const updateProgressMutation = useMutation({
     mutationFn: async (updates) => {
+      if (!user || !progress.id) {
+        // For anonymous users, just update local state
+        return { ...progress, ...updates };
+      }
       return await base44.entities.UserBibleProgress.update(progress.id, updates);
     },
     onSuccess: () => {
@@ -73,6 +94,11 @@ export default function Home() {
   });
 
   const handleVerseAdvance = async () => {
+    if (!user) {
+      // Prompt anonymous users to sign in
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     const nextVerse = progress.current_verse + 1;
     const currentCount = progress.verses_read || 0;
     // Only increment if moving to a new verse we haven't read before
@@ -85,6 +111,11 @@ export default function Home() {
   };
 
   const handleVerseBack = async () => {
+    if (!user) {
+      // Prompt anonymous users to sign in
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     if (progress.current_verse > 1) {
       await updateProgressMutation.mutateAsync({
         current_verse: progress.current_verse - 1
@@ -93,6 +124,11 @@ export default function Home() {
   };
 
   const handleTranslationChange = async (translation) => {
+    if (!user) {
+      // Prompt anonymous users to sign in
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
     await updateProgressMutation.mutateAsync({
       preferred_translation: translation
     });
