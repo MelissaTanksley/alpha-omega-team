@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Heart, Pin, Send, Search, Plus } from 'lucide-react';
+import { MessageSquare, ArrowUp, ArrowDown, Pin, Send, Search, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
@@ -20,6 +20,8 @@ export default function Forum() {
   const [showNewPost, setShowNewPost] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [replyContent, setReplyContent] = useState('');
+  const [replyToId, setReplyToId] = useState(null);
+  const [sortBy, setSortBy] = useState('hot');
   const [newPost, setNewPost] = useState({
     title: '',
     content: '',
@@ -72,19 +74,43 @@ export default function Forum() {
       author_name: user.full_name || user.email,
       author_email: user.email,
       replies: [],
-      likes: []
+      upvotes: [],
+      downvotes: []
     });
   };
 
-  const handleLike = (post) => {
-    const likes = post.likes || [];
-    const newLikes = likes.includes(user.email)
-      ? likes.filter(email => email !== user.email)
-      : [...likes, user.email];
+  const getScore = (post) => {
+    const upvotes = (post.upvotes || []).length;
+    const downvotes = (post.downvotes || []).length;
+    return upvotes - downvotes;
+  };
+
+  const handleVote = (post, voteType) => {
+    const upvotes = post.upvotes || [];
+    const downvotes = post.downvotes || [];
+    
+    let newUpvotes = [...upvotes];
+    let newDownvotes = [...downvotes];
+    
+    if (voteType === 'up') {
+      if (upvotes.includes(user.email)) {
+        newUpvotes = upvotes.filter(email => email !== user.email);
+      } else {
+        newUpvotes = [...upvotes, user.email];
+        newDownvotes = downvotes.filter(email => email !== user.email);
+      }
+    } else {
+      if (downvotes.includes(user.email)) {
+        newDownvotes = downvotes.filter(email => email !== user.email);
+      } else {
+        newDownvotes = [...downvotes, user.email];
+        newUpvotes = upvotes.filter(email => email !== user.email);
+      }
+    }
     
     updatePostMutation.mutate({
       id: post.id,
-      data: { likes: newLikes }
+      data: { upvotes: newUpvotes, downvotes: newDownvotes }
     });
   };
 
@@ -92,10 +118,14 @@ export default function Forum() {
     if (!replyContent.trim()) return;
     
     const newReply = {
+      id: Date.now().toString(),
       author_name: user.full_name || user.email,
       author_email: user.email,
       content: replyContent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      upvotes: [],
+      downvotes: [],
+      parent_reply_id: replyToId
     };
     
     updatePostMutation.mutate({
@@ -106,15 +136,133 @@ export default function Forum() {
     });
     
     setReplyContent('');
+    setReplyToId(null);
   };
 
-  const filteredPosts = posts.filter(post => {
+  const handleReplyVote = (post, replyId, voteType) => {
+    const replies = post.replies || [];
+    const updatedReplies = replies.map(reply => {
+      if (reply.id !== replyId) return reply;
+      
+      const upvotes = reply.upvotes || [];
+      const downvotes = reply.downvotes || [];
+      let newUpvotes = [...upvotes];
+      let newDownvotes = [...downvotes];
+      
+      if (voteType === 'up') {
+        if (upvotes.includes(user.email)) {
+          newUpvotes = upvotes.filter(email => email !== user.email);
+        } else {
+          newUpvotes = [...upvotes, user.email];
+          newDownvotes = downvotes.filter(email => email !== user.email);
+        }
+      } else {
+        if (downvotes.includes(user.email)) {
+          newDownvotes = downvotes.filter(email => email !== user.email);
+        } else {
+          newDownvotes = [...downvotes, user.email];
+          newUpvotes = upvotes.filter(email => email !== user.email);
+        }
+      }
+      
+      return { ...reply, upvotes: newUpvotes, downvotes: newDownvotes };
+    });
+    
+    updatePostMutation.mutate({
+      id: post.id,
+      data: { replies: updatedReplies }
+    });
+  };
+
+  const sortPosts = (posts) => {
+    const sorted = [...posts];
+    switch (sortBy) {
+      case 'hot':
+        return sorted.sort((a, b) => {
+          const scoreA = getScore(a);
+          const scoreB = getScore(b);
+          const timeA = new Date(a.created_date).getTime();
+          const timeB = new Date(b.created_date).getTime();
+          const hotA = scoreA / Math.pow((Date.now() - timeA) / 3600000 + 2, 1.5);
+          const hotB = scoreB / Math.pow((Date.now() - timeB) / 3600000 + 2, 1.5);
+          return hotB - hotA;
+        });
+      case 'new':
+        return sorted.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      case 'top':
+        return sorted.sort((a, b) => getScore(b) - getScore(a));
+      default:
+        return sorted;
+    }
+  };
+
+  const filteredPosts = sortPosts(posts.filter(post => {
     const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
     const matchesSearch = !searchQuery || 
       post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.content?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
-  });
+  }));
+
+  const renderReplies = (replies, post, parentId = null, depth = 0) => {
+    const filteredReplies = replies.filter(r => r.parent_reply_id === parentId);
+    
+    return filteredReplies.map((reply) => {
+      const replyScore = (reply.upvotes || []).length - (reply.downvotes || []).length;
+      const hasUpvoted = (reply.upvotes || []).includes(user?.email);
+      const hasDownvoted = (reply.downvotes || []).includes(user?.email);
+      const childReplies = replies.filter(r => r.parent_reply_id === reply.id);
+      
+      return (
+        <div key={reply.id} className={`${depth > 0 ? 'ml-8 mt-3' : 'mt-3'}`}>
+          <div className="bg-slate-800/50 p-3 rounded-lg">
+            <div className="flex gap-2">
+              <div className="flex flex-col items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-6 w-6 ${hasUpvoted ? 'text-orange-500' : 'text-slate-500 hover:text-orange-500'}`}
+                  onClick={() => handleReplyVote(post, reply.id, 'up')}
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <span className={`text-xs font-bold ${replyScore > 0 ? 'text-orange-500' : replyScore < 0 ? 'text-blue-500' : 'text-slate-400'}`}>
+                  {replyScore}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-6 w-6 ${hasDownvoted ? 'text-blue-500' : 'text-slate-500 hover:text-blue-500'}`}
+                  onClick={() => handleReplyVote(post, reply.id, 'down')}
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-slate-400 mb-2">
+                  {reply.author_name} • {format(new Date(reply.timestamp), 'MMM d, h:mm a')}
+                </p>
+                <p className="text-sm text-slate-300">{reply.content}</p>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="text-xs text-slate-500 hover:text-amber-400 p-0 h-auto mt-1"
+                  onClick={() => setReplyToId(reply.id)}
+                >
+                  Reply
+                </Button>
+              </div>
+            </div>
+          </div>
+          {childReplies.length > 0 && (
+            <div className="border-l-2 border-slate-700 pl-2">
+              {renderReplies(replies, post, reply.id, depth + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
 
   const categories = [
     { value: 'all', label: 'All Posts', color: 'bg-slate-500' },
@@ -189,21 +337,33 @@ export default function Forum() {
         )}
       </AnimatePresence>
 
-      {/* Search and Filter */}
+      {/* Search, Filter, and Sort */}
       <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
         <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search posts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-slate-800 border-slate-700 text-slate-200"
-              />
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Search posts..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-slate-800 border-slate-700 text-slate-200"
+                />
+              </div>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full md:w-32 bg-slate-800 border-slate-700 text-slate-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hot">🔥 Hot</SelectItem>
+                  <SelectItem value="new">🆕 New</SelectItem>
+                  <SelectItem value="top">⭐ Top</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full md:w-auto">
-              <TabsList className="grid grid-cols-4 md:grid-cols-7 w-full md:w-auto">
+            <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
+              <TabsList className="grid grid-cols-4 md:grid-cols-7 w-full">
                 {categories.map(cat => (
                   <TabsTrigger key={cat.value} value={cat.value} className="text-xs">
                     {cat.label.split(' ')[0]}
@@ -217,105 +377,127 @@ export default function Forum() {
 
       {/* Posts */}
       <div className="space-y-4">
-        {filteredPosts.map((post) => (
-          <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-amber-500/30 transition-all">
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {/* Post Header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {post.is_pinned && <Pin className="h-4 w-4 text-amber-400" />}
-                        <Badge className={categories.find(c => c.value === post.category)?.color}>
-                          {categories.find(c => c.value === post.category)?.label}
-                        </Badge>
-                        {post.scripture_reference && (
-                          <Badge variant="outline" className="text-amber-400 border-amber-400">
-                            {post.scripture_reference}
-                          </Badge>
+        {filteredPosts.map((post) => {
+          const score = getScore(post);
+          const hasUpvoted = (post.upvotes || []).includes(user?.email);
+          const hasDownvoted = (post.downvotes || []).includes(user?.email);
+          
+          return (
+            <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-amber-500/30 transition-all">
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    {/* Vote Section */}
+                    <div className="flex flex-col items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`h-8 w-8 ${hasUpvoted ? 'text-orange-500' : 'text-slate-500 hover:text-orange-500'}`}
+                        onClick={() => handleVote(post, 'up')}
+                      >
+                        <ArrowUp className="h-5 w-5" />
+                      </Button>
+                      <span className={`text-sm font-bold ${score > 0 ? 'text-orange-500' : score < 0 ? 'text-blue-500' : 'text-slate-400'}`}>
+                        {score}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`h-8 w-8 ${hasDownvoted ? 'text-blue-500' : 'text-slate-500 hover:text-blue-500'}`}
+                        onClick={() => handleVote(post, 'down')}
+                      >
+                        <ArrowDown className="h-5 w-5" />
+                      </Button>
+                    </div>
+
+                    {/* Post Content */}
+                    <div className="flex-1 space-y-4">
+                      {/* Post Header */}
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            {post.is_pinned && <Pin className="h-4 w-4 text-amber-400" />}
+                            <Badge className={categories.find(c => c.value === post.category)?.color}>
+                              {categories.find(c => c.value === post.category)?.label}
+                            </Badge>
+                            {post.scripture_reference && (
+                              <Badge variant="outline" className="text-amber-400 border-amber-400">
+                                {post.scripture_reference}
+                              </Badge>
+                            )}
+                          </div>
+                          <h3 className="text-xl font-semibold text-slate-200 mb-2 cursor-pointer hover:text-amber-400" onClick={() => setSelectedPost(selectedPost?.id === post.id ? null : post)}>
+                            {post.title}
+                          </h3>
+                          <p className="text-sm text-slate-400">
+                            Posted by {post.author_name} • {format(new Date(post.created_date), 'MMM d, yyyy')}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Post Content */}
+                      <div className="text-slate-300 leading-relaxed">
+                        {post.content.length > 300 && !selectedPost?.id === post.id ? (
+                          <>
+                            {post.content.substring(0, 300)}...
+                            <Button
+                              variant="link"
+                              onClick={() => setSelectedPost(post)}
+                              className="text-amber-400 p-0 h-auto ml-2"
+                            >
+                              Read more
+                            </Button>
+                          </>
+                        ) : (
+                          <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
+                            {post.content}
+                          </ReactMarkdown>
                         )}
                       </div>
-                      <h3 className="text-xl font-semibold text-slate-200 mb-2">{post.title}</h3>
-                      <p className="text-sm text-slate-400">
-                        Posted by {post.author_name} • {format(new Date(post.created_date), 'MMM d, yyyy')}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Post Content */}
-                  <div className="text-slate-300 leading-relaxed">
-                    {post.content.length > 300 && !selectedPost?.id === post.id ? (
-                      <>
-                        {post.content.substring(0, 300)}...
+                      {/* Post Actions */}
+                      <div className="flex items-center gap-4 pt-2 border-t border-slate-700">
                         <Button
-                          variant="link"
-                          onClick={() => setSelectedPost(post)}
-                          className="text-amber-400 p-0 h-auto ml-2"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedPost(selectedPost?.id === post.id ? null : post)}
+                          className="text-slate-400 hover:text-amber-400"
                         >
-                          Read more
-                        </Button>
-                      </>
-                    ) : (
-                      <ReactMarkdown className="prose prose-invert prose-sm max-w-none">
-                        {post.content}
-                      </ReactMarkdown>
-                    )}
-                  </div>
-
-                  {/* Post Actions */}
-                  <div className="flex items-center gap-4 pt-2 border-t border-slate-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleLike(post)}
-                      className={`${(post.likes || []).includes(user?.email) ? 'text-red-400' : 'text-slate-400'}`}
-                    >
-                      <Heart className="h-4 w-4 mr-1" />
-                      {(post.likes || []).length}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedPost(selectedPost?.id === post.id ? null : post)}
-                      className="text-slate-400"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      {(post.replies || []).length}
-                    </Button>
-                  </div>
-
-                  {/* Replies Section */}
-                  {selectedPost?.id === post.id && (
-                    <div className="mt-4 space-y-3 pl-4 border-l-2 border-amber-500/30">
-                      {(post.replies || []).map((reply, idx) => (
-                        <div key={idx} className="bg-slate-800/50 p-3 rounded-lg">
-                          <p className="text-xs text-slate-400 mb-2">
-                            {reply.author_name} • {format(new Date(reply.timestamp), 'MMM d, h:mm a')}
-                          </p>
-                          <p className="text-sm text-slate-300">{reply.content}</p>
-                        </div>
-                      ))}
-
-                      <div className="flex gap-2 mt-3">
-                        <Input
-                          placeholder="Write a reply..."
-                          value={replyContent}
-                          onChange={(e) => setReplyContent(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleReply(post)}
-                          className="bg-slate-800 border-slate-700 text-slate-200"
-                        />
-                        <Button onClick={() => handleReply(post)} size="icon" className="bg-amber-600 hover:bg-amber-700">
-                          <Send className="h-4 w-4" />
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          {(post.replies || []).length} comments
                         </Button>
                       </div>
+
+                      {/* Replies Section */}
+                      {selectedPost?.id === post.id && (
+                        <div className="mt-4 space-y-3 border-t border-slate-700 pt-4">
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder={replyToId ? "Write a reply to comment..." : "Write a comment..."}
+                              value={replyContent}
+                              onChange={(e) => setReplyContent(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleReply(post)}
+                              className="bg-slate-800 border-slate-700 text-slate-200"
+                            />
+                            <Button onClick={() => handleReply(post)} size="icon" className="bg-amber-600 hover:bg-amber-700">
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          {replyToId && (
+                            <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="text-xs text-slate-500">
+                              Cancel reply
+                            </Button>
+                          )}
+                          {renderReplies(post.replies || [], post)}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          );
+        })}
 
         {filteredPosts.length === 0 && (
           <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
