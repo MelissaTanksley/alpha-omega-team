@@ -108,6 +108,8 @@ export default function Layout({ children, currentPageName }) {
       page: 'Forum',
       dropdown: [
         { name: 'Forum', icon: Church, page: 'Forum' },
+        { name: 'Churches', icon: Church, page: 'Churches' },
+        { name: 'Sermons', icon: BookOpen, page: 'Sermons' },
         { name: 'Messages', icon: BookOpen, page: 'Messages' },
         { name: 'Search', icon: Search, page: 'Search' }
       ]

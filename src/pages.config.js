@@ -15,6 +15,8 @@ import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
 import UserProfile from './pages/UserProfile';
+import Churches from './pages/Churches';
+import Sermons from './pages/Sermons';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +38,8 @@ export const PAGES = {
     "Store": Store,
     "TopicalStudies": TopicalStudies,
     "UserProfile": UserProfile,
+    "Churches": Churches,
+    "Sermons": Sermons,
 }
 
 export const pagesConfig = {
