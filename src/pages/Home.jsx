@@ -133,7 +133,7 @@ export default function Home() {
       >
         <h1 className="text-4xl md:text-5xl font-bold text-center">
           <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">Welcome to </span>
-          <span className="text-[#A14A3A]">Alpha Omega!</span>
+          <span className="text-[#A14A3A]">Alpha Omega at Home!</span>
         </h1>
         <p className="text-blue-400 text-lg">
           Daily Scripture • Christian AI Tool and Community
