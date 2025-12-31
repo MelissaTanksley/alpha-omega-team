@@ -86,7 +86,6 @@ export default function Layout({ children, currentPageName }) {
       ]
     },
     { name: 'Community', icon: Church, page: 'Forum' },
-    { name: 'Store', icon: BookMarked, page: 'Store' },
     { name: 'AI Settings', icon: User, page: 'AISettings' },
     { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
   ];
