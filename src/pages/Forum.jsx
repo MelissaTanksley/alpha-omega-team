@@ -35,6 +35,25 @@ export default function Forum() {
     loadUser();
   }, []);
 
+  const loadUser = async () => {
+    try {
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      if (isAuthenticated) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      }
+    } catch (error) {
+      // User not authenticated
+      setUser(null);
+    }
+  };
+
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['forumPosts'],
+    queryFn: () => base44.entities.ForumPost.list('-updated_date', 100),
+    enabled: true
+  });
+
   useEffect(() => {
     // Check for verse parameter in URL and find or create discussion
     if (posts.length > 0) {
@@ -64,25 +83,6 @@ export default function Forum() {
       }
     }
   }, [posts]);
-
-  const loadUser = async () => {
-    try {
-      const isAuthenticated = await base44.auth.isAuthenticated();
-      if (isAuthenticated) {
-        const userData = await base44.auth.me();
-        setUser(userData);
-      }
-    } catch (error) {
-      // User not authenticated
-      setUser(null);
-    }
-  };
-
-  const { data: posts = [], isLoading } = useQuery({
-    queryKey: ['forumPosts'],
-    queryFn: () => base44.entities.ForumPost.list('-updated_date', 100),
-    enabled: true
-  });
 
   const createPostMutation = useMutation({
     mutationFn: async (data) => {
