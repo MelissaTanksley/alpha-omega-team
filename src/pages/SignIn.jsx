@@ -32,10 +32,9 @@ export default function SignIn() {
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/dfa220c63_image.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/1bc2f2467_Designer2.png"
                 alt="Alpha Omega"
-                className="h-32 w-32 object-cover object-top mx-auto"
-                style={{ objectPosition: 'center 15%' }}
+                className="h-48 w-48 object-contain mx-auto"
               />
             </div>
             <CardTitle className="text-3xl font-bold text-slate-900">
