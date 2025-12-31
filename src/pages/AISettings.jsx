@@ -173,12 +173,12 @@ export default function AISettings() {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-amber-500/30">
+      <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30">
         <CardContent className="p-6 space-y-3">
-          <h3 className="font-semibold text-lg text-amber-300">
+          <h3 className="font-semibold text-lg text-blue-300">
             How to Get API Keys
           </h3>
-          <ul className="space-y-2 text-slate-300 text-sm">
+          <ul className="space-y-2 text-blue-200 text-sm">
             <li>• <strong>ChatGPT:</strong> Get your API key from platform.openai.com</li>
             <li>• <strong>Claude:</strong> Sign up at console.anthropic.com</li>
             <li>• <strong>Grok:</strong> Available through x.ai developer portal</li>
