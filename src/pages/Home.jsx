@@ -15,10 +15,12 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
   const queryClient = useQueryClient();
 
   useEffect(() => {
     initializeUser();
+    setResetKey(prev => prev + 1);
     
     // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e) => {
@@ -280,7 +282,7 @@ export default function Home() {
       )}
 
       {/* Daily Verse */}
-      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
+      <DailyVerse key={resetKey} progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
 
       {/* Quick Info */}
       <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
