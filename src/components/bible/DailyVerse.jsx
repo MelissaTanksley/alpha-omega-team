@@ -247,7 +247,7 @@ export default function DailyVerse({ progress, onVerseAdvance, onVerseBack, lang
                 ? "bg-blue-700/50 text-blue-900 border-blue-600" 
                 : "bg-amber-100/50 text-amber-800 border-amber-300"
               }>
-                {language === 'es' ? 'Traducción NTV' : (progress.preferred_translation || 'KJV')}
+                {language === 'es' ? 'NTV' : (progress.preferred_translation || 'KJV')}
               </Badge>
           </div>
         </CardHeader>
