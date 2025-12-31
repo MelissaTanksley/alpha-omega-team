@@ -41,13 +41,13 @@ export default function Layout({ children, currentPageName }) {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/3e2e4dd93_Crossandthorns.jpg)',
+          backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/6cd0d3412_image.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-blue-50/90 to-amber-50/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-blue-50/85 to-amber-50/80" />
       </div>
 
       {/* Content */}
