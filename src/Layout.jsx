@@ -109,51 +109,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden border-t border-slate-800 bg-slate-900/95 backdrop-blur-sm">
-              <nav className="px-4 py-4 space-y-2">
-                {navigation.map((item) => {
-                  const isActive = currentPageName === item.page;
-                  return (
-                    <Link 
-                      key={item.page} 
-                      to={createPageUrl(item.page)}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          isActive 
-                            ? 'bg-amber-500/20 text-amber-400' 
-                            : 'text-slate-300 hover:text-amber-400'
-                        }`}
-                      >
-                        <item.icon className="h-4 w-4 mr-3" />
-                        {item.name}
-                      </Button>
-                    </Link>
-                  );
-                })}
-                <div className="pt-3 border-t border-slate-800">
-                  {user && (
-                    <div className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 mb-2">
-                      <User className="h-4 w-4 text-amber-400" />
-                      {user.full_name || user.email}
-                    </div>
-                  )}
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-red-400 hover:text-red-300"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Logout
-                  </Button>
-                </div>
-              </nav>
-            </div>
-          )}
+
         </header>
 
         {/* Main Content */}
