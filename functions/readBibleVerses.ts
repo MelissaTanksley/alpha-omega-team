@@ -72,9 +72,12 @@ Make it engaging and fun, but keep the important message!`;
         );
 
         if (!audioResponse.ok) {
+            const errorText = await audioResponse.text();
+            console.error('ElevenLabs API Error:', errorText);
             return Response.json({ 
                 text: simplified.kid_friendly_text,
-                audio_url: null 
+                audio_url: null,
+                error: `ElevenLabs error: ${errorText}`
             });
         }
 
