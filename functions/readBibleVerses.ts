@@ -47,8 +47,8 @@ Make it engaging and fun, but keep the important message!`;
             });
         }
 
-        // Use Bella - soft, young female voice perfect for kids
-        const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Bella
+        // Use Rachel - clear, friendly female voice
+        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel
         
         const audioResponse = await fetch(
             `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
