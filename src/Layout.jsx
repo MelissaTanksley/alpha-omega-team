@@ -149,10 +149,9 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center gap-4 h-16">
               <Link to={createPageUrl('Home')} className="flex items-center group flex-shrink-0">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695442b835cc4742963c476e/d70fd8659_Designer.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/f5c888cb6_Designer2.png"
                   alt="Alpha Omega"
-                  className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity border-2 border-white rounded-lg"
-                  style={{filter: 'brightness(0) invert(1)'}}
+                  className="h-16 w-16 object-contain group-hover:opacity-90 transition-opacity"
                 />
               </Link>
 
