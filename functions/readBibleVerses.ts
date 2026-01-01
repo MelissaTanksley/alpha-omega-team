@@ -47,8 +47,8 @@ Make it engaging and fun, but keep the important message!`;
             });
         }
 
-        // Use a kid-friendly voice (Rachel is clear and friendly)
-        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel voice
+        // Use a kid-friendly voice (Lily is a child voice)
+        const voiceId = "pFZP5JQG7iQjIQuC4Bku"; // Lily - child voice
         
         const audioResponse = await fetch(
             `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
@@ -60,10 +60,12 @@ Make it engaging and fun, but keep the important message!`;
                 },
                 body: JSON.stringify({
                     text: simplified.kid_friendly_text,
-                    model_id: "eleven_monolingual_v1",
+                    model_id: "eleven_turbo_v2",
                     voice_settings: {
-                        stability: 0.5,
-                        similarity_boost: 0.75
+                        stability: 0.6,
+                        similarity_boost: 0.8,
+                        style: 0.3,
+                        use_speaker_boost: true
                     }
                 })
             }
