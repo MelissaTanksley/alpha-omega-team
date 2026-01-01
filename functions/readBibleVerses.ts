@@ -47,8 +47,8 @@ Make it engaging and fun, but keep the important message!`;
             });
         }
 
-        // Use Dorothy - clear, young female voice perfect for kids
-        const voiceId = "ThT5KcBeYPX3keUQqHPh"; // Dorothy
+        // Use Bella - soft, young female voice perfect for kids
+        const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Bella
         
         const audioResponse = await fetch(
             `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
