@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper, Volume2, VolumeX, Loader2 } from 'lucide-react';
@@ -69,22 +69,40 @@ export default function KidsBibleStudy() {
   const [isReading, setIsReading] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
-  const [audioRef] = useState(new Audio());
+  const audioRef = useRef(new Audio());
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedStory && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsReading(false);
+    }
+  }, [selectedStory]);
 
   const handleStoryComplete = () => {
     setPoints(points + 10);
     setSelectedStory(null);
     setAudioUrl(null);
-    if (audioRef) {
-      audioRef.pause();
-      audioRef.currentTime = 0;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
+    setIsReading(false);
   };
 
   const handleListen = async (story) => {
-    if (isReading && audioRef) {
-      audioRef.pause();
-      audioRef.currentTime = 0;
+    if (isReading && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       setIsReading(false);
       return;
     }
@@ -97,9 +115,9 @@ export default function KidsBibleStudy() {
       });
 
       if (data.audio_url) {
-        audioRef.src = data.audio_url;
-        audioRef.onended = () => setIsReading(false);
-        audioRef.play();
+        audioRef.current.src = data.audio_url;
+        audioRef.current.onended = () => setIsReading(false);
+        audioRef.current.play();
         setIsReading(true);
         setAudioUrl(data.audio_url);
       } else {
@@ -180,9 +198,9 @@ export default function KidsBibleStudy() {
           className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
           onClick={() => {
             setSelectedStory(null);
-            if (audioRef) {
-              audioRef.pause();
-              audioRef.currentTime = 0;
+            if (audioRef.current) {
+              audioRef.current.pause();
+              audioRef.current.currentTime = 0;
             }
             setIsReading(false);
           }}
@@ -258,9 +276,9 @@ export default function KidsBibleStudy() {
               <Button
                 onClick={() => {
                   setSelectedStory(null);
-                  if (audioRef) {
-                    audioRef.pause();
-                    audioRef.currentTime = 0;
+                  if (audioRef.current) {
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
                   }
                   setIsReading(false);
                 }}
