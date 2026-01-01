@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper, Volume2, VolumeX } from 'lucide-react';
+import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
 const kidStories = [
@@ -66,32 +67,57 @@ export default function KidsBibleStudy() {
   const [selectedStory, setSelectedStory] = useState(null);
   const [points, setPoints] = useState(0);
   const [isReading, setIsReading] = useState(false);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+  const [audioRef] = useState(new Audio());
 
   const handleStoryComplete = () => {
     setPoints(points + 10);
     setSelectedStory(null);
+    setAudioUrl(null);
+    if (audioRef) {
+      audioRef.pause();
+      audioRef.currentTime = 0;
+    }
   };
 
-  const handleListen = (story) => {
-    if (isReading) {
-      window.speechSynthesis.cancel();
+  const handleListen = async (story) => {
+    if (isReading && audioRef) {
+      audioRef.pause();
+      audioRef.currentTime = 0;
       setIsReading(false);
       return;
     }
 
-    const text = `${story.title}. ${story.summary} The Bible says: ${story.lesson}`;
-    const utterance = new SpeechSynthesisUtterance(text);
+    setLoadingAudio(true);
     
-    // Kid-friendly voice settings
-    utterance.rate = 0.85; // Slower pace for kids
-    utterance.pitch = 1.2; // Higher pitch for friendliness
-    utterance.volume = 1;
+    try {
+      const { data } = await base44.functions.invoke('readBibleVerses', {
+        passage: story.verse
+      });
 
-    utterance.onend = () => setIsReading(false);
-    utterance.onerror = () => setIsReading(false);
-
-    setIsReading(true);
-    window.speechSynthesis.speak(utterance);
+      if (data.audio_url) {
+        audioRef.src = data.audio_url;
+        audioRef.onended = () => setIsReading(false);
+        audioRef.play();
+        setIsReading(true);
+        setAudioUrl(data.audio_url);
+      } else {
+        // Fallback to browser speech if no audio URL
+        const text = data.text || story.summary;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        utterance.pitch = 1.2;
+        utterance.onend = () => setIsReading(false);
+        window.speechSynthesis.speak(utterance);
+        setIsReading(true);
+      }
+    } catch (error) {
+      console.error('Error fetching audio:', error);
+      alert('Could not load audio. Please try again!');
+    }
+    
+    setLoadingAudio(false);
   };
 
   return (
@@ -195,9 +221,15 @@ export default function KidsBibleStudy() {
             <div className="flex gap-3">
               <Button
                 onClick={() => handleListen(selectedStory)}
+                disabled={loadingAudio}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-bold text-lg py-6"
               >
-                {isReading ? (
+                {loadingAudio ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Loading Audio...
+                  </>
+                ) : isReading ? (
                   <>
                     <VolumeX className="h-5 w-5 mr-2" />
                     Stop Listening
@@ -205,7 +237,7 @@ export default function KidsBibleStudy() {
                 ) : (
                   <>
                     <Volume2 className="h-5 w-5 mr-2" />
-                    Listen to Story! 🎧
+                    Listen to Bible Verses! 🎧
                   </>
                 )}
               </Button>
