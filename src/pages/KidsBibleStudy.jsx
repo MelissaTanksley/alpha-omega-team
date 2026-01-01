@@ -81,9 +81,12 @@ export default function KidsBibleStudy() {
   }, []);
 
   useEffect(() => {
-    if (!selectedStory && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (!selectedStory) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      window.speechSynthesis.cancel();
       setIsReading(false);
     }
   }, [selectedStory]);
@@ -100,9 +103,12 @@ export default function KidsBibleStudy() {
   };
 
   const handleListen = async (story) => {
-    if (isReading && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (isReading) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      window.speechSynthesis.cancel();
       setIsReading(false);
       return;
     }
@@ -115,13 +121,17 @@ export default function KidsBibleStudy() {
       });
 
       if (data.audio_url) {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
         audioRef.current.src = data.audio_url;
         audioRef.current.onended = () => setIsReading(false);
-        audioRef.current.play();
+        await audioRef.current.play();
         setIsReading(true);
         setAudioUrl(data.audio_url);
       } else {
-        // Fallback to browser speech if no audio URL
+        window.speechSynthesis.cancel();
         const text = data.text || story.summary;
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.85;
@@ -197,12 +207,13 @@ export default function KidsBibleStudy() {
           animate={{ opacity: 1 }}
           className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
           onClick={() => {
-            setSelectedStory(null);
             if (audioRef.current) {
               audioRef.current.pause();
               audioRef.current.currentTime = 0;
             }
+            window.speechSynthesis.cancel();
             setIsReading(false);
+            setSelectedStory(null);
           }}
         >
           <motion.div
@@ -275,12 +286,13 @@ export default function KidsBibleStudy() {
               </Button>
               <Button
                 onClick={() => {
-                  setSelectedStory(null);
                   if (audioRef.current) {
                     audioRef.current.pause();
                     audioRef.current.currentTime = 0;
                   }
+                  window.speechSynthesis.cancel();
                   setIsReading(false);
+                  setSelectedStory(null);
                 }}
                 variant="outline"
                 className="border-2 border-slate-300"
