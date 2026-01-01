@@ -178,7 +178,14 @@ export default function KidsBibleStudy() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          onClick={() => setSelectedStory(null)}
+          onClick={() => {
+            setSelectedStory(null);
+            if (audioRef) {
+              audioRef.pause();
+              audioRef.currentTime = 0;
+            }
+            setIsReading(false);
+          }}
         >
           <motion.div
             initial={{ scale: 0.9 }}
@@ -249,7 +256,14 @@ export default function KidsBibleStudy() {
                 I Read It! (+10 Points)
               </Button>
               <Button
-                onClick={() => setSelectedStory(null)}
+                onClick={() => {
+                  setSelectedStory(null);
+                  if (audioRef) {
+                    audioRef.pause();
+                    audioRef.currentTime = 0;
+                  }
+                  setIsReading(false);
+                }}
                 variant="outline"
                 className="border-2 border-slate-300"
               >
