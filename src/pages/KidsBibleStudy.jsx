@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper } from 'lucide-react';
+import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const kidStories = [
@@ -65,10 +65,33 @@ const funActivities = [
 export default function KidsBibleStudy() {
   const [selectedStory, setSelectedStory] = useState(null);
   const [points, setPoints] = useState(0);
+  const [isReading, setIsReading] = useState(false);
 
   const handleStoryComplete = () => {
     setPoints(points + 10);
     setSelectedStory(null);
+  };
+
+  const handleListen = (story) => {
+    if (isReading) {
+      window.speechSynthesis.cancel();
+      setIsReading(false);
+      return;
+    }
+
+    const text = `${story.title}. ${story.summary} The Bible says: ${story.lesson}`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Kid-friendly voice settings
+    utterance.rate = 0.85; // Slower pace for kids
+    utterance.pitch = 1.2; // Higher pitch for friendliness
+    utterance.volume = 1;
+
+    utterance.onend = () => setIsReading(false);
+    utterance.onerror = () => setIsReading(false);
+
+    setIsReading(true);
+    window.speechSynthesis.speak(utterance);
   };
 
   return (
@@ -170,6 +193,22 @@ export default function KidsBibleStudy() {
             </Card>
 
             <div className="flex gap-3">
+              <Button
+                onClick={() => handleListen(selectedStory)}
+                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-bold text-lg py-6"
+              >
+                {isReading ? (
+                  <>
+                    <VolumeX className="h-5 w-5 mr-2" />
+                    Stop Listening
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="h-5 w-5 mr-2" />
+                    Listen to Story! 🎧
+                  </>
+                )}
+              </Button>
               <Button
                 onClick={handleStoryComplete}
                 className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg py-6"
