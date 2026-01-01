@@ -47,8 +47,8 @@ Make it engaging and fun, but keep the important message!`;
             });
         }
 
-        // Use Rachel - clear, friendly female voice
-        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel
+        // Use voice from user's selection
+        const voiceId = "tapn1QwocNXk3viVSowa";
         
         const audioResponse = await fetch(
             `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
