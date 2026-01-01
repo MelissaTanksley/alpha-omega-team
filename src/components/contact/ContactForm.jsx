@@ -38,7 +38,7 @@ export default function ContactForm({ language = 'en' }) {
 
     try {
       await base44.integrations.Core.SendEmail({
-        to: 'contact@alphaomega.com',
+        to: 'alphaomegateam.llc@gmail.com',
         subject: language === 'es' 
           ? `Nuevo mensaje de contacto de ${formData.name}`
           : `New Contact Form Message from ${formData.name}`,
