@@ -263,8 +263,7 @@ export default function Home() {
       )}
 
       {/* Settings Panel - Only for logged in users */}
-      {user && progress?.id && (
-      {showSettings && (
+      {user && progress?.id && showSettings && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -282,7 +281,6 @@ export default function Home() {
             </CardContent>
           </Card>
         </motion.div>
-      )}
       )}
 
       {/* Daily Verse - Personalized for logged in users */}
