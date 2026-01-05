@@ -92,7 +92,6 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navigation = [
-    { name: 'Home', icon: BookOpen, page: 'Home' },
     { 
       name: 'AI Assistant', 
       icon: BookOpen, 
@@ -159,6 +158,21 @@ export default function Layout({ children, currentPageName }) {
               {/* Scrollable Navigation */}
               <nav className="flex-1 overflow-x-auto scrollbar-hide">
                 <div className="flex items-center gap-1 min-w-max">
+                  <Link to={createPageUrl('Home')}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`${
+                        currentPageName === 'Home'
+                          ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                          : isDarkMode 
+                            ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-900/20'
+                            : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                      }`}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   {navigation.map((item) => {
                     if (item.dropdown) {
                       const isActive = item.dropdown.some(d => d.page === currentPageName);
