@@ -48,7 +48,7 @@ Make it engaging and fun, but keep the important message!`;
         }
 
         // Use voice from user's selection
-        const voiceId = "XJ2fW4ybq7HouelYYGcL";
+        const voiceId = "tapn1QwocNXk3viVSowa";
         
         const audioResponse = await fetch(
             `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
