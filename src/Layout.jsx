@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown, Search } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown, Search, Home } from 'lucide-react';
 import NotificationBell from './components/notifications/NotificationBell';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -170,7 +170,7 @@ export default function Layout({ children, currentPageName }) {
                             : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
                       }`}
                     >
-                      <BookOpen className="h-4 w-4" />
+                      <Home className="h-4 w-4" />
                     </Button>
                   </Link>
                   {navigation.map((item) => {
