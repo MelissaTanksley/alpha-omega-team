@@ -7,6 +7,7 @@ import ContactUs from './pages/ContactUs';
 import Forum from './pages/Forum';
 import Home from './pages/Home';
 import HomeSpanish from './pages/HomeSpanish';
+import KidsBibleStudy from './pages/KidsBibleStudy';
 import Messages from './pages/Messages';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
@@ -17,7 +18,6 @@ import SignIn from './pages/SignIn';
 import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
 import UserProfile from './pages/UserProfile';
-import KidsBibleStudy from './pages/KidsBibleStudy';
 import __Layout from './Layout.jsx';
 
 
@@ -31,6 +31,7 @@ export const PAGES = {
     "Forum": Forum,
     "Home": Home,
     "HomeSpanish": HomeSpanish,
+    "KidsBibleStudy": KidsBibleStudy,
     "Messages": Messages,
     "Notes": Notes,
     "Payments": Payments,
@@ -41,7 +42,6 @@ export const PAGES = {
     "Store": Store,
     "TopicalStudies": TopicalStudies,
     "UserProfile": UserProfile,
-    "KidsBibleStudy": KidsBibleStudy,
 }
 
 export const pagesConfig = {

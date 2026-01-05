@@ -149,7 +149,7 @@ export default function Home() {
     setDeferredPrompt(null);
   };
 
-  if (isLoading || !progress) {
+  if (user && (isLoading || !progress)) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -186,7 +186,8 @@ export default function Home() {
         )}
         </motion.div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Only for logged in users */}
+      {user && progress?.id && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -259,8 +260,10 @@ export default function Home() {
           </Card>
         </motion.div>
       </div>
+      )}
 
-      {/* Settings Panel */}
+      {/* Settings Panel - Only for logged in users */}
+      {user && progress?.id && (
       {showSettings && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -280,9 +283,45 @@ export default function Home() {
           </Card>
         </motion.div>
       )}
+      )}
 
-      {/* Daily Verse */}
-      <DailyVerse key={resetKey} progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
+      {/* Daily Verse - Personalized for logged in users */}
+      {user && progress?.id && (
+        <DailyVerse key={resetKey} progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} />
+      )}
+
+      {/* Guest View - Static verse for non-logged in users */}
+      {!user && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <DailyVerse 
+            progress={{
+              current_book: 'John',
+              current_chapter: 3,
+              current_verse: 16,
+              preferred_translation: 'KJV'
+            }} 
+            onVerseAdvance={() => base44.auth.redirectToLogin(window.location.pathname)}
+            onVerseBack={() => base44.auth.redirectToLogin(window.location.pathname)}
+          />
+          <Card className="bg-blue-500/20 border-blue-500/50 mt-4">
+            <CardContent className="p-6 text-center">
+              <p className="text-blue-200 mb-4">
+                Sign in to track your progress, save notes, and start your personalized Bible reading journey!
+              </p>
+              <Button 
+                onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                Sign In to Continue
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Quick Info */}
       <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
