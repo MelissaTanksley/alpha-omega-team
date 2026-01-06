@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DailyVerse from '../components/bible/DailyVerse';
 import TranslationSelector from '../components/bible/TranslationSelector';
+import LoginModal from '../components/auth/LoginModal';
 import { BookOpen, TrendingUp, CheckCircle2, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
@@ -16,6 +17,8 @@ export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginAction, setLoginAction] = useState('');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -97,8 +100,8 @@ export default function Home() {
 
   const handleVerseAdvance = async () => {
     if (!user) {
-      // Prompt anonymous users to sign in
-      base44.auth.redirectToLogin(window.location.pathname);
+      setLoginAction('advance to the next verse');
+      setShowLoginModal(true);
       return;
     }
     const nextVerse = progress.current_verse + 1;
@@ -114,8 +117,8 @@ export default function Home() {
 
   const handleVerseBack = async () => {
     if (!user) {
-      // Prompt anonymous users to sign in
-      base44.auth.redirectToLogin(window.location.pathname);
+      setLoginAction('go back to previous verses');
+      setShowLoginModal(true);
       return;
     }
     if (progress.current_verse > 1) {
@@ -127,8 +130,8 @@ export default function Home() {
 
   const handleTranslationChange = async (translation) => {
     if (!user) {
-      // Prompt anonymous users to sign in
-      base44.auth.redirectToLogin(window.location.pathname);
+      setLoginAction('change your Bible translation');
+      setShowLoginModal(true);
       return;
     }
     await updateProgressMutation.mutateAsync({
@@ -311,7 +314,10 @@ export default function Home() {
                 Sign in to track your progress, save notes, and start your personalized Bible reading journey!
               </p>
               <Button 
-                onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                onClick={() => {
+                  setLoginAction('track your progress and save notes');
+                  setShowLoginModal(true);
+                }}
                 className="bg-amber-600 hover:bg-amber-700"
               >
                 Sign In to Continue
@@ -339,6 +345,12 @@ export default function Home() {
             </div>
             </CardContent>
             </Card>
+
+            <LoginModal 
+              isOpen={showLoginModal} 
+              onClose={() => setShowLoginModal(false)}
+              action={loginAction}
+            />
             </div>
             );
             }
