@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AIChat from '../components/ai/AIChat';
+import LoginModal from '../components/auth/LoginModal';
 import { Plus, MessageSquare, Trash2, Edit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -14,6 +15,7 @@ export default function AIChatPage() {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showNewChat, setShowNewChat] = useState(false);
   const [newChatTitle, setNewChatTitle] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -63,6 +65,10 @@ export default function AIChatPage() {
   });
 
   const handleCreateConversation = () => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
     if (!newChatTitle.trim()) {
       setNewChatTitle('New Conversation');
     }
@@ -107,6 +113,12 @@ export default function AIChatPage() {
 
   return (
     <div className="h-[calc(100vh-8rem)]">
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        action="save your conversations and chat with AI"
+      />
+      
       {/* Sidebar - Hidden when conversation is selected */}
       {!selectedConversation && (
         <div className="max-w-2xl mx-auto space-y-4">
