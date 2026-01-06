@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import LoginModal from '../auth/LoginModal';
 
 const AI_PROVIDERS = [
   { id: 'chatgpt', name: 'ChatGPT', color: 'bg-green-500' },
@@ -42,6 +43,9 @@ export default function AIChat({ conversation, onUpdate }) {
   const [showProviderSwitch, setShowProviderSwitch] = useState(false);
   const [userContext, setUserContext] = useState(null);
   const [loadingContext, setLoadingContext] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginAction, setLoginAction] = useState('');
+  const [user, setUser] = useState(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -51,8 +55,18 @@ export default function AIChat({ conversation, onUpdate }) {
   }, [messages]);
 
   useEffect(() => {
+    checkUser();
     loadUserContext();
   }, []);
+
+  const checkUser = async () => {
+    try {
+      const userData = await base44.auth.me();
+      setUser(userData);
+    } catch (error) {
+      setUser(null);
+    }
+  };
 
   const loadUserContext = async () => {
     setLoadingContext(true);
@@ -339,6 +353,11 @@ I'm here to chat, but these professionals are specifically trained to help in cr
   };
 
   const handleSaveContent = async (message) => {
+    if (!user) {
+      setLoginAction('save this content');
+      setShowLoginModal(true);
+      return;
+    }
     try {
       const title = prompt('Enter a title for this saved content:');
       if (!title) return;
@@ -359,6 +378,11 @@ I'm here to chat, but these professionals are specifically trained to help in cr
   };
 
   const handleSaveAsStudy = async (message) => {
+    if (!user) {
+      setLoginAction('save this as a Bible study');
+      setShowLoginModal(true);
+      return;
+    }
     try {
       const title = prompt('Enter a title for this Bible study:');
       if (!title) return;
@@ -380,6 +404,11 @@ I'm here to chat, but these professionals are specifically trained to help in cr
   };
 
   const handleSaveEntireConversation = async () => {
+    if (!user) {
+      setLoginAction('save this conversation');
+      setShowLoginModal(true);
+      return;
+    }
     try {
       const title = prompt('Enter a title for this saved conversation:');
       if (!title) return;
@@ -405,6 +434,12 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
   return (
     <div className="flex flex-col h-full bg-white">
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        action={loginAction}
+      />
+      
       {/* Header */}
       <div className="border-b border-slate-200 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
