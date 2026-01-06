@@ -55,7 +55,7 @@ export default function Home() {
   };
 
   const { data: progress, isLoading } = useQuery({
-    queryKey: ['userProgress', user?.id],
+    queryKey: ['userProgress', user?.email || 'anonymous'],
     queryFn: async () => {
       if (!user) {
         // Return default progress for anonymous users
@@ -82,7 +82,8 @@ export default function Home() {
       }
       return results[0];
     },
-    enabled: true
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    retry: 1
   });
 
   const updateProgressMutation = useMutation({
@@ -152,7 +153,7 @@ export default function Home() {
     setDeferredPrompt(null);
   };
 
-  if (user && (isLoading || !progress)) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -161,6 +162,10 @@ export default function Home() {
         </div>
       </div>
     );
+  }
+
+  if (!progress) {
+    return null;
   }
 
   return (
