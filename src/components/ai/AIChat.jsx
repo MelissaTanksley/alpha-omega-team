@@ -143,24 +143,33 @@ export default function AIChat({ conversation, onUpdate }) {
         .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
         .join('\n');
 
-      // First, check for mental health concerns and offensive content
-      const safetyCheck = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this message for:
-1. Signs of depression, suicidal ideation, or self-harm
-2. Offensive, hateful, or inappropriate content
+      // First, check if user wants to build an app/website
+      const intentCheck = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this user message and determine the intent:
 
-User message: "${input}"
+      User message: "${input}"
 
-Respond with your analysis.`,
+      Is the user asking to:
+      1. Build/create an app, website, or web page?
+      2. Generate HTML, CSS, or JavaScript code?
+      3. Design a user interface or landing page?
+
+      Also check for:
+      4. Signs of depression, suicidal ideation, or self-harm
+      5. Offensive, hateful, or inappropriate content`,
         response_json_schema: {
           type: "object",
           properties: {
+            is_app_building_request: { type: "boolean" },
+            app_type: { type: "string", enum: ["website", "landing_page", "web_app", "none"] },
             has_mental_health_concern: { type: "boolean" },
             has_offensive_content: { type: "boolean" },
             concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] }
           }
         }
       });
+
+      const safetyCheck = intentCheck;
 
       // Handle mental health concerns
       if (safetyCheck.has_mental_health_concern && safetyCheck.concern_level === "severe") {
@@ -220,9 +229,63 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         }
         setLoading(false);
         return;
-      }
+        }
 
-      // Build user context for personalization
+        // Handle app/website building requests
+        if (intentCheck.is_app_building_request) {
+        const appBuildingPrompt = `You are an expert web developer. Create a complete, production-ready ${intentCheck.app_type || 'website'} based on this request:
+
+        "${input}"
+
+        IMPORTANT INSTRUCTIONS:
+        - Generate COMPLETE, WORKING code (HTML, CSS, and JavaScript combined in a single HTML file)
+        - Include modern, beautiful styling with CSS
+        - Make it fully responsive (mobile, tablet, desktop)
+        - Add smooth animations and transitions
+        - Include all necessary functionality
+        - Use modern best practices
+        - Add comments explaining key sections
+        - Make it visually stunning and professional
+
+        Return ONLY the complete HTML code, starting with <!DOCTYPE html>.
+        Do NOT include any explanations, markdown formatting, or code blocks - JUST the raw HTML code.`;
+
+        const codeResponse = await base44.integrations.Core.InvokeLLM({
+          prompt: appBuildingPrompt,
+          add_context_from_internet: true
+        });
+
+        // Extract code if wrapped in markdown
+        let generatedCode = codeResponse.response || codeResponse;
+        if (generatedCode.includes('```')) {
+          const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
+          if (codeMatch) {
+            generatedCode = codeMatch[1].trim();
+          }
+        }
+
+        const assistantMessage = {
+          role: 'assistant',
+          content: `# Your App is Ready! 🎉\n\nI've created your ${intentCheck.app_type || 'website'}. Here's what I built:\n\n## Preview\n\nClick the button below to preview your app in a new window:\n\n<div style="margin: 20px 0;">\n  <button onclick="(function() {\n    const win = window.open('', '_blank', 'width=1200,height=800');\n    win.document.write(${JSON.stringify(generatedCode)});\n    win.document.close();\n  })()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🚀 Preview Your App</button>\n</div>\n\n## Download\n\n<button onclick="(function() {\n  const code = ${JSON.stringify(generatedCode)};\n  const blob = new Blob([code], { type: 'text/html' });\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'my-app.html';\n  a.click();\n  URL.revokeObjectURL(url);\n})()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-left: 10px;">💾 Download HTML File</button>\n\n## Code\n\nHere's your complete code:\n\n\`\`\`html\n${generatedCode}\n\`\`\`\n\n---\n\nWant to make changes? Just tell me what to modify!`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString(),
+          generated_code: generatedCode
+        };
+
+        const updatedMessages = [...newMessages, assistantMessage];
+        setMessages(updatedMessages);
+
+        if (onUpdate) {
+          onUpdate({
+            messages: updatedMessages,
+            current_provider: currentProvider
+          });
+        }
+        setLoading(false);
+        return;
+        }
+
+        // Build user context for personalization
       let contextInfo = '';
       if (userContext) {
         const aiSettings = userContext.aiSettings || {};
@@ -276,6 +339,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
       - Be gentle, encouraging, and factually accurate
       - Always speak with grace and wisdom
       - Use the user context to provide PERSONALIZED insights
+      - If asked about building apps/websites, let them know you can create complete web applications for them
       ${contextInfo}
 
       Previous conversation context:
