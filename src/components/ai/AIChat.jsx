@@ -231,6 +231,38 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         return;
         }
 
+        // Check for GitHub push request
+        if (input.toLowerCase().includes('push to github') || input.toLowerCase().includes('deploy to github')) {
+          // Find the last generated code from messages
+          const lastCodeMessage = [...messages].reverse().find(m => m.generated_code);
+
+          if (!lastCodeMessage) {
+            const assistantMessage = {
+              role: 'assistant',
+              content: `I don't see any app code in our conversation. Please first ask me to build an app, then I can help you push it to GitHub!`,
+              provider: currentProvider,
+              timestamp: new Date().toISOString()
+            };
+            setMessages([...newMessages, assistantMessage]);
+            if (onUpdate) onUpdate({ messages: [...newMessages, assistantMessage], current_provider: currentProvider });
+            setLoading(false);
+            return;
+          }
+
+          const githubInstructions = {
+            role: 'assistant',
+            content: `# 🚀 Deploy to GitHub\n\nTo deploy your app to GitHub Pages, follow these steps:\n\n## Option 1: Manual Upload\n\n1. **Download your app** using the download button above\n2. Go to [GitHub](https://github.com) and create a new repository\n3. Name it something like \`my-awesome-app\`\n4. Upload your HTML file and rename it to \`index.html\`\n5. Go to repository Settings → Pages\n6. Select "Deploy from a branch" and choose \`main\` branch\n7. Your site will be live at: \`https://yourusername.github.io/my-awesome-app\`\n\n## Option 2: Using Git (Command Line)\n\n\`\`\`bash\n# 1. Create a new repository on GitHub first, then:\ngit clone https://github.com/yourusername/your-repo-name.git\ncd your-repo-name\n\n# 2. Copy your downloaded HTML file to this folder and rename to index.html\n\n# 3. Commit and push\ngit add index.html\ngit commit -m "Initial commit: My awesome app"\ngit push origin main\n\n# 4. Enable GitHub Pages in repository settings\n\`\`\`\n\n## Option 3: Quick Deploy with GitHub Gist\n\n1. Copy your code using the "Copy Code" button\n2. Go to [gist.github.com](https://gist.github.com)\n3. Create a new gist with filename \`index.html\`\n4. Paste your code and save\n5. Use [GitHack](https://raw.githack.com/) to get a live URL\n\n---\n\n✨ **Pro Tip:** For a custom domain, add a \`CNAME\` file to your repository with your domain name!\n\nNeed help with any of these steps? Just ask!`,
+            provider: currentProvider,
+            timestamp: new Date().toISOString()
+          };
+
+          const updatedMessages = [...newMessages, githubInstructions];
+          setMessages(updatedMessages);
+          if (onUpdate) onUpdate({ messages: updatedMessages, current_provider: currentProvider });
+          setLoading(false);
+          return;
+        }
+
         // Handle app/website building requests
         if (intentCheck.is_app_building_request) {
         const appBuildingPrompt = `You are an expert web developer. Create a complete, production-ready ${intentCheck.app_type || 'website'} based on this request:
@@ -266,7 +298,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
         const assistantMessage = {
           role: 'assistant',
-          content: `# Your App is Ready! 🎉\n\nI've created your ${intentCheck.app_type || 'website'}. Here's what I built:\n\n## Preview\n\nClick the button below to preview your app in a new window:\n\n<div style="margin: 20px 0;">\n  <button onclick="(function() {\n    const win = window.open('', '_blank', 'width=1200,height=800');\n    win.document.write(${JSON.stringify(generatedCode)});\n    win.document.close();\n  })()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🚀 Preview Your App</button>\n</div>\n\n## Download\n\n<button onclick="(function() {\n  const code = ${JSON.stringify(generatedCode)};\n  const blob = new Blob([code], { type: 'text/html' });\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'my-app.html';\n  a.click();\n  URL.revokeObjectURL(url);\n})()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-left: 10px;">💾 Download HTML File</button>\n\n## Code\n\nHere's your complete code:\n\n\`\`\`html\n${generatedCode}\n\`\`\`\n\n---\n\nWant to make changes? Just tell me what to modify!`,
+          content: `# Your App is Ready! 🎉\n\nI've created your ${intentCheck.app_type || 'website'}. Here's what I built:\n\n## Live Preview\n\n<div id="app-preview-container" style="margin: 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">\n  <iframe id="app-preview-frame" srcdoc="${generatedCode.replace(/"/g, '&quot;').replace(/\n/g, ' ')}" style="width: 100%; height: 600px; border: none;"></iframe>\n</div>\n\n## Actions\n\n<div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">\n  <button onclick="(function() {\n    const win = window.open('', '_blank', 'width=1200,height=800');\n    win.document.write(${JSON.stringify(generatedCode)});\n    win.document.close();\n  })()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🚀 Open in New Tab</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    navigator.clipboard.writeText(code).then(() => alert('Code copied to clipboard!'));\n  })()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📋 Copy Code</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    const blob = new Blob([code], { type: 'text/html' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = 'my-app.html';\n    a.click();\n    URL.revokeObjectURL(url);\n  })()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">💾 Download HTML</button>\n</div>\n\n## Code\n\n<details style="margin: 20px 0;">\n  <summary style="cursor: pointer; padding: 12px; background: #f7fafc; border-radius: 8px; font-weight: 600;">View Full Code</summary>\n  <div style="margin-top: 10px;">\n\n\`\`\`html\n${generatedCode}\n\`\`\`\n\n  </div>\n</details>\n\n---\n\n💡 **Want to push to GitHub?** Type "push to github" and I'll help you deploy this to a GitHub repository!\n\nWant to make changes? Just tell me what to modify!`,
           provider: currentProvider,
           timestamp: new Date().toISOString(),
           generated_code: generatedCode
