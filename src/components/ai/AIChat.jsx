@@ -150,9 +150,9 @@ export default function AIChat({ conversation, onUpdate }) {
       User message: "${input}"
 
       Is the user asking to:
-      1. Build/create an app, website, or web page?
+      1. Build/create an app, website, web page, or game?
       2. Generate HTML, CSS, or JavaScript code?
-      3. Design a user interface or landing page?
+      3. Design a user interface, landing page, or interactive game?
 
       Also check for:
       4. Signs of depression, suicidal ideation, or self-harm
@@ -161,7 +161,7 @@ export default function AIChat({ conversation, onUpdate }) {
           type: "object",
           properties: {
             is_app_building_request: { type: "boolean" },
-            app_type: { type: "string", enum: ["website", "landing_page", "web_app", "none"] },
+            app_type: { type: "string", enum: ["website", "landing_page", "web_app", "game", "none"] },
             has_mental_health_concern: { type: "boolean" },
             has_offensive_content: { type: "boolean" },
             concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] }
@@ -265,19 +265,21 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
         // Handle app/website building requests
         if (intentCheck.is_app_building_request) {
-        const appBuildingPrompt = `You are an expert web developer. Create a complete, production-ready ${intentCheck.app_type || 'website'} based on this request:
+        const appBuildingPrompt = `You are an expert web developer and game designer. Create a complete, production-ready ${intentCheck.app_type || 'website'} based on this request:
 
         "${input}"
 
         IMPORTANT INSTRUCTIONS:
         - Generate COMPLETE, WORKING code (HTML, CSS, and JavaScript combined in a single HTML file)
-        - Include modern, beautiful styling with CSS
+        - Include modern, beautiful styling with CSS (use gradients, shadows, animations)
         - Make it fully responsive (mobile, tablet, desktop)
         - Add smooth animations and transitions
-        - Include all necessary functionality
+        - Include all necessary functionality (if it's a game, make it playable with proper game logic)
+        - For games: Include controls, score tracking, proper game mechanics, and win/lose conditions
         - Use modern best practices
         - Add comments explaining key sections
         - Make it visually stunning and professional
+        - Use vibrant colors and modern design patterns
 
         Return ONLY the complete HTML code, starting with <!DOCTYPE html>.
         Do NOT include any explanations, markdown formatting, or code blocks - JUST the raw HTML code.`;
@@ -302,7 +304,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
         const assistantMessage = {
           role: 'assistant',
-          content: `# Your App is Ready! 🎉\n\nI've created your ${intentCheck.app_type || 'website'}. Here's what I built:\n\n## Live Preview\n\n<div id="app-preview-container" style="margin: 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">\n  <iframe id="app-preview-frame" srcdoc="${generatedCode.replace(/"/g, '&quot;').replace(/\n/g, ' ')}" style="width: 100%; height: 600px; border: none;"></iframe>\n</div>\n\n## Actions\n\n<div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">\n  <button onclick="(function() {\n    const win = window.open('', '_blank', 'width=1200,height=800');\n    win.document.write(${JSON.stringify(generatedCode)});\n    win.document.close();\n  })()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🚀 Open in New Tab</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    navigator.clipboard.writeText(code).then(() => alert('Code copied to clipboard!'));\n  })()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📋 Copy Code</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    const blob = new Blob([code], { type: 'text/html' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = 'my-app.html';\n    a.click();\n    URL.revokeObjectURL(url);\n  })()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">💾 Download HTML</button>\n</div>\n\n## Code\n\n<details style="margin: 20px 0;">\n  <summary style="cursor: pointer; padding: 12px; background: #f7fafc; border-radius: 8px; font-weight: 600;">View Full Code</summary>\n  <div style="margin-top: 10px;">\n\n\`\`\`html\n${generatedCode}\n\`\`\`\n\n  </div>\n</details>\n\n---\n\n💡 **Want to push to GitHub?** Type "push to github" and I'll help you deploy this to a GitHub repository!\n\nWant to make changes? Just tell me what to modify!`,
+          content: `# ${intentCheck.app_type === 'game' ? '🎮 Your Game is Ready!' : '🚀 Your App is Ready!'}\n\nI've created your ${intentCheck.app_type || 'website'}. ${intentCheck.app_type === 'game' ? 'Start playing below!' : 'Here\'s what I built:'}\n\n## 🖼️ Live Preview\n\n<div id="app-preview-container" style="margin: 20px 0; border: 3px solid #667eea; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4px;">\n  <div style="background: white; border-radius: 12px; overflow: hidden;">\n    <div style="background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%); padding: 8px 16px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center;">\n      <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f57;"></div>\n      <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>\n      <div style="width: 12px; height: 12px; border-radius: 50%; background: #28ca42;"></div>\n      <span style="margin-left: auto; font-size: 12px; color: #64748b; font-family: monospace;">preview</span>\n    </div>\n    <iframe id="app-preview-frame" srcdoc="${generatedCode.replace(/"/g, '&quot;').replace(/\n/g, ' ')}" style="width: 100%; height: 600px; border: none; display: block;"></iframe>\n  </div>\n</div>\n\n## ⚡ Actions\n\n<div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">\n  <button onclick="(function() {\n    const win = window.open('', '_blank', 'width=1200,height=800');\n    win.document.write(${JSON.stringify(generatedCode)});\n    win.document.close();\n  })()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;">🚀 Open Full Screen</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    navigator.clipboard.writeText(code).then(() => alert('✅ Code copied to clipboard!'));\n  })()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;">📋 Copy Code</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    const blob = new Blob([code], { type: 'text/html' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = '${intentCheck.app_type === 'game' ? 'my-game' : 'my-app'}.html';\n    a.click();\n    URL.revokeObjectURL(url);\n  })()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;">💾 Download HTML</button>\n</div>\n\n## 💻 View Code\n\n<details style="margin: 24px 0; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden;">\n  <summary style="cursor: pointer; padding: 16px 20px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); font-weight: 600; color: #2d3748; user-select: none; transition: all 0.2s;">👨‍💻 Click to view full code</summary>\n  <div style="padding: 20px; background: #1e293b; max-height: 500px; overflow: auto;">\n\n\`\`\`html\n${generatedCode}\n\`\`\`\n\n  </div>\n</details>\n\n---\n\n💡 **Next Steps:**\n- Type "**push to github**" to deploy this to a live GitHub Pages URL\n- Tell me what to change or improve\n- Ask me to build something else!\n\n${intentCheck.app_type === 'game' ? '🎮 **Enjoy your game!**' : '✨ **Your app is ready to use!**'}`,
           provider: currentProvider,
           timestamp: new Date().toISOString(),
           generated_code: generatedCode
