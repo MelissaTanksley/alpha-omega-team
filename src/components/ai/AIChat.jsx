@@ -312,8 +312,14 @@ I'm here to chat, but these professionals are specifically trained to help in cr
             add_context_from_internet: true
           });
 
-          let generatedCode = codeResponse.response || codeResponse || '';
-          if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
+          let generatedCode = '';
+          if (typeof codeResponse === 'string') {
+            generatedCode = codeResponse;
+          } else if (codeResponse && typeof codeResponse.response === 'string') {
+            generatedCode = codeResponse.response;
+          }
+
+          if (generatedCode && generatedCode.includes('```')) {
             const codeMatch = generatedCode.match(/```(?:\w+)?\n([\s\S]*?)```/);
             if (codeMatch) {
               generatedCode = codeMatch[1].trim();
@@ -369,8 +375,14 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         });
 
         // Extract code if wrapped in markdown
-        let generatedCode = codeResponse.response || codeResponse || '';
-        if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
+        let generatedCode = '';
+        if (typeof codeResponse === 'string') {
+          generatedCode = codeResponse;
+        } else if (codeResponse && typeof codeResponse.response === 'string') {
+          generatedCode = codeResponse.response;
+        }
+
+        if (generatedCode && generatedCode.includes('```')) {
           const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
           if (codeMatch) {
             generatedCode = codeMatch[1].trim();
