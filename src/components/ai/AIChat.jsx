@@ -288,12 +288,16 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         });
 
         // Extract code if wrapped in markdown
-        let generatedCode = codeResponse.response || codeResponse;
-        if (generatedCode.includes('```')) {
+        let generatedCode = codeResponse.response || codeResponse || '';
+        if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
           const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
           if (codeMatch) {
             generatedCode = codeMatch[1].trim();
           }
+        }
+
+        if (!generatedCode) {
+          throw new Error('Failed to generate code. Please try again.');
         }
 
         const assistantMessage = {
