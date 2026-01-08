@@ -17,6 +17,8 @@ export default function Home() {
   const [resetKey, setResetKey] = useState(0);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginAction, setLoginAction] = useState('');
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -27,6 +29,19 @@ export default function Home() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
     }
+
+    // Handle PWA install prompt
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
   const initializeUser = async () => {
@@ -130,6 +145,19 @@ export default function Home() {
     });
   };
 
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setShowInstallButton(false);
+    }
+    
+    setDeferredPrompt(null);
+  };
+
 
 
   if (isLoading) {
@@ -163,6 +191,14 @@ export default function Home() {
         <p className="text-blue-400 text-lg">
           Daily Scripture • Christian AI Tool and Community
         </p>
+        {showInstallButton && (
+          <Button
+            onClick={handleInstallClick}
+            className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+          >
+            📱 Install App on Your Phone
+          </Button>
+        )}
         </motion.div>
 
       {/* Stats Cards - Only for logged in users */}
