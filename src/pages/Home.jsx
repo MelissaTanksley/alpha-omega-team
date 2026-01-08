@@ -146,15 +146,18 @@ export default function Home() {
   };
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
+    if (!deferredPrompt) {
+      alert('To install this app:\n\n1. On iPhone: Tap Share button → Add to Home Screen\n2. On Android: Tap menu (⋮) → Install app or Add to Home Screen');
+      return;
+    }
+
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       setShowInstallButton(false);
     }
-    
+
     setDeferredPrompt(null);
   };
 
@@ -191,14 +194,12 @@ export default function Home() {
         <p className="text-blue-400 text-lg">
           Daily Scripture • Christian AI Tool and Community
         </p>
-        {showInstallButton && (
-          <Button
-            onClick={handleInstallClick}
-            className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-          >
-            📱 Install App on Your Phone
-          </Button>
-        )}
+        <Button
+          onClick={handleInstallClick}
+          className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+        >
+          📱 Install App on Your Phone
+        </Button>
         </motion.div>
 
       {/* Stats Cards - Only for logged in users */}
