@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, GraduationCap, Church, LogOut, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown, Search, Home } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Church, LogOut, LogIn, User, Menu, X, BookMarked, Save, Moon, Sun, ChevronDown, Search, Home } from 'lucide-react';
 import NotificationBell from './components/notifications/NotificationBell';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -288,14 +288,25 @@ export default function Layout({ children, currentPageName }) {
                 >
                   {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleLogout}
-                  className="text-slate-600 hover:text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="h-5 w-5" />
-                </Button>
+                {user ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleLogout}
+                    className="text-slate-600 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="h-5 w-5" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                    className="text-slate-600 hover:text-green-600 hover:bg-green-50"
+                  >
+                    <LogIn className="h-5 w-5" />
+                  </Button>
+                )}
               </div>
             </div>
           </div>
