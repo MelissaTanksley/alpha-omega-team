@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-// import LoginModal from '../auth/LoginModal';
+import LoginModal from '../auth/LoginModal';
 
 const AI_PROVIDERS = [
   { id: 'chatgpt', name: 'ChatGPT (GPT-5.2)', color: 'bg-green-500' },
@@ -67,8 +67,8 @@ export default function AIChat({ conversation, onUpdate }) {
   const [showProviderSwitch, setShowProviderSwitch] = useState(false);
   const [userContext, setUserContext] = useState(null);
   const [loadingContext, setLoadingContext] = useState(false);
-  // const [showLoginModal, setShowLoginModal] = useState(false);
-  // const [loginAction, setLoginAction] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginAction, setLoginAction] = useState('');
   const [user, setUser] = useState(null);
   const scrollRef = useRef(null);
 
@@ -571,8 +571,8 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
   const handleSaveContent = async (message) => {
     if (!user) {
-      // setLoginAction('save this content');
-      // setShowLoginModal(true);
+      setLoginAction('save this content');
+      setShowLoginModal(true);
       return;
     }
     try {
@@ -596,8 +596,8 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
   const handleSaveAsStudy = async (message) => {
     if (!user) {
-      // setLoginAction('save this as a Bible study');
-      // setShowLoginModal(true);
+      setLoginAction('save this as a Bible study');
+      setShowLoginModal(true);
       return;
     }
     try {
@@ -622,8 +622,8 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
   const handleSaveEntireConversation = async () => {
     if (!user) {
-      // setLoginAction('save this conversation');
-      // setShowLoginModal(true);
+      setLoginAction('save this conversation');
+      setShowLoginModal(true);
       return;
     }
     try {
@@ -651,11 +651,11 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* <LoginModal 
+      <LoginModal 
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}
         action={loginAction}
-      /> */}
+      />
       
       {/* Header */}
       <div className="border-b border-slate-200 px-6 py-4">
