@@ -96,26 +96,29 @@ export default function AIChat({ conversation, onUpdate }) {
     setLoadingContext(true);
     try {
       const user = await base44.auth.me();
-      const [progress, notes, studies, posts, savedContent] = await Promise.all([
-        base44.entities.UserBibleProgress.filter({ created_by: user.email }),
-        base44.entities.Note.filter({ created_by: user.email }, '-updated_date', 10),
-        base44.entities.BibleStudy.filter({ created_by: user.email }, '-updated_date', 5),
-        base44.entities.ForumPost.filter({ author_email: user.email }, '-updated_date', 5),
-        base44.entities.SavedAIContent.filter({ created_by: user.email }, '-updated_date', 10)
-      ]);
-      
-      setUserContext({
-        progress: progress[0],
-        recentNotes: notes,
-        recentStudies: studies,
-        recentPosts: posts,
-        savedContent: savedContent,
-        userEmail: user.email,
-        userName: user.full_name,
-        aiSettings: user.ai_assistant_settings || {}
-      });
+      if (user) {
+        const [progress, notes, studies, posts, savedContent] = await Promise.all([
+          base44.entities.UserBibleProgress.filter({ created_by: user.email }),
+          base44.entities.Note.filter({ created_by: user.email }, '-updated_date', 10),
+          base44.entities.BibleStudy.filter({ created_by: user.email }, '-updated_date', 5),
+          base44.entities.ForumPost.filter({ author_email: user.email }, '-updated_date', 5),
+          base44.entities.SavedAIContent.filter({ created_by: user.email }, '-updated_date', 10)
+        ]);
+        
+        setUserContext({
+          progress: progress[0],
+          recentNotes: notes,
+          recentStudies: studies,
+          recentPosts: posts,
+          savedContent: savedContent,
+          userEmail: user.email,
+          userName: user.full_name,
+          aiSettings: user.ai_assistant_settings || {}
+        });
+      }
     } catch (error) {
-      console.error('Error loading context:', error);
+      // User not logged in - that's fine, they can still use the chat
+      setUserContext(null);
     }
     setLoadingContext(false);
   };
