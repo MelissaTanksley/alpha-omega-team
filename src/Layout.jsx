@@ -93,7 +93,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { 
-      name: 'AI Assistant', 
+      name: 'AI Dev', 
       icon: BookOpen, 
       page: 'AIChat',
       dropdown: [
