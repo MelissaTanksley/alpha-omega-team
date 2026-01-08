@@ -93,14 +93,14 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { 
-      name: 'AI Dev', 
+      name: 'AI Assistant', 
       icon: BookOpen, 
       page: 'AIChat',
       dropdown: [
         { name: 'AI Chat', icon: BookOpen, page: 'AIChat' },
         { name: 'Bible Study', icon: GraduationCap, page: 'BibleAssistant' },
         { name: 'Kids Bible Study', icon: BookOpen, page: 'KidsBibleStudy' },
-        { name: 'Topical Studies', icon: GraduationCap, page: 'TopicalStudies' },
+        { name: 'Topical Studies', icon: GraduationCat, page: 'TopicalStudies' },
         { name: 'Notes', icon: BookMarked, page: 'Notes' },
         { name: 'Saved Content', icon: Save, page: 'SavedContent' }
       ]
