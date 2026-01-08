@@ -161,7 +161,7 @@ export default function AIChat({ conversation, onUpdate }) {
           type: "object",
           properties: {
             is_app_building_request: { type: "boolean" },
-            app_type: { type: "string", enum: ["website", "landing_page", "web_app", "game", "none"] },
+            app_type: { type: "string", enum: ["website", "landing_page", "web_app", "game", "python", "javascript", "logo", "none"] },
             has_mental_health_concern: { type: "boolean" },
             has_offensive_content: { type: "boolean" },
             concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] }
@@ -259,6 +259,85 @@ I'm here to chat, but these professionals are specifically trained to help in cr
           const updatedMessages = [...newMessages, githubInstructions];
           setMessages(updatedMessages);
           if (onUpdate) onUpdate({ messages: updatedMessages, current_provider: currentProvider });
+          setLoading(false);
+          return;
+        }
+
+        // Handle logo creation requests
+        if (intentCheck.app_type === 'logo') {
+          const logoResponse = await base44.integrations.Core.GenerateImage({
+            prompt: `Create a professional logo design: ${input}. Modern, clean, vector-style, professional branding, high quality, transparent or white background.`
+          });
+
+          const assistantMessage = {
+            role: 'assistant',
+            content: `# 🎨 Your Logo is Ready!\n\nI've created a professional logo based on your request.\n\n## 🖼️ Logo Preview\n\n<div style="margin: 24px 0; padding: 40px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; text-align: center;">\n  <img src="${logoResponse.url}" alt="Generated Logo" style="max-width: 400px; max-height: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);" />\n</div>\n\n## ⚡ Actions\n\n<div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">\n  <button onclick="window.open('${logoResponse.url}', '_blank')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">🚀 View Full Size</button>\n  \n  <a href="${logoResponse.url}" download="logo.png" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4); text-decoration: none; display: inline-block;">💾 Download Logo</a>\n</div>\n\n---\n\n💡 Want changes? Just tell me what to adjust!`,
+            provider: currentProvider,
+            timestamp: new Date().toISOString(),
+            generated_image: logoResponse.url
+          };
+
+          const updatedMessages = [...newMessages, assistantMessage];
+          setMessages(updatedMessages);
+
+          if (onUpdate) {
+            onUpdate({
+              messages: updatedMessages,
+              current_provider: currentProvider
+            });
+          }
+          setLoading(false);
+          return;
+        }
+
+        // Handle Python/JavaScript code requests
+        if (intentCheck.app_type === 'python' || intentCheck.app_type === 'javascript') {
+          const language = intentCheck.app_type;
+          const codePrompt = `You are an expert ${language === 'python' ? 'Python' : 'JavaScript'} developer. Write clean, well-documented ${language.toUpperCase()} code for this request:
+
+        "${input}"
+
+        IMPORTANT INSTRUCTIONS:
+        - Write COMPLETE, WORKING ${language.toUpperCase()} code
+        - Include helpful comments explaining key parts
+        - Follow best practices and modern conventions
+        - Make the code production-ready and efficient
+        - Include error handling where appropriate
+
+        Return ONLY the ${language.toUpperCase()} code.
+        Do NOT include explanations, markdown formatting, or code block markers - JUST the raw code.`;
+
+          const codeResponse = await base44.integrations.Core.InvokeLLM({
+            prompt: codePrompt,
+            add_context_from_internet: true
+          });
+
+          let generatedCode = codeResponse.response || codeResponse || '';
+          if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
+            const codeMatch = generatedCode.match(/```(?:\w+)?\n([\s\S]*?)```/);
+            if (codeMatch) {
+              generatedCode = codeMatch[1].trim();
+            }
+          }
+
+          const assistantMessage = {
+            role: 'assistant',
+            content: `# 💻 Your ${language === 'python' ? 'Python' : 'JavaScript'} Code is Ready!\n\n## ⚡ Actions\n\n<div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">\n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    navigator.clipboard.writeText(code).then(() => alert('✅ Code copied to clipboard!'));\n  })()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);">📋 Copy Code</button>\n  \n  <button onclick="(function() {\n    const code = ${JSON.stringify(generatedCode)};\n    const blob = new Blob([code], { type: 'text/plain' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = 'code.${language === 'python' ? 'py' : 'js'}';\n    a.click();\n    URL.revokeObjectURL(url);\n  })()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 14px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);">💾 Download</button>\n</div>\n\n## 💻 Code\n\n<div style="margin: 24px 0; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden;">\n  <div style="padding: 16px 20px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); font-weight: 600; color: #2d3748; border-bottom: 2px solid #e2e8f0;">👨‍💻 ${language === 'python' ? 'Python' : 'JavaScript'} Code</div>\n  <div style="padding: 20px; background: #1e293b; max-height: 600px; overflow: auto;">\n\n\`\`\`${language}\n${generatedCode}\n\`\`\`\n\n  </div>\n</div>\n\n---\n\n💡 Need changes? Just tell me what to modify!`,
+            provider: currentProvider,
+            timestamp: new Date().toISOString(),
+            generated_code: generatedCode,
+            code_language: language
+          };
+
+          const updatedMessages = [...newMessages, assistantMessage];
+          setMessages(updatedMessages);
+
+          if (onUpdate) {
+            onUpdate({
+              messages: updatedMessages,
+              current_provider: currentProvider
+            });
+          }
           setLoading(false);
           return;
         }
