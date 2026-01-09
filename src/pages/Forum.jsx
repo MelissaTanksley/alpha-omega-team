@@ -268,7 +268,7 @@ export default function Forum() {
 
   const handleCreatePost = () => {
     if (!user) {
-      alert('Please sign in to create a post');
+      base44.auth.redirectToLogin(window.location.pathname);
       return;
     }
     if (!newPost.title.trim() || !newPost.content.trim()) return;
