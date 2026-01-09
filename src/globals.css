@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +10,16 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+  
+  @media (min-width: 768px) {
+    .md\:scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .md\:scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
