@@ -16,6 +16,7 @@ export default function AIChatPage() {
   const [showNewChat, setShowNewChat] = useState(false);
   const [newChatTitle, setNewChatTitle] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [guestConversation, setGuestConversation] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -65,14 +66,11 @@ export default function AIChatPage() {
   });
 
   const handleCreateConversation = () => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
     if (!newChatTitle.trim()) {
       setNewChatTitle('New Conversation');
     }
-    createConversationMutation.mutate({
+    
+    const newConv = {
       title: newChatTitle.trim() || 'New Conversation',
       messages: [],
       current_provider: 'chatgpt',
@@ -99,15 +97,33 @@ export default function AIChatPage() {
         'techpresso',
         'deepseek'
       ]
-    });
+    };
+
+    if (user) {
+      createConversationMutation.mutate(newConv);
+    } else {
+      // For guests, just use local state
+      setGuestConversation(newConv);
+      setSelectedConversation(newConv);
+      setShowNewChat(false);
+      setNewChatTitle('');
+    }
   };
 
   const handleUpdateConversation = (updates) => {
     if (selectedConversation) {
-      updateConversationMutation.mutate({
-        id: selectedConversation.id,
-        data: updates
-      });
+      if (user && selectedConversation.id) {
+        // Logged in user - save to database
+        updateConversationMutation.mutate({
+          id: selectedConversation.id,
+          data: updates
+        });
+      } else {
+        // Guest user - update local state
+        const updatedConv = { ...selectedConversation, ...updates };
+        setGuestConversation(updatedConv);
+        setSelectedConversation(updatedConv);
+      }
     }
   };
 
@@ -122,6 +138,15 @@ export default function AIChatPage() {
       {/* Sidebar - Hidden when conversation is selected */}
       {!selectedConversation && (
         <div className="max-w-2xl mx-auto space-y-4">
+          {!user && (
+            <Card className="bg-blue-500/20 border-blue-500/50">
+              <CardContent className="p-4 text-center">
+                <p className="text-blue-200 text-sm">
+                  You're chatting as a guest. Sign in to save your conversations!
+                </p>
+              </CardContent>
+            </Card>
+          )}
           <Card className="bg-slate-900/70 backdrop-blur-sm border-slate-700">
           <CardHeader className="pb-3">
             <CardTitle className="text-slate-200 flex items-center justify-between">
@@ -160,6 +185,11 @@ export default function AIChatPage() {
             )}
 
             <div className="space-y-2 max-h-[calc(100vh-20rem)] overflow-y-auto">
+              {!user && conversations.length === 0 && !showNewChat && (
+                <div className="text-center py-8 text-slate-400 text-sm">
+                  Click + to start your first chat!
+                </div>
+              )}
               {conversations.map((conv) => (
                 <motion.div
                   key={conv.id}
