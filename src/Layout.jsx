@@ -156,7 +156,7 @@ export default function Layout({ children, currentPageName }) {
               </Link>
 
               {/* Scrollable Navigation */}
-              <nav className="flex-1 overflow-x-auto md:scrollbar-hide">
+              <nav className="flex-1 overflow-x-auto scrollbar-hide mobile-scrollbar-visible">
                 <div className="flex items-center gap-1 min-w-max">
                   <Link to={createPageUrl('Home')}>
                     <Button
