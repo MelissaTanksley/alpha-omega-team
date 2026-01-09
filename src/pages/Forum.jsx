@@ -530,7 +530,13 @@ export default function Forum() {
           <h1 className="text-4xl font-bold text-white">Community Forum</h1>
           <p className="text-slate-300 mt-1">Connect, share, and grow together in faith</p>
         </div>
-        <Button onClick={() => setShowNewPost(!showNewPost)} className="bg-amber-600 hover:bg-amber-700">
+        <Button onClick={() => {
+          if (!user) {
+            base44.auth.redirectToLogin(window.location.pathname);
+          } else {
+            setShowNewPost(!showNewPost);
+          }
+        }} className="bg-amber-600 hover:bg-amber-700">
           <Plus className="h-4 w-4 mr-2" />
           New Post
         </Button>
