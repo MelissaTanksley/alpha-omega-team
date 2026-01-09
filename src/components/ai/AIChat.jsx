@@ -322,7 +322,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
             generatedCode = codeResponse.response;
           }
 
-          if (generatedCode && generatedCode.includes('```')) {
+          if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
             const codeMatch = generatedCode.match(/```(?:\w+)?\n([\s\S]*?)```/);
             if (codeMatch) {
               generatedCode = codeMatch[1].trim();
@@ -385,7 +385,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
           generatedCode = codeResponse.response;
         }
 
-        if (generatedCode && generatedCode.includes('```')) {
+        if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
           const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
           if (codeMatch) {
             generatedCode = codeMatch[1].trim();
