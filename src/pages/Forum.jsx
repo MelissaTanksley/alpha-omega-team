@@ -513,6 +513,17 @@ export default function Forum() {
 
   return (
     <div className="space-y-6">
+      {/* Guest Notice */}
+      {!user && (
+        <Card className="bg-blue-500/20 border-blue-500/50">
+          <CardContent className="p-4 text-center">
+            <p className="text-blue-200 text-sm">
+              You're browsing as a guest. Sign in to post and participate in discussions!
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
