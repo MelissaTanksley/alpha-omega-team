@@ -490,9 +490,19 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         }
       });
 
+      // Safely extract response content
+      let responseContent = '';
+      if (typeof response === 'string') {
+        responseContent = response;
+      } else if (response && typeof response.response === 'string') {
+        responseContent = response.response;
+      } else {
+        responseContent = 'I apologize, but I encountered an issue generating a response. Please try again.';
+      }
+
       const assistantMessage = {
         role: 'assistant',
-        content: response.response,
+        content: responseContent,
         provider: currentProvider,
         timestamp: new Date().toISOString()
       };
