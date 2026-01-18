@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
         favicon.rel = 'icon';
         document.head.appendChild(favicon);
       }
-      favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/eb805b8aa_Designer2.png';
+      favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69552d682a4e973d9943fc93/355ef2673_FinalAOLogo.png';
 
       // Open Graph image for search results
       let ogImage = document.querySelector("meta[property='og:image']");
