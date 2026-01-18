@@ -93,7 +93,7 @@ Return a detailed analysis with specific suggestions.`,
         <h1 className="text-3xl font-bold mb-2">
           <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">Writing Assistant</span>
         </h1>
-        <p className="text-slate-600">Paste or type your text below for grammar, style, and clarity improvements.</p>
+        <p className="text-blue-400">Paste or type your text below for grammar, style, and clarity improvements.</p>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -104,8 +104,8 @@ Return a detailed analysis with specific suggestions.`,
           className="space-y-3"
         >
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-slate-700">Your Text</label>
-            <span className="text-xs text-slate-500">{writingText.length} characters</span>
+            <label className="text-sm font-medium text-blue-400">Your Text</label>
+            <span className="text-xs text-blue-400">{writingText.length} characters</span>
           </div>
           <Textarea
             value={writingText}
