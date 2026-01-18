@@ -35,6 +35,18 @@ export default function Home() {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstallButton(true);
+
+      // Auto-prompt after a short delay
+      setTimeout(() => {
+        if (e && !localStorage.getItem('installPromptDismissed')) {
+          e.prompt();
+          e.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'dismissed') {
+              localStorage.setItem('installPromptDismissed', 'true');
+            }
+          });
+        }
+      }, 3000); // Show after 3 seconds
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
