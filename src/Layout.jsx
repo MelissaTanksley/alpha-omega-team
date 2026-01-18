@@ -242,10 +242,10 @@ export default function Layout({ children, currentPageName }) {
 
                     const isActive = currentPageName === item.page;
                     return (
-                      <Link key={item.page} to={createPageUrl(item.page)} className="hidden md:block">
+                      <Link key={item.page} to={createPageUrl(item.page)}>
                         <Button
                           variant="ghost"
-                          className={`flex items-center gap-2 whitespace-nowrap ${
+                          className={`hidden md:flex items-center gap-2 whitespace-nowrap ${
                             isActive 
                               ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                               : isDarkMode 
