@@ -324,7 +324,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className={`text-sm ${isDarkMode ? 'text-amber-400' : 'text-orange-600'}`}>
-                  © 2025 Alpha Omega Team, LLC
+                  © 2025 Alpha Omega AI, LLC
                 </p>
                 <div className="flex gap-4">
                   <Link to={createPageUrl('AISettings')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
