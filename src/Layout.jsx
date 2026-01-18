@@ -98,6 +98,7 @@ export default function Layout({ children, currentPageName }) {
       page: 'AIChat',
       dropdown: [
         { name: 'AI Chat', icon: BookOpen, page: 'AIChat' },
+        { name: 'Writing Assistant', icon: FileText, page: 'WritingAssistant' },
         { name: 'Bible Study', icon: GraduationCap, page: 'BibleAssistant' },
         { name: 'Kids Bible Study', icon: BookOpen, page: 'KidsBibleStudy' },
         { name: 'Topical Studies', icon: GraduationCap, page: 'TopicalStudies' },
