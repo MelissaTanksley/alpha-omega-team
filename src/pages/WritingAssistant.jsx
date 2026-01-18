@@ -90,7 +90,9 @@ Return a detailed analysis with specific suggestions.`,
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">Writing Assistant</h1>
+        <h1 className="text-3xl font-bold mb-2">
+          <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">Writing Assistant</span>
+        </h1>
         <p className="text-slate-600">Paste or type your text below for grammar, style, and clarity improvements.</p>
       </motion.div>
 
