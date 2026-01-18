@@ -323,9 +323,13 @@ I'm here to chat, but these professionals are specifically trained to help in cr
           }
 
           if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
-            const codeMatch = generatedCode.match(/```(?:\w+)?\n([\s\S]*?)```/);
-            if (codeMatch) {
-              generatedCode = codeMatch[1].trim();
+            try {
+              const codeMatch = generatedCode.match(/```(?:\w+)?\n([\s\S]*?)```/);
+              if (codeMatch && codeMatch[1]) {
+                generatedCode = codeMatch[1].trim();
+              }
+            } catch (error) {
+              console.error('Error extracting code:', error);
             }
           }
 
@@ -386,9 +390,13 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         }
 
         if (generatedCode && typeof generatedCode === 'string' && generatedCode.includes('```')) {
-          const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
-          if (codeMatch) {
-            generatedCode = codeMatch[1].trim();
+          try {
+            const codeMatch = generatedCode.match(/```(?:html)?\n([\s\S]*?)```/);
+            if (codeMatch && codeMatch[1]) {
+              generatedCode = codeMatch[1].trim();
+            }
+          } catch (error) {
+            console.error('Error extracting code:', error);
           }
         }
 
