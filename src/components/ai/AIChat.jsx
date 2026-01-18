@@ -159,7 +159,9 @@ export default function AIChat({ conversation, onUpdate }) {
 
       Also check for:
       4. Signs of depression, suicidal ideation, or self-harm
-      5. Offensive, hateful, or inappropriate content`,
+      5. Offensive, hateful, or inappropriate content
+      6. Romantic advances, flirting, or seeking a romantic relationship
+      7. Seeking professional counseling, therapy, or medical advice`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -167,7 +169,9 @@ export default function AIChat({ conversation, onUpdate }) {
             app_type: { type: "string", enum: ["website", "landing_page", "web_app", "game", "python", "javascript", "logo", "none"] },
             has_mental_health_concern: { type: "boolean" },
             has_offensive_content: { type: "boolean" },
-            concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] }
+            concern_level: { type: "string", enum: ["none", "mild", "moderate", "severe"] },
+            is_romantic_advance: { type: "boolean" },
+            is_seeking_counseling: { type: "boolean" }
           }
         }
       });
@@ -223,7 +227,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
 
         const updatedMessages = [...newMessages, warningResponse];
         setMessages(updatedMessages);
-        
+
         if (onUpdate) {
           onUpdate({
             messages: updatedMessages,
@@ -232,7 +236,58 @@ I'm here to chat, but these professionals are specifically trained to help in cr
         }
         setLoading(false);
         return;
+      }
+
+      // Handle romantic advances
+      if (safetyCheck.is_romantic_advance) {
+        const romanticResponse = {
+          role: 'assistant',
+          content: `I'm an AI assistant designed to help with Bible study, learning, and projects. I'm not capable of personal relationships. How can I help you with your spiritual growth, studies, or creative projects instead?`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+
+        const updatedMessages = [...newMessages, romanticResponse];
+        setMessages(updatedMessages);
+
+        if (onUpdate) {
+          onUpdate({
+            messages: updatedMessages,
+            current_provider: currentProvider
+          });
         }
+        setLoading(false);
+        return;
+      }
+
+      // Handle counseling requests
+      if (safetyCheck.is_seeking_counseling) {
+        const counselingResponse = {
+          role: 'assistant',
+          content: `I'm an AI assistant, not a licensed counselor or therapist. While I can discuss biblical principles and provide educational information, I cannot provide professional counseling or medical advice.
+
+      **For Professional Support:**
+      - Contact a licensed Christian counselor or therapist
+      - Speak with your pastor or church leader
+      - Call the Christian Helpline: 855-382-5433
+
+      I'm here to help with Bible study, theological questions, and educational projects. How can I assist you in those areas?`,
+          provider: currentProvider,
+          timestamp: new Date().toISOString()
+        };
+
+        const updatedMessages = [...newMessages, counselingResponse];
+        setMessages(updatedMessages);
+
+        if (onUpdate) {
+          onUpdate({
+            messages: updatedMessages,
+            current_provider: currentProvider
+          });
+        }
+        setLoading(false);
+        return;
+      }
 
         // Check for GitHub push request
         if (input.toLowerCase().includes('push to github') || input.toLowerCase().includes('deploy to github')) {
