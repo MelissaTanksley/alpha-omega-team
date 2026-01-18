@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DailyVerse from '../components/bible/DailyVerse';
 import TranslationSelector from '../components/bible/TranslationSelector';
+import LoginModal from '../components/auth/LoginModal';
 import { BookOpen, TrendingUp, CheckCircle2, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
@@ -13,6 +14,9 @@ import { format } from 'date-fns';
 export default function HomeSpanish() {
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginAction, setLoginAction] = useState('');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const queryClient = useQueryClient();
@@ -88,11 +92,24 @@ export default function HomeSpanish() {
 
   useEffect(() => {
     initializeUser();
+    setResetKey(prev => prev + 1);
     
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstallButton(true);
+
+      // Auto-prompt after a short delay
+      setTimeout(() => {
+        if (e && !localStorage.getItem('installPromptDismissed')) {
+          e.prompt();
+          e.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'dismissed') {
+              localStorage.setItem('installPromptDismissed', 'true');
+            }
+          });
+        }
+      }, 3000);
     };
     
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -104,16 +121,33 @@ export default function HomeSpanish() {
 
   const initializeUser = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      if (isAuthenticated) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       console.error('Error loading user:', error);
+      setUser(null);
     }
   };
 
   const { data: progress, isLoading } = useQuery({
-    queryKey: ['userProgress', user?.id],
+    queryKey: ['userProgress', user?.email || 'anonymous'],
     queryFn: async () => {
+      if (!user) {
+        // Return default progress for anonymous users
+        return {
+          current_book: 'Genesis',
+          current_chapter: 1,
+          current_verse: 1,
+          preferred_translation: 'KJV',
+          verses_read: 0,
+          last_login_date: format(new Date(), 'yyyy-MM-dd')
+        };
+      }
       const results = await base44.entities.UserBibleProgress.filter({ created_by: user.email });
       if (results.length === 0) {
         return await base44.entities.UserBibleProgress.create({
@@ -127,11 +161,16 @@ export default function HomeSpanish() {
       }
       return results[0];
     },
-    enabled: !!user
+    staleTime: 1000 * 60 * 5,
+    retry: 1
   });
 
   const updateProgressMutation = useMutation({
     mutationFn: async (updates) => {
+      if (!user || !progress.id) {
+        // For anonymous users, just update local state
+        return { ...progress, ...updates };
+      }
       return await base44.entities.UserBibleProgress.update(progress.id, updates);
     },
     onSuccess: () => {
@@ -140,6 +179,11 @@ export default function HomeSpanish() {
   });
 
   const handleVerseAdvance = async () => {
+    if (!user) {
+      setLoginAction('avanzar al siguiente versículo');
+      setShowLoginModal(true);
+      return;
+    }
     const nextVerse = progress.current_verse + 1;
     const currentCount = progress.verses_read || 0;
     const newVerseCount = nextVerse > currentCount ? nextVerse : currentCount;
@@ -151,6 +195,11 @@ export default function HomeSpanish() {
   };
 
   const handleVerseBack = async () => {
+    if (!user) {
+      setLoginAction('regresar a versículos anteriores');
+      setShowLoginModal(true);
+      return;
+    }
     if (progress.current_verse > 1) {
       await updateProgressMutation.mutateAsync({
         current_verse: progress.current_verse - 1
@@ -159,6 +208,11 @@ export default function HomeSpanish() {
   };
 
   const handleTranslationChange = async (translation) => {
+    if (!user) {
+      setLoginAction('cambiar tu traducción de la Biblia');
+      setShowLoginModal(true);
+      return;
+    }
     await updateProgressMutation.mutateAsync({
       preferred_translation: translation
     });
@@ -177,7 +231,7 @@ export default function HomeSpanish() {
     setDeferredPrompt(null);
   };
 
-  if (isLoading || !progress) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -186,6 +240,10 @@ export default function HomeSpanish() {
         </div>
       </div>
     );
+  }
+
+  if (!progress) {
+    return null;
   }
 
   return (
@@ -214,7 +272,8 @@ export default function HomeSpanish() {
         )}
         </motion.div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Only for logged in users */}
+      {user && progress?.id && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -287,9 +346,10 @@ export default function HomeSpanish() {
           </Card>
         </motion.div>
       </div>
+      )}
 
-      {/* Settings Panel */}
-      {showSettings && (
+      {/* Settings Panel - Only for logged in users */}
+      {user && progress?.id && showSettings && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -309,8 +369,47 @@ export default function HomeSpanish() {
         </motion.div>
       )}
 
-      {/* Daily Verse */}
-      <DailyVerse progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} language="es" />
+      {/* Daily Verse - Personalized for logged in users */}
+      {user && progress?.id && (
+        <DailyVerse key={resetKey} progress={progress} onVerseAdvance={handleVerseAdvance} onVerseBack={handleVerseBack} language="es" />
+      )}
+
+      {/* Guest View - Static verse for non-logged in users */}
+      {!user && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <DailyVerse 
+            progress={{
+              current_book: 'John',
+              current_chapter: 3,
+              current_verse: 16,
+              preferred_translation: 'KJV'
+            }} 
+            onVerseAdvance={() => base44.auth.redirectToLogin(window.location.pathname)}
+            onVerseBack={() => base44.auth.redirectToLogin(window.location.pathname)}
+            language="es"
+          />
+          <Card className="bg-blue-500/20 border-blue-500/50 mt-4">
+            <CardContent className="p-6 text-center">
+              <p className="text-blue-200 mb-4">
+                ¡Inicia sesión para rastrear tu progreso, guardar notas y comenzar tu viaje personalizado de lectura bíblica!
+              </p>
+              <Button 
+                onClick={() => {
+                  setLoginAction('rastrear tu progreso y guardar notas');
+                  setShowLoginModal(true);
+                }}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                Iniciar Sesión para Continuar
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Quick Info */}
       <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm border-slate-700 shadow-xl">
@@ -330,6 +429,12 @@ export default function HomeSpanish() {
             </div>
             </CardContent>
             </Card>
+
+            <LoginModal 
+              isOpen={showLoginModal} 
+              onClose={() => setShowLoginModal(false)}
+              action={loginAction}
+            />
             </div>
             );
             }
