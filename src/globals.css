@@ -11,25 +11,6 @@ css
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
-  /* Show scrollbar on mobile only */
-  @media (max-width: 767px) {
-    .mobile-scrollbar-visible {
-      -ms-overflow-style: auto !important;
-      scrollbar-width: thin !important;
-    }
-    .mobile-scrollbar-visible::-webkit-scrollbar {
-      display: block !important;
-      height: 6px;
-    }
-    .mobile-scrollbar-visible::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.5);
-      border-radius: 3px;
-    }
-    .mobile-scrollbar-visible::-webkit-scrollbar-track {
-      background: rgba(148, 163, 184, 0.1);
-    }
-  }
 }
 
 .dark-mode {

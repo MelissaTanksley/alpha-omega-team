@@ -156,10 +156,10 @@ export default function Layout({ children, currentPageName }) {
                 />
               </Link>
 
-              {/* Scrollable Navigation */}
-              <nav className="flex-1 overflow-x-auto scrollbar-hide mobile-scrollbar-visible">
-                <div className="flex items-center gap-1 min-w-max">
-                  <Link to={createPageUrl('Home')}>
+              {/* Navigation */}
+              <nav className="flex-1 overflow-hidden">
+                <div className="flex items-center gap-1">
+                  <Link to={createPageUrl('Home')} className="hidden md:block">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -242,7 +242,7 @@ export default function Layout({ children, currentPageName }) {
 
                     const isActive = currentPageName === item.page;
                     return (
-                      <Link key={item.page} to={createPageUrl(item.page)}>
+                      <Link key={item.page} to={createPageUrl(item.page)} className="hidden md:block">
                         <Button
                           variant="ghost"
                           className={`flex items-center gap-2 whitespace-nowrap ${
@@ -258,12 +258,58 @@ export default function Layout({ children, currentPageName }) {
                         </Button>
                       </Link>
                     );
-                  })}
-                </div>
-              </nav>
+                    })}
+                    </div>
+                    </nav>
 
               {/* User Menu */}
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Mobile Menu - Show all navigation in dropdown */}
+                <div className="md:hidden">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={isDarkMode 
+                          ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-900/20'
+                          : 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                        }
+                      >
+                        <Menu className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-64 max-h-[80vh] overflow-y-auto">
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl('Home')} className="flex items-center gap-2 cursor-pointer">
+                          <Home className="h-4 w-4" />
+                          Home
+                        </Link>
+                      </DropdownMenuItem>
+                      {navigation.map((navItem) => {
+                        if (navItem.dropdown) {
+                          return navItem.dropdown.map((dropItem) => (
+                            <DropdownMenuItem key={dropItem.page} asChild>
+                              <Link to={createPageUrl(dropItem.page)} className="flex items-center gap-2 cursor-pointer">
+                                <dropItem.icon className="h-4 w-4" />
+                                {dropItem.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ));
+                        }
+                        return (
+                          <DropdownMenuItem key={navItem.page} asChild>
+                            <Link to={createPageUrl(navItem.page)} className="flex items-center gap-2 cursor-pointer">
+                              <navItem.icon className="h-4 w-4" />
+                              {navItem.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
                 {user && (
                   <>
                     <NotificationBell userEmail={user.email} />
