@@ -182,7 +182,7 @@ export default function Layout({ children, currentPageName }) {
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
-                              className={`flex items-center gap-2 whitespace-nowrap ${
+                              className={`hidden md:flex items-center gap-2 whitespace-nowrap ${
                                 isActive 
                                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
                                   : isDarkMode 
