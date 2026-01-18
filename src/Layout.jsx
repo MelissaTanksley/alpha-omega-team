@@ -124,6 +124,15 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className={`min-h-screen relative ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      {/* Hide Base44 editor for non-admin users */}
+      {user && user.role !== 'admin' && (
+        <style>{`
+          [id*="base44"], [class*="base44"], button[aria-label*="Edit"] {
+            display: none !important;
+          }
+        `}</style>
+      )}
+      
       {/* Background Image with Overlay */}
       <div 
         className="fixed inset-0 z-0"
