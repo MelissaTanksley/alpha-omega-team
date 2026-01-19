@@ -302,7 +302,7 @@ export default function KidsBibleStudy() {
             </div>
 
             <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-purple-300">
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-6 space-y-4 max-h-96 overflow-y-auto">
                 <div>
                   <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <BookOpen className="h-5 w-5" />
