@@ -403,6 +403,11 @@ export default function Layout({ children, currentPageName }) {
                   <Link to={createPageUrl('Payments')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
                     Donate
                   </Link>
+                  {user && user.role === 'admin' && (
+                    <Link to={createPageUrl('ManageContacts')} className={`text-sm hover:underline ${isDarkMode ? 'text-amber-400 hover:text-amber-300' : 'text-orange-600 hover:text-orange-700'}`}>
+                      Manage Contacts
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

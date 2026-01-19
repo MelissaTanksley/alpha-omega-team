@@ -19,6 +19,7 @@ import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
 import UserProfile from './pages/UserProfile';
 import WritingAssistant from './pages/WritingAssistant';
+import ManageContacts from './pages/ManageContacts';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "TopicalStudies": TopicalStudies,
     "UserProfile": UserProfile,
     "WritingAssistant": WritingAssistant,
+    "ManageContacts": ManageContacts,
 }
 
 export const pagesConfig = {
