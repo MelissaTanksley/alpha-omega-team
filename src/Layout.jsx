@@ -119,7 +119,15 @@ export default function Layout({ children, currentPageName }) {
         { name: 'Search', icon: Search, page: 'Search' }
       ]
     },
-    { name: 'Español', icon: BookOpen, page: 'HomeSpanish' }
+    { 
+      name: 'Español', 
+      icon: BookOpen, 
+      page: 'HomeSpanish',
+      dropdown: [
+        { name: 'Inicio', icon: Home, page: 'HomeSpanish' },
+        { name: 'Estudio Bíblico para Niños', icon: BookOpen, page: 'KidsBibleStudy' }
+      ]
+    }
   ];
 
   return (
