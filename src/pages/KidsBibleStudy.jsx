@@ -291,9 +291,9 @@ export default function KidsBibleStudy() {
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl max-w-2xl w-full p-8 space-y-6"
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col"
           >
-            <div className="text-center">
+            <div className="p-8 pb-4 text-center">
               <div className="text-7xl mb-4">{selectedStory.emoji}</div>
               <h2 className="text-4xl font-bold text-slate-800 mb-2">
                 {selectedStory.title}
@@ -301,29 +301,31 @@ export default function KidsBibleStudy() {
               <p className="text-lg text-slate-600 font-medium">{selectedStory.verse}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-purple-300 rounded-lg max-h-96 overflow-y-auto p-6 space-y-4 scrollbar-hide">
-              <div>
-                <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  {t.theStory}
-                </h3>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {selectedStory.story}
-                </p>
-              </div>
+            <div className="px-8 flex-1 overflow-y-auto">
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-purple-300 rounded-lg p-6 space-y-4">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    {t.theStory}
+                  </h3>
+                  <p className="text-lg text-slate-700 leading-relaxed">
+                    {selectedStory.story}
+                  </p>
+                </div>
 
-              <div className="bg-yellow-100 rounded-lg p-4 border-2 border-yellow-400">
-                <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-red-500" />
-                  {t.whatWeLearn}
-                </h3>
-                <p className="text-lg text-slate-700 font-medium">
-                  {selectedStory.lesson}
-                </p>
+                <div className="bg-yellow-100 rounded-lg p-4 border-2 border-yellow-400">
+                  <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-red-500" />
+                    {t.whatWeLearn}
+                  </h3>
+                  <p className="text-lg text-slate-700 font-medium">
+                    {selectedStory.lesson}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="p-8 pt-4 flex gap-3">
               <Button
                 onClick={() => handleListen(selectedStory)}
                 disabled={loadingAudio}
