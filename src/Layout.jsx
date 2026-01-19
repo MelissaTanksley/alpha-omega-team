@@ -125,7 +125,7 @@ export default function Layout({ children, currentPageName }) {
       page: 'HomeSpanish',
       dropdown: [
         { name: 'Inicio', icon: Home, page: 'HomeSpanish' },
-        { name: 'Estudio Bíblico para Niños', icon: BookOpen, page: 'KidsBibleStudy' }
+        { name: 'Estudio Bíblico para Niños', icon: BookOpen, page: 'KidsBibleStudy', params: '?lang=es' }
       ]
     }
   ];
@@ -222,7 +222,7 @@ export default function Layout({ children, currentPageName }) {
                             )}
                             {item.dropdown.map((dropItem) => (
                               <DropdownMenuItem key={dropItem.page} asChild>
-                                <Link to={createPageUrl(dropItem.page)} className="flex items-center gap-2 cursor-pointer">
+                                <Link to={createPageUrl(dropItem.page) + (dropItem.params || '')} className="flex items-center gap-2 cursor-pointer">
                                   <dropItem.icon className="h-4 w-4" />
                                   {dropItem.name}
                                 </Link>

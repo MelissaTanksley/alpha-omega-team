@@ -5,65 +5,166 @@ import { BookOpen, Star, Heart, Sparkles, Trophy, PartyPopper, Volume2, VolumeX,
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
-const kidStories = [
-  {
-    title: "Noah's Ark",
-    verse: "Genesis 6-9",
-    summary: "God told Noah to build a big boat to save animals from a flood!",
-    lesson: "God always keeps His promises and protects us.",
-    color: "bg-blue-500",
-    emoji: "🌈"
-  },
-  {
-    title: "David and Goliath",
-    verse: "1 Samuel 17",
-    summary: "Young David defeated the giant Goliath with just a sling and stones!",
-    lesson: "With God's help, we can do anything!",
-    color: "bg-green-500",
-    emoji: "⚔️"
-  },
-  {
-    title: "Daniel and the Lions",
-    verse: "Daniel 6",
-    summary: "Daniel prayed to God even when it was dangerous, and God saved him from lions!",
-    lesson: "Always stay faithful to God no matter what.",
-    color: "bg-yellow-500",
-    emoji: "🦁"
-  },
-  {
-    title: "Jesus Feeds 5000",
-    verse: "John 6:1-14",
-    summary: "Jesus fed thousands of people with just 5 loaves and 2 fish!",
-    lesson: "Jesus can do miracles and cares about our needs.",
-    color: "bg-purple-500",
-    emoji: "🍞"
-  },
-  {
-    title: "The Good Samaritan",
-    verse: "Luke 10:25-37",
-    summary: "A kind man helped someone who was hurt, even though others passed by.",
-    lesson: "Be kind and help others, even strangers!",
-    color: "bg-pink-500",
-    emoji: "❤️"
-  },
-  {
-    title: "Jonah and the Big Fish",
-    verse: "Jonah 1-4",
-    summary: "Jonah ran away from God but learned that God loves everyone!",
-    lesson: "God gives us second chances and loves all people.",
-    color: "bg-cyan-500",
-    emoji: "🐋"
-  }
-];
+const kidStories = {
+  en: [
+    {
+      title: "Noah's Ark",
+      verse: "Genesis 6-9",
+      summary: "God told Noah to build a big boat to save animals from a flood!",
+      lesson: "God always keeps His promises and protects us.",
+      color: "bg-blue-500",
+      emoji: "🌈"
+    },
+    {
+      title: "David and Goliath",
+      verse: "1 Samuel 17",
+      summary: "Young David defeated the giant Goliath with just a sling and stones!",
+      lesson: "With God's help, we can do anything!",
+      color: "bg-green-500",
+      emoji: "⚔️"
+    },
+    {
+      title: "Daniel and the Lions",
+      verse: "Daniel 6",
+      summary: "Daniel prayed to God even when it was dangerous, and God saved him from lions!",
+      lesson: "Always stay faithful to God no matter what.",
+      color: "bg-yellow-500",
+      emoji: "🦁"
+    },
+    {
+      title: "Jesus Feeds 5000",
+      verse: "John 6:1-14",
+      summary: "Jesus fed thousands of people with just 5 loaves and 2 fish!",
+      lesson: "Jesus can do miracles and cares about our needs.",
+      color: "bg-purple-500",
+      emoji: "🍞"
+    },
+    {
+      title: "The Good Samaritan",
+      verse: "Luke 10:25-37",
+      summary: "A kind man helped someone who was hurt, even though others passed by.",
+      lesson: "Be kind and help others, even strangers!",
+      color: "bg-pink-500",
+      emoji: "❤️"
+    },
+    {
+      title: "Jonah and the Big Fish",
+      verse: "Jonah 1-4",
+      summary: "Jonah ran away from God but learned that God loves everyone!",
+      lesson: "God gives us second chances and loves all people.",
+      color: "bg-cyan-500",
+      emoji: "🐋"
+    }
+  ],
+  es: [
+    {
+      title: "El Arca de Noé",
+      verse: "Génesis 6-9",
+      summary: "¡Dios le dijo a Noé que construyera un gran barco para salvar a los animales de una inundación!",
+      lesson: "Dios siempre cumple Sus promesas y nos protege.",
+      color: "bg-blue-500",
+      emoji: "🌈"
+    },
+    {
+      title: "David y Goliat",
+      verse: "1 Samuel 17",
+      summary: "¡El joven David derrotó al gigante Goliat con solo una honda y piedras!",
+      lesson: "¡Con la ayuda de Dios, podemos hacer cualquier cosa!",
+      color: "bg-green-500",
+      emoji: "⚔️"
+    },
+    {
+      title: "Daniel y los Leones",
+      verse: "Daniel 6",
+      summary: "¡Daniel oró a Dios incluso cuando era peligroso, y Dios lo salvó de los leones!",
+      lesson: "Mantente siempre fiel a Dios sin importar qué.",
+      color: "bg-yellow-500",
+      emoji: "🦁"
+    },
+    {
+      title: "Jesús Alimenta a 5000",
+      verse: "Juan 6:1-14",
+      summary: "¡Jesús alimentó a miles de personas con solo 5 panes y 2 peces!",
+      lesson: "Jesús puede hacer milagros y se preocupa por nuestras necesidades.",
+      color: "bg-purple-500",
+      emoji: "🍞"
+    },
+    {
+      title: "El Buen Samaritano",
+      verse: "Lucas 10:25-37",
+      summary: "Un hombre amable ayudó a alguien que estaba herido, aunque otros pasaron de largo.",
+      lesson: "¡Sé amable y ayuda a los demás, incluso a extraños!",
+      color: "bg-pink-500",
+      emoji: "❤️"
+    },
+    {
+      title: "Jonás y el Gran Pez",
+      verse: "Jonás 1-4",
+      summary: "¡Jonás huyó de Dios pero aprendió que Dios ama a todos!",
+      lesson: "Dios nos da segundas oportunidades y ama a todas las personas.",
+      color: "bg-cyan-500",
+      emoji: "🐋"
+    }
+  ]
+};
 
-const funActivities = [
-  { title: "Memory Verse Game", icon: Brain, color: "bg-orange-500" },
-  { title: "Bible Story Coloring", icon: Sparkles, color: "bg-indigo-500" },
-  { title: "Song Time", icon: PartyPopper, color: "bg-rose-500" },
-  { title: "Prayer Challenges", icon: Heart, color: "bg-red-500" }
-];
+const funActivities = {
+  en: [
+    { title: "Memory Verse Game", icon: Brain, color: "bg-orange-500" },
+    { title: "Bible Story Coloring", icon: Sparkles, color: "bg-indigo-500" },
+    { title: "Song Time", icon: PartyPopper, color: "bg-rose-500" },
+    { title: "Prayer Challenges", icon: Heart, color: "bg-red-500" }
+  ],
+  es: [
+    { title: "Juego de Memorizar Versículos", icon: Brain, color: "bg-orange-500" },
+    { title: "Colorear Historias Bíblicas", icon: Sparkles, color: "bg-indigo-500" },
+    { title: "Tiempo de Canciones", icon: PartyPopper, color: "bg-rose-500" },
+    { title: "Desafíos de Oración", icon: Heart, color: "bg-red-500" }
+  ]
+};
+
+const translations = {
+  en: {
+    title: "Kids Bible Study! 🌟",
+    subtitle: "Learn Amazing Stories from the Bible!",
+    points: "Points!",
+    readStory: "Read Story!",
+    theStory: "The Story:",
+    whatWeLearn: "What We Learn:",
+    listen: "Listen to Bible Verses! 🎧",
+    stopListening: "Stop Listening",
+    loadingAudio: "Loading Audio...",
+    iReadIt: "I Read It! (+10 Points)",
+    close: "Close",
+    comingSoon: "Coming Soon: Fun Activities!",
+    encouragement: "🎉 You're Doing Great! 🎉",
+    keepLearning: "Keep learning about Jesus and God's amazing love!"
+  },
+  es: {
+    title: "¡Estudio Bíblico para Niños! 🌟",
+    subtitle: "¡Aprende Historias Increíbles de la Biblia!",
+    points: "¡Puntos!",
+    readStory: "¡Leer Historia!",
+    theStory: "La Historia:",
+    whatWeLearn: "Lo que Aprendemos:",
+    listen: "¡Escuchar los Versículos de la Biblia! 🎧",
+    stopListening: "Dejar de Escuchar",
+    loadingAudio: "Cargando Audio...",
+    iReadIt: "¡Lo Leí! (+10 Puntos)",
+    close: "Cerrar",
+    comingSoon: "¡Próximamente: Actividades Divertidas!",
+    encouragement: "🎉 ¡Lo Estás Haciendo Genial! 🎉",
+    keepLearning: "¡Sigue aprendiendo sobre Jesús y el amor increíble de Dios!"
+  }
+};
 
 export default function KidsBibleStudy() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const lang = urlParams.get('lang') || 'en';
+  const t = translations[lang];
+  const stories = kidStories[lang];
+  const activities = funActivities[lang];
+
   const [selectedStory, setSelectedStory] = useState(null);
   const [points, setPoints] = useState(0);
   const [isReading, setIsReading] = useState(false);
@@ -158,24 +259,24 @@ export default function KidsBibleStudy() {
       >
         <h1 className="text-5xl font-bold">
           <span className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
-            Kids Bible Study! 🌟
+            {t.title}
           </span>
         </h1>
         <p className="text-2xl text-blue-400 font-semibold">
-          Learn Amazing Stories from the Bible!
+          {t.subtitle}
         </p>
         
         {/* Points Badge */}
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg">
           <Trophy className="h-6 w-6 text-white" />
-          <span className="text-white font-bold text-xl">{points} Points!</span>
+          <span className="text-white font-bold text-xl">{points} {t.points}</span>
           <Star className="h-6 w-6 text-white" />
         </div>
       </motion.div>
 
       {/* Bible Stories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {kidStories.map((story, idx) => (
+        {stories.map((story, idx) => (
           <motion.div
             key={idx}
             initial={{ opacity: 0, scale: 0.9 }}
@@ -192,7 +293,7 @@ export default function KidsBibleStudy() {
                 <h3 className="text-2xl font-bold text-white">{story.title}</h3>
                 <p className="text-white/90 text-sm font-medium">{story.verse}</p>
                 <Button className="bg-white text-slate-800 hover:bg-slate-100 font-bold">
-                  Read Story!
+                  {t.readStory}
                 </Button>
               </CardContent>
             </Card>
@@ -235,7 +336,7 @@ export default function KidsBibleStudy() {
                 <div>
                   <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <BookOpen className="h-5 w-5" />
-                    The Story:
+                    {t.theStory}
                   </h3>
                   <p className="text-lg text-slate-700 leading-relaxed">
                     {selectedStory.summary}
@@ -245,7 +346,7 @@ export default function KidsBibleStudy() {
                 <div className="bg-yellow-100 rounded-lg p-4 border-2 border-yellow-400">
                   <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <Heart className="h-5 w-5 text-red-500" />
-                    What We Learn:
+                    {t.whatWeLearn}
                   </h3>
                   <p className="text-lg text-slate-700 font-medium">
                     {selectedStory.lesson}
@@ -263,17 +364,17 @@ export default function KidsBibleStudy() {
                 {loadingAudio ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Loading Audio...
+                    {t.loadingAudio}
                   </>
                 ) : isReading ? (
                   <>
                     <VolumeX className="h-5 w-5 mr-2" />
-                    Stop Listening
+                    {t.stopListening}
                   </>
                 ) : (
                   <>
                     <Volume2 className="h-5 w-5 mr-2" />
-                    Listen to Bible Verses! 🎧
+                    {t.listen}
                   </>
                 )}
               </Button>
@@ -282,7 +383,7 @@ export default function KidsBibleStudy() {
                 className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg py-6"
               >
                 <Star className="h-5 w-5 mr-2" />
-                I Read It! (+10 Points)
+                {t.iReadIt}
               </Button>
               <Button
                 onClick={() => {
@@ -297,7 +398,7 @@ export default function KidsBibleStudy() {
                 variant="outline"
                 className="border-2 border-slate-300"
               >
-                Close
+                {t.close}
               </Button>
             </div>
           </motion.div>
@@ -309,13 +410,13 @@ export default function KidsBibleStudy() {
         <CardHeader>
           <CardTitle className="text-3xl text-center text-purple-800 flex items-center justify-center gap-2">
             <Sparkles className="h-8 w-8" />
-            Coming Soon: Fun Activities!
+            {t.comingSoon}
             <Sparkles className="h-8 w-8" />
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {funActivities.map((activity, idx) => (
+            {activities.map((activity, idx) => (
               <div
                 key={idx}
                 className={`${activity.color} rounded-xl p-4 text-center text-white shadow-lg`}
@@ -332,10 +433,10 @@ export default function KidsBibleStudy() {
       <Card className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 border-0 shadow-xl">
         <CardContent className="p-8 text-center">
           <h3 className="text-3xl font-bold text-white mb-3">
-            🎉 You're Doing Great! 🎉
+            {t.encouragement}
           </h3>
           <p className="text-xl text-white font-medium">
-            Keep learning about Jesus and God's amazing love!
+            {t.keepLearning}
           </p>
         </CardContent>
       </Card>
