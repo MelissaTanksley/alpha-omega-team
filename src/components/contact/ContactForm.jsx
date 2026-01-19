@@ -133,7 +133,7 @@ export default function ContactForm({ language = 'en' }) {
             className="flex items-center gap-3 p-4 bg-green-500/20 border border-green-500/30 rounded-lg"
           >
             <CheckCircle2 className="h-5 w-5 text-green-400 flex-shrink-0" />
-            <p className="text-green-300 text-sm">{t.success}</p>
+            <p className="text-white text-sm">{t.success}</p>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
