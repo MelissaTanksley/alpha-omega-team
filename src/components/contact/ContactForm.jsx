@@ -37,23 +37,16 @@ export default function ContactForm({ language = 'en' }) {
     setLoading(true);
 
     try {
-      await base44.integrations.Core.SendEmail({
-        from_name: 'Alpha Omega Contact Form',
-        to: 'alphaomegateam.llc@gmail.com',
-        subject: language === 'es' 
-          ? `Nuevo mensaje de contacto de ${formData.name}`
-          : `New Contact Form Message from ${formData.name}`,
-        body: `
-Name: ${formData.name}
-Email: ${formData.email}
-
-Message:
-${formData.message}
-
----
-Reply to: ${formData.email}
-        `
+      const response = await base44.functions.invoke('sendContactEmail', {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        language: language
       });
+
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
 
       setSuccess(true);
       setFormData({ name: '', email: '', message: '' });
