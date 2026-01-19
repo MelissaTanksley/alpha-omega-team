@@ -203,50 +203,20 @@ export default function KidsBibleStudy() {
     setIsReading(false);
   };
 
-  const handleListen = async (story) => {
+  const handleListen = (story) => {
     if (isReading) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
       window.speechSynthesis.cancel();
       setIsReading(false);
       return;
     }
 
-    setLoadingAudio(true);
-    
-    try {
-      const { data } = await base44.functions.invoke('readBibleVerses', {
-        passage: story.verse
-      });
-
-      if (data.audio_url) {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        }
-        audioRef.current.src = data.audio_url;
-        audioRef.current.onended = () => setIsReading(false);
-        await audioRef.current.play();
-        setIsReading(true);
-        setAudioUrl(data.audio_url);
-      } else {
-        window.speechSynthesis.cancel();
-        const text = data.text || story.summary;
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.85;
-        utterance.pitch = 1.2;
-        utterance.onend = () => setIsReading(false);
-        window.speechSynthesis.speak(utterance);
-        setIsReading(true);
-      }
-    } catch (error) {
-      console.error('Error fetching audio:', error);
-      alert('Could not load audio. Please try again!');
-    }
-    
-    setLoadingAudio(false);
+    const textToRead = `${story.title}. ${story.summary} ${story.lesson}`;
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    utterance.rate = 0.85;
+    utterance.pitch = 1.2;
+    utterance.onend = () => setIsReading(false);
+    window.speechSynthesis.speak(utterance);
+    setIsReading(true);
   };
 
   return (
