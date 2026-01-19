@@ -38,6 +38,7 @@ export default function ContactForm({ language = 'en' }) {
 
     try {
       await base44.integrations.Core.SendEmail({
+        from_name: 'Alpha Omega Contact Form',
         to: 'alphaomegateam.llc@gmail.com',
         subject: language === 'es' 
           ? `Nuevo mensaje de contacto de ${formData.name}`
@@ -48,6 +49,9 @@ Email: ${formData.email}
 
 Message:
 ${formData.message}
+
+---
+Reply to: ${formData.email}
         `
       });
 
@@ -59,9 +63,10 @@ ${formData.message}
       }, 5000);
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMsg = error?.message || error?.toString() || 'Unknown error';
       alert(language === 'es' 
-        ? 'Error al enviar el mensaje. Por favor intenta de nuevo.'
-        : 'Error sending message. Please try again.');
+        ? `Error al enviar el mensaje. Por favor intenta de nuevo. Detalle: ${errorMsg}`
+        : `Error sending message. Please try again. Details: ${errorMsg}`);
     }
 
     setLoading(false);
