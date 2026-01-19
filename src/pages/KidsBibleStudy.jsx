@@ -218,7 +218,8 @@ export default function KidsBibleStudy() {
     
     try {
       const { data } = await base44.functions.invoke('readBibleVerses', {
-        passage: story.verse
+        passage: story.verse,
+        language: lang
       });
 
       if (data.audio_url) {
