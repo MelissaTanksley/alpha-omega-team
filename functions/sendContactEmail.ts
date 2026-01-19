@@ -9,14 +9,24 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Send email using service role to bypass user restrictions
-        await base44.asServiceRole.integrations.Core.SendEmail({
-            from_name: 'Alpha Omega Contact Form',
-            to: 'alphaomegateam.llc@gmail.com',
-            subject: language === 'es' 
-                ? `Nuevo mensaje de contacto de ${name}`
-                : `New Contact Form Message from ${name}`,
-            body: `
+        // Store contact submission in database
+        await base44.asServiceRole.entities.ContactSubmission.create({
+            name,
+            email,
+            message,
+            language,
+            status: 'new'
+        });
+
+        // Try to notify admin if they're registered in the app
+        try {
+            await base44.asServiceRole.integrations.Core.SendEmail({
+                from_name: 'Alpha Omega Contact Form',
+                to: 'melissa.alphaomega@gmail.com',
+                subject: language === 'es' 
+                    ? `Nuevo mensaje de contacto de ${name}`
+                    : `New Contact Form Message from ${name}`,
+                body: `
 Name: ${name}
 Email: ${email}
 
@@ -25,12 +35,16 @@ ${message}
 
 ---
 Reply to: ${email}
-            `
-        });
+                `
+            });
+        } catch (emailError) {
+            // Email notification failed but submission is saved
+            console.log('Email notification not sent (user may not be registered):', emailError.message);
+        }
 
         return Response.json({ success: true });
     } catch (error) {
-        console.error('Error sending contact email:', error);
+        console.error('Error saving contact submission:', error);
         return Response.json({ 
             error: error.message || 'Failed to send message' 
         }, { status: 500 });
