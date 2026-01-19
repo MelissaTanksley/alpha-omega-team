@@ -213,7 +213,25 @@ export default function KidsBibleStudy() {
     const textToRead = `${story.title}. ${story.story}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.rate = 0.85;
-    utterance.pitch = 1.2;
+    
+    // Use a kid-friendly voice for English, regular for Spanish
+    if (lang === 'en') {
+      utterance.pitch = 1.5; // Higher pitch for child-like voice
+      // Try to find a female/child voice
+      const voices = window.speechSynthesis.getVoices();
+      const kidVoice = voices.find(v => 
+        v.name.includes('Google UK English Female') || 
+        v.name.includes('Microsoft Zira') ||
+        v.name.includes('Female') ||
+        v.name.includes('Samantha')
+      );
+      if (kidVoice) {
+        utterance.voice = kidVoice;
+      }
+    } else {
+      utterance.pitch = 1.2;
+    }
+    
     utterance.onend = () => setIsReading(false);
     window.speechSynthesis.speak(utterance);
     setIsReading(true);

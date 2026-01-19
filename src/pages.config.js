@@ -8,6 +8,7 @@ import Forum from './pages/Forum';
 import Home from './pages/Home';
 import HomeSpanish from './pages/HomeSpanish';
 import KidsBibleStudy from './pages/KidsBibleStudy';
+import ManageContacts from './pages/ManageContacts';
 import Messages from './pages/Messages';
 import Notes from './pages/Notes';
 import Payments from './pages/Payments';
@@ -19,7 +20,6 @@ import Store from './pages/Store';
 import TopicalStudies from './pages/TopicalStudies';
 import UserProfile from './pages/UserProfile';
 import WritingAssistant from './pages/WritingAssistant';
-import ManageContacts from './pages/ManageContacts';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +34,7 @@ export const PAGES = {
     "Home": Home,
     "HomeSpanish": HomeSpanish,
     "KidsBibleStudy": KidsBibleStudy,
+    "ManageContacts": ManageContacts,
     "Messages": Messages,
     "Notes": Notes,
     "Payments": Payments,
@@ -45,7 +46,6 @@ export const PAGES = {
     "TopicalStudies": TopicalStudies,
     "UserProfile": UserProfile,
     "WritingAssistant": WritingAssistant,
-    "ManageContacts": ManageContacts,
 }
 
 export const pagesConfig = {
