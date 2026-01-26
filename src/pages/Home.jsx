@@ -24,11 +24,6 @@ export default function Home() {
   useEffect(() => {
     initializeUser();
     setResetKey(prev => prev + 1);
-    
-    // Register service worker for PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
 
     // Handle PWA install prompt
     const handleBeforeInstallPrompt = (e) => {
