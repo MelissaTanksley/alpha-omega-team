@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus, FileText, BookOpen } from 'lucide-react';
+import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, Save, BookmarkPlus, FileText, BookOpen, Paperclip, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,7 +70,9 @@ export default function AIChat({ conversation, onUpdate }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginAction, setLoginAction] = useState('');
   const [user, setUser] = useState(null);
+  const [attachedImages, setAttachedImages] = useState([]);
   const scrollRef = useRef(null);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -81,6 +83,25 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
+
+    // Handle paste event for images
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const file = items[i].getAsFile();
+          if (file) {
+            handleImageUpload(file);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
   }, []);
 
   const checkUser = async () => {
@@ -123,18 +144,34 @@ export default function AIChat({ conversation, onUpdate }) {
     setLoadingContext(false);
   };
 
+  const handleImageUpload = async (file) => {
+    try {
+      const { data } = await base44.integrations.Core.UploadFile({ file });
+      setAttachedImages(prev => [...prev, data.file_url]);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image');
+    }
+  };
+
+  const removeImage = (index) => {
+    setAttachedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSend = async (retryCount = 0) => {
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && attachedImages.length === 0) || loading) return;
 
     const userMessage = {
       role: 'user',
       content: input,
+      images: attachedImages.length > 0 ? [...attachedImages] : undefined,
       timestamp: new Date().toISOString()
     };
 
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');
+    setAttachedImages([]);
     setLoading(true);
 
     const maxRetries = AI_PROVIDERS.length;
@@ -545,6 +582,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
         add_context_from_internet: true,
+        file_urls: userMessage.images || undefined,
         response_json_schema: {
           type: "object",
           properties: {
@@ -795,20 +833,27 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                     {message.role === 'user' ? (
                       <User className="h-5 w-5 text-slate-600" />
                     ) : (
-                      <Bot className="h-5 w-5 text-slate-600" />
+                     <Bot className="h-5 w-5 text-slate-600" />
                     )}
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-slate-900 mb-2 text-sm">
-                      {message.role === 'user' ? 'You' : 'Assistant'}
                     </div>
+
+                    <div className="flex-1 min-w-0">
+                    <div className="font-medium text-slate-900 mb-2 text-sm">
+                     {message.role === 'user' ? 'You' : 'Assistant'}
+                    </div>
+                    {message.images && message.images.length > 0 && (
+                     <div className="flex gap-2 mb-3 flex-wrap">
+                       {message.images.map((img, i) => (
+                         <img key={i} src={img} alt="Attached" className="rounded-lg max-w-xs max-h-48 object-cover border border-slate-200" />
+                       ))}
+                     </div>
+                    )}
                     {message.role === 'assistant' ? (
-                      <ReactMarkdown className="prose prose-slate max-w-none text-slate-800 leading-relaxed">
-                        {message.content}
-                      </ReactMarkdown>
+                     <ReactMarkdown className="prose prose-slate max-w-none text-slate-800 leading-relaxed">
+                       {message.content}
+                     </ReactMarkdown>
                     ) : (
-                      <p className="text-slate-800 leading-relaxed">{message.content}</p>
+                     <p className="text-slate-800 leading-relaxed">{message.content}</p>
                     )}
                     
                     {message.role === 'assistant' && (
@@ -864,8 +909,24 @@ I'm here to chat, but these professionals are specifically trained to help in cr
           {/* Input */}
           <div className="border-t border-slate-200 bg-white">
         <div className="max-w-3xl mx-auto px-6 py-4">
+          {attachedImages.length > 0 && (
+            <div className="flex gap-2 mb-3 flex-wrap">
+              {attachedImages.map((img, i) => (
+                <div key={i} className="relative group">
+                  <img src={img} alt="Attached" className="rounded-lg h-20 w-20 object-cover border border-slate-200" />
+                  <button
+                    onClick={() => removeImage(i)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="relative">
             <Textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -874,18 +935,35 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                   handleSend();
                 }
               }}
-              placeholder="Message Assistant..."
-              className="min-h-[80px] pr-12 resize-none border-slate-300 focus:border-slate-400 focus:ring-slate-400 text-slate-800 bg-white"
+              placeholder="Message Assistant or paste an image..."
+              className="min-h-[80px] pr-24 resize-none border-slate-300 focus:border-slate-400 focus:ring-slate-400 text-slate-800 bg-white"
               disabled={loading}
             />
-            <Button
-              onClick={handleSend}
-              disabled={!input.trim() || loading}
-              size="icon"
-              className="absolute bottom-3 right-3 h-8 w-8 bg-slate-800 hover:bg-slate-900 text-white"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+            <div className="absolute bottom-3 right-3 flex gap-2">
+              <label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file);
+                  }}
+                  disabled={loading}
+                />
+                <div className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-300 hover:bg-slate-50 cursor-pointer text-slate-600">
+                  <Paperclip className="h-4 w-4" />
+                </div>
+              </label>
+              <Button
+                onClick={handleSend}
+                disabled={(!input.trim() && attachedImages.length === 0) || loading}
+                size="icon"
+                className="h-8 w-8 bg-slate-800 hover:bg-slate-900 text-white"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           </div>
           </div>
