@@ -213,12 +213,12 @@ export default function KidsBibleStudy() {
     const textToRead = `${story.title}. ${story.story}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.rate = 0.85;
-    
-    // Use a kid-friendly voice for English, regular for Spanish
+    utterance.pitch = 1.5; // Higher pitch for child-like voice
+
+    const voices = window.speechSynthesis.getVoices();
+
     if (lang === 'en') {
-      utterance.pitch = 1.5; // Higher pitch for child-like voice
-      // Try to find a female/child voice
-      const voices = window.speechSynthesis.getVoices();
+      // Try to find a female/child voice for English
       const kidVoice = voices.find(v => 
         v.name.includes('Google UK English Female') || 
         v.name.includes('Microsoft Zira') ||
@@ -229,7 +229,19 @@ export default function KidsBibleStudy() {
         utterance.voice = kidVoice;
       }
     } else {
-      utterance.pitch = 1.2;
+      // Try to find a female/child voice for Spanish
+      const kidVoice = voices.find(v => 
+        v.lang.startsWith('es') && (
+          v.name.includes('Female') ||
+          v.name.includes('Mónica') ||
+          v.name.includes('Paulina') ||
+          v.name.includes('Google español') ||
+          v.name.includes('Microsoft Helena')
+        )
+      );
+      if (kidVoice) {
+        utterance.voice = kidVoice;
+      }
     }
     
     utterance.onend = () => setIsReading(false);
