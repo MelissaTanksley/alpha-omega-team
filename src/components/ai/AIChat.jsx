@@ -920,13 +920,17 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 const items = e.clipboardData?.items;
                 if (!items) return;
 
+                let hasImage = false;
                 for (let i = 0; i < items.length; i++) {
                   if (items[i].type.indexOf('image') !== -1) {
+                    hasImage = true;
                     e.preventDefault();
+                    e.stopPropagation();
                     const file = items[i].getAsFile();
                     if (file) {
                       handleImageUpload(file);
                     }
+                    break;
                   }
                 }
               }}
