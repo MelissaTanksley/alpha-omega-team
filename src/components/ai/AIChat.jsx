@@ -83,26 +83,6 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
-
-    // Prevent browser from navigating when image is pasted
-    const handleGlobalPaste = (e) => {
-      // Only prevent if not in our textarea
-      if (e.target !== textareaRef.current) {
-        const items = e.clipboardData?.items;
-        if (items) {
-          for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-              e.preventDefault();
-              e.stopPropagation();
-              return false;
-            }
-          }
-        }
-      }
-    };
-
-    window.addEventListener('paste', handleGlobalPaste, true);
-    return () => window.removeEventListener('paste', handleGlobalPaste, true);
   }, []);
 
   const checkUser = async () => {
@@ -938,23 +918,35 @@ I'm here to chat, but these professionals are specifically trained to help in cr
               }}
               onPaste={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const items = e.clipboardData?.items;
-                if (!items) return;
+                if (!items) {
+                  const text = e.clipboardData.getData('text');
+                  if (text) {
+                    setInput(prev => prev + text);
+                  }
+                  return;
+                }
 
+                let hasImage = false;
                 for (let i = 0; i < items.length; i++) {
                   if (items[i].type.indexOf('image') !== -1) {
+                    hasImage = true;
                     const file = items[i].getAsFile();
                     if (file) {
                       handleImageUpload(file);
                     }
-                    return;
+                    break;
                   }
                 }
 
-                // If no image, handle text paste
-                const text = e.clipboardData.getData('text');
-                if (text) {
-                  setInput(prev => prev + text);
+                // If no image found, handle text paste
+                if (!hasImage) {
+                  const text = e.clipboardData.getData('text');
+                  if (text) {
+                    setInput(prev => prev + text);
+                  }
                 }
               }}
               placeholder="Message Assistant or paste an image..."
