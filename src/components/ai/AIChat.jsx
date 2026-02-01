@@ -963,7 +963,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                   }
                 }
               }}
-              placeholder="Message Assistant or paste an image..."
+              placeholder="Message Assistant..."
               className="min-h-[80px] pr-24 resize-none border-slate-300 focus:border-slate-400 focus:ring-slate-400 text-slate-800 bg-white"
               disabled={loading}
             />
