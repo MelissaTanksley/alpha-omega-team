@@ -83,6 +83,31 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
+
+    // Prevent browser from navigating when image is pasted anywhere
+    const preventImageNavigation = (e) => {
+      const items = e.clipboardData?.items;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // If pasted in textarea, handle it
+            if (e.target === textareaRef.current) {
+              const file = items[i].getAsFile();
+              if (file) {
+                handleImageUpload(file);
+              }
+            }
+            return false;
+          }
+        }
+      }
+    };
+
+    document.addEventListener('paste', preventImageNavigation, true);
+    return () => document.removeEventListener('paste', preventImageNavigation, true);
   }, []);
 
   const checkUser = async () => {
@@ -917,32 +942,21 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 }
               }}
               onPaste={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
+                // Let the global handler deal with images
                 const items = e.clipboardData?.items;
-                if (!items) {
-                  const text = e.clipboardData.getData('text');
-                  if (text) {
-                    setInput(prev => prev + text);
-                  }
-                  return;
-                }
-
                 let hasImage = false;
-                for (let i = 0; i < items.length; i++) {
-                  if (items[i].type.indexOf('image') !== -1) {
-                    hasImage = true;
-                    const file = items[i].getAsFile();
-                    if (file) {
-                      handleImageUpload(file);
+                if (items) {
+                  for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                      hasImage = true;
+                      break;
                     }
-                    break;
                   }
                 }
 
-                // If no image found, handle text paste
+                // Only handle text paste here
                 if (!hasImage) {
+                  e.preventDefault();
                   const text = e.clipboardData.getData('text');
                   if (text) {
                     setInput(prev => prev + text);
