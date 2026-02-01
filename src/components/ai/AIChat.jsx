@@ -83,6 +83,23 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
+
+    // Prevent default browser behavior for image paste globally
+    const preventImagePaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+      }
+    };
+
+    document.addEventListener('paste', preventImagePaste, true);
+    return () => document.removeEventListener('paste', preventImagePaste, true);
   }, []);
 
   const checkUser = async () => {
@@ -920,12 +937,8 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 const items = e.clipboardData?.items;
                 if (!items) return;
 
-                let hasImage = false;
                 for (let i = 0; i < items.length; i++) {
                   if (items[i].type.indexOf('image') !== -1) {
-                    hasImage = true;
-                    e.preventDefault();
-                    e.stopPropagation();
                     const file = items[i].getAsFile();
                     if (file) {
                       handleImageUpload(file);
