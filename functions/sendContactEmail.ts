@@ -18,43 +18,18 @@ Deno.serve(async (req) => {
             status: 'new'
         });
 
-        // Send email notification via SendGrid
-        const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
-        
-        if (SENDGRID_API_KEY) {
-            try {
-                const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        personalizations: [{
-                            to: [{ email: 'melissa.alphaomega@gmail.com' }],
-                            subject: language === 'es' 
-                                ? `Nuevo mensaje de contacto de ${name}`
-                                : `New Contact Form Message from ${name}`
-                        }],
-                        from: { 
-                            email: 'noreply@alphaomega.com',
-                            name: 'Alpha Omega Contact Form'
-                        },
-                        reply_to: { email: email },
-                        content: [{
-                            type: 'text/plain',
-                            value: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n---\nReply to: ${email}`
-                        }]
-                    })
-                });
-
-                if (!response.ok) {
-                    const error = await response.text();
-                    console.error('SendGrid error:', error);
-                }
-            } catch (emailError) {
-                console.error('Failed to send email:', emailError.message);
-            }
+        // Send email notification using Base44's built-in email
+        try {
+            await base44.asServiceRole.integrations.Core.SendEmail({
+                from_name: 'Alpha Omega Contact Form',
+                to: 'melissa.alphaomega@gmail.com',
+                subject: language === 'es' 
+                    ? `Nuevo mensaje de contacto de ${name}`
+                    : `New Contact Form Message from ${name}`,
+                body: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n---\nReply to this person at: ${email}`
+            });
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError.message);
         }
 
         return Response.json({ success: true });
