@@ -83,25 +83,6 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
-
-    // Handle paste event for images
-    const handlePaste = (e) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          e.preventDefault();
-          const file = items[i].getAsFile();
-          if (file) {
-            handleImageUpload(file);
-          }
-        }
-      }
-    };
-
-    document.addEventListener('paste', handlePaste);
-    return () => document.removeEventListener('paste', handlePaste);
   }, []);
 
   const checkUser = async () => {
@@ -933,6 +914,20 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();
+                }
+              }}
+              onPaste={(e) => {
+                const items = e.clipboardData?.items;
+                if (!items) return;
+
+                for (let i = 0; i < items.length; i++) {
+                  if (items[i].type.indexOf('image') !== -1) {
+                    e.preventDefault();
+                    const file = items[i].getAsFile();
+                    if (file) {
+                      handleImageUpload(file);
+                    }
+                  }
                 }
               }}
               placeholder="Message Assistant or paste an image..."
