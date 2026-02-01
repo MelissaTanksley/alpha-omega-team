@@ -83,23 +83,6 @@ export default function AIChat({ conversation, onUpdate }) {
   useEffect(() => {
     checkUser();
     loadUserContext();
-
-    // Prevent default browser behavior for image paste globally
-    const preventImagePaste = (e) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-      }
-    };
-
-    document.addEventListener('paste', preventImagePaste, true);
-    return () => document.removeEventListener('paste', preventImagePaste, true);
   }, []);
 
   const checkUser = async () => {
@@ -934,6 +917,7 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                 }
               }}
               onPaste={(e) => {
+                e.preventDefault();
                 const items = e.clipboardData?.items;
                 if (!items) return;
 
@@ -943,8 +927,14 @@ I'm here to chat, but these professionals are specifically trained to help in cr
                     if (file) {
                       handleImageUpload(file);
                     }
-                    break;
+                    return;
                   }
+                }
+
+                // If no image, handle text paste
+                const text = e.clipboardData.getData('text');
+                if (text) {
+                  setInput(prev => prev + text);
                 }
               }}
               placeholder="Message Assistant or paste an image..."

@@ -21,23 +21,6 @@ export default function AIChatPage() {
 
   useEffect(() => {
     loadUser();
-
-    // Prevent image paste from navigating the page
-    const preventImagePaste = (e) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-      }
-    };
-
-    document.addEventListener('paste', preventImagePaste, true);
-    return () => document.removeEventListener('paste', preventImagePaste, true);
   }, []);
 
   const loadUser = async () => {
