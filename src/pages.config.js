@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import ExecutiveDashboard from './pages/ExecutiveDashboard';
 import RiskAssessment from './pages/RiskAssessment';
 import RiskDashboard from './pages/RiskDashboard';
 import AIChat from './pages/AIChat';
@@ -75,6 +76,7 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "ExecutiveDashboard": ExecutiveDashboard,
     "RiskAssessment": RiskAssessment,
     "RiskDashboard": RiskDashboard,
     "AIChat": AIChat,

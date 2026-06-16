@@ -27,7 +27,8 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', path: '/', page: 'Home' },
     { name: 'Assess AI System', path: '/RiskAssessment', page: 'RiskAssessment' },
-    { name: 'Dashboard', path: '/RiskDashboard', page: 'RiskDashboard' },
+    { name: 'Executive Dashboard', path: '/ExecutiveDashboard', page: 'ExecutiveDashboard' },
+    { name: 'All Assessments', path: '/RiskDashboard', page: 'RiskDashboard' },
   ];
 
   return (
@@ -143,7 +144,8 @@ export default function Layout({ children, currentPageName }) {
             </div>
             <div className="flex gap-6">
               <Link to="/RiskAssessment" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Start Assessment</Link>
-              <Link to="/RiskDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Dashboard</Link>
+              <Link to="/ExecutiveDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Executive Dashboard</Link>
+              <Link to="/RiskDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">All Assessments</Link>
             </div>
             <p className="text-slate-500 text-xs">© 2026 AI Risk Navigator for Healthcare</p>
           </div>
