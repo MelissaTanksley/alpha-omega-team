@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Shield, BarChart3, Plus, ChevronDown, ChevronUp, Calendar, Building2 } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, ChevronDown, ChevronUp, Calendar, Building2, Download, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import moment from 'moment';
+import jsPDF from 'jspdf';
 
 function getRiskStyle(level) {
   const map = {
@@ -32,6 +33,102 @@ function ScoreBar({ label, score }) {
       </div>
     </div>
   );
+}
+
+function exportCardPDF(a) {
+  const doc = new jsPDF();
+  const pageW = doc.internal.pageSize.getWidth();
+  const style = getRiskStyle(a.risk_level);
+  const scoreColors = { low: [16,185,129], medium: [245,158,11], high: [249,115,22], critical: [239,68,68] };
+  const [r, g, b] = scoreColors[a.risk_level] || [100,116,139];
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageW, 36, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(15); doc.setFont('helvetica', 'bold');
+  doc.text('AI Risk Navigator for Healthcare', pageW/2, 14, { align: 'center' });
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(148,163,184);
+  doc.text('Risk Assessment Report', pageW/2, 23, { align: 'center' });
+  doc.setTextColor(203,213,225);
+  doc.text(a.system_name, pageW/2, 31, { align: 'center' });
+
+  doc.setFillColor(r, g, b);
+  doc.rect(0, 36, pageW, 26, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(26); doc.setFont('helvetica', 'bold');
+  doc.text(String(a.overall_risk_score ?? '—'), 18, 54);
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+  doc.text('/100', 40, 54);
+  doc.setFontSize(12); doc.setFont('helvetica', 'bold');
+  doc.text(style.label, pageW - 14, 54, { align: 'right' });
+
+  let y = 76;
+  doc.setTextColor(30,41,59);
+
+  if (a.vendor || a.deployment_context) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(100,116,139);
+    doc.text('SYSTEM DETAILS', 14, y); y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(71,85,105); doc.setFontSize(10);
+    if (a.vendor) { doc.text(`Vendor: ${a.vendor}`, 14, y); y += 6; }
+    if (a.deployment_context) { doc.text(`Deployment: ${a.deployment_context}`, 14, y); y += 6; }
+    y += 4;
+  }
+
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(100,116,139);
+  doc.text('RISK DIMENSION SCORES', 14, y); y += 6;
+  const dims = [
+    ['Algorithmic Bias', a.bias_score],
+    ['Cybersecurity', a.cybersecurity_score],
+    ['Regulatory Compliance', a.compliance_score],
+    ['Clinical Impact', a.clinical_impact_score],
+  ];
+  dims.forEach(([label, score]) => {
+    const sc = score ?? 0;
+    const sc2 = sc < 26 ? [16,185,129] : sc < 51 ? [245,158,11] : sc < 76 ? [249,115,22] : [239,68,68];
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(71,85,105); doc.setFontSize(10);
+    doc.text(label, 14, y);
+    doc.setTextColor(...sc2); doc.setFont('helvetica', 'bold');
+    doc.text(String(sc), pageW-14, y, { align: 'right' }); y += 7;
+  });
+  y += 4;
+
+  if (a.summary) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(100,116,139);
+    doc.text('EXECUTIVE SUMMARY', 14, y); y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(71,85,105); doc.setFontSize(10);
+    const lines = doc.splitTextToSize(a.summary, pageW - 28);
+    doc.text(lines, 14, y); y += lines.length * 5 + 6;
+  }
+
+  if (a.governance_gaps?.length) {
+    if (y > 250) { doc.addPage(); y = 20; }
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(194,65,12);
+    doc.text('GOVERNANCE GAPS', 14, y); y += 6;
+    a.governance_gaps.forEach(gap => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(71,85,105); doc.setFontSize(10);
+      const lines = doc.splitTextToSize(`• ${gap}`, pageW - 28);
+      doc.text(lines, 14, y); y += lines.length * 5 + 2;
+    });
+    y += 4;
+  }
+
+  if (a.recommendations?.length) {
+    if (y > 250) { doc.addPage(); y = 20; }
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(29,78,216);
+    doc.text('RECOMMENDATIONS', 14, y); y += 6;
+    a.recommendations.forEach((rec, i) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(71,85,105); doc.setFontSize(10);
+      const lines = doc.splitTextToSize(`${i+1}. ${rec}`, pageW - 28);
+      doc.text(lines, 14, y); y += lines.length * 5 + 2;
+    });
+  }
+
+  doc.setFontSize(8); doc.setTextColor(148,163,184);
+  doc.text(`Generated ${new Date().toLocaleDateString()} · AI Risk Navigator for Healthcare`, pageW/2, 290, { align: 'center' });
+  doc.save(`AI-Risk-${a.system_name.replace(/\s+/g, '-')}.pdf`);
 }
 
 function AssessmentCard({ assessment }) {
@@ -64,11 +161,18 @@ function AssessmentCard({ assessment }) {
               <ScoreBar label="Clinical Impact" score={assessment.clinical_impact_score} />
             </div>
           </div>
-          <div className="flex flex-col items-center flex-shrink-0">
+          <div className="flex flex-col items-center gap-2 flex-shrink-0">
             <div className={`text-3xl font-bold ${assessment.overall_risk_score < 26 ? 'text-emerald-600' : assessment.overall_risk_score < 51 ? 'text-amber-600' : assessment.overall_risk_score < 76 ? 'text-orange-600' : 'text-red-600'}`}>
               {assessment.overall_risk_score ?? '—'}
             </div>
             <div className="text-xs text-slate-400">overall</div>
+            <button
+              onClick={() => exportCardPDF(assessment)}
+              title="Export PDF"
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-600 border border-slate-200 hover:border-blue-300 rounded px-2 py-1 transition-colors"
+            >
+              <Download className="h-3 w-3" /> PDF
+            </button>
           </div>
         </div>
 
@@ -81,7 +185,6 @@ function AssessmentCard({ assessment }) {
 
         {expanded && (
           <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Radar Chart */}
             <div>
               <div className="text-xs font-medium text-slate-500 mb-2">Risk Radar</div>
               <ResponsiveContainer width="100%" height={180}>
@@ -93,7 +196,6 @@ function AssessmentCard({ assessment }) {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
-
             <div className="space-y-4">
               {assessment.summary && (
                 <div>
@@ -135,20 +237,29 @@ export default function RiskDashboard() {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [newAlerts, setNewAlerts] = useState([]);
 
   useEffect(() => {
-    loadAssessments();
-  }, []);
+    base44.entities.AIRiskAssessment.list('-created_date', 50)
+      .then(setAssessments)
+      .catch(console.error)
+      .finally(() => setLoading(false));
 
-  const loadAssessments = async () => {
-    try {
-      const data = await base44.entities.AIRiskAssessment.list('-created_date', 50);
-      setAssessments(data);
-    } catch (e) {
-      console.error(e);
-    }
-    setLoading(false);
-  };
+    // Real-time sync
+    const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
+      if (event.type === 'create') {
+        setAssessments(prev => [event.data, ...prev]);
+        if (event.data?.risk_level === 'critical' || event.data?.risk_level === 'high') {
+          setNewAlerts(prev => [event.data, ...prev].slice(0, 5));
+        }
+      } else if (event.type === 'update') {
+        setAssessments(prev => prev.map(a => a.id === event.data.id ? event.data : a));
+      } else if (event.type === 'delete') {
+        setAssessments(prev => prev.filter(a => a.id !== event.entity_id));
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   const filtered = filter === 'all' ? assessments : assessments.filter(a => a.risk_level === filter);
 
@@ -173,11 +284,30 @@ export default function RiskDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      {/* Real-time alert banner */}
+      {newAlerts.length > 0 && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <div className="text-sm font-semibold text-red-700 mb-1">New High-Risk Alert{newAlerts.length > 1 ? 's' : ''}</div>
+            {newAlerts.map((a, i) => (
+              <div key={i} className="text-xs text-red-600">{a.system_name} — {a.risk_level === 'critical' ? 'Critical' : 'High'} Risk (Score: {a.overall_risk_score})</div>
+            ))}
+          </div>
+          <button onClick={() => setNewAlerts([])} className="text-red-400 hover:text-red-600 text-xs font-medium">Dismiss</button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Risk Dashboard</h1>
-          <p className="text-slate-500 text-sm mt-0.5">AI system risk assessments and governance insights</p>
+          <div className="flex items-center gap-2 mb-0.5">
+            <h1 className="text-2xl font-bold text-slate-900">Risk Dashboard</h1>
+            <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+              <RefreshCw className="h-3 w-3" /> Live
+            </div>
+          </div>
+          <p className="text-slate-500 text-sm">AI system risk assessments and governance insights</p>
         </div>
         <Link to="/RiskAssessment">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">

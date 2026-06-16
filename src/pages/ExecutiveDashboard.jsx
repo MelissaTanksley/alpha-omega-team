@@ -72,6 +72,17 @@ export default function ExecutiveDashboard() {
       .then(setAssessments)
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
+      if (event.type === 'create') {
+        setAssessments(prev => [event.data, ...prev]);
+      } else if (event.type === 'update') {
+        setAssessments(prev => prev.map(a => a.id === event.data.id ? event.data : a));
+      } else if (event.type === 'delete') {
+        setAssessments(prev => prev.filter(a => a.id !== event.entity_id));
+      }
+    });
+    return unsubscribe;
   }, []);
 
   if (loading) {
