@@ -56,6 +56,7 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Home": Home,
     "ComplianceChecklists": ComplianceChecklists,
     "ExecutiveDashboard": ExecutiveDashboard,
     "RiskAssessment": RiskAssessment,
