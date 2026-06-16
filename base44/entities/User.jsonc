@@ -1,0 +1,61 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "bio": {
+      "type": "string",
+      "description": "User biography"
+    },
+    "location": {
+      "type": "string",
+      "description": "User location"
+    },
+    "denomination": {
+      "type": "string",
+      "description": "Christian denomination"
+    },
+    "favorite_verse": {
+      "type": "string",
+      "description": "User's favorite Bible verse"
+    },
+    "profile_picture_url": {
+      "type": "string",
+      "description": "Profile picture URL"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "User reputation score"
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Earned badges"
+    },
+    "api_keys": {
+      "type": "object",
+      "description": "User's AI service API keys"
+    },
+    "preferred_ai_provider": {
+      "type": "string",
+      "description": "Preferred AI provider"
+    },
+    "is_visible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether user appears in active members list"
+    }
+  },
+  "required": [
+    "bio",
+    "location",
+    "denomination",
+    "favorite_verse",
+    "profile_picture_url",
+    "api_keys",
+    "preferred_ai_provider"
+  ]
+}

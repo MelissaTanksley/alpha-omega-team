@@ -1,0 +1,77 @@
+{
+  "name": "Sermon",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Sermon title"
+    },
+    "church_id": {
+      "type": "string",
+      "description": "Reference to the church"
+    },
+    "church_name": {
+      "type": "string",
+      "description": "Church name for display"
+    },
+    "speaker": {
+      "type": "string",
+      "description": "Speaker/Pastor name"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Sermon date"
+    },
+    "scripture_reference": {
+      "type": "string",
+      "description": "Main scripture passage"
+    },
+    "series_name": {
+      "type": "string",
+      "description": "Sermon series name if applicable"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Video link (YouTube, Vimeo, etc.)"
+    },
+    "audio_url": {
+      "type": "string",
+      "description": "Audio podcast link"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Sermon notes in rich text"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief sermon summary"
+    },
+    "key_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Key takeaway points"
+    },
+    "discussion_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Small group discussion questions"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topic tags"
+    }
+  },
+  "required": [
+    "title",
+    "church_id",
+    "speaker"
+  ]
+}

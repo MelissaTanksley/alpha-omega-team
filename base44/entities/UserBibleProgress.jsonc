@@ -1,0 +1,51 @@
+{
+  "name": "UserBibleProgress",
+  "type": "object",
+  "properties": {
+    "current_book": {
+      "type": "string",
+      "default": "Genesis",
+      "description": "Current book in Bible reading"
+    },
+    "current_chapter": {
+      "type": "number",
+      "default": 1,
+      "description": "Current chapter number"
+    },
+    "current_verse": {
+      "type": "number",
+      "default": 1,
+      "description": "Current verse number"
+    },
+    "preferred_translation": {
+      "type": "string",
+      "enum": [
+        "KJV",
+        "NIV",
+        "ESV",
+        "NASB",
+        "NLT",
+        "NKJV",
+        "AMP",
+        "MSG"
+      ],
+      "default": "KJV",
+      "description": "User's preferred Bible translation"
+    },
+    "verses_read": {
+      "type": "number",
+      "default": 0,
+      "description": "Total verses read"
+    },
+    "last_login_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last login date to track daily progress"
+    }
+  },
+  "required": [
+    "current_book",
+    "current_chapter",
+    "current_verse"
+  ]
+}

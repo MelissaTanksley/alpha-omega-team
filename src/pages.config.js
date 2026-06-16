@@ -47,6 +47,8 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import RiskAssessment from './pages/RiskAssessment';
+import RiskDashboard from './pages/RiskDashboard';
 import AIChat from './pages/AIChat';
 import AISettings from './pages/AISettings';
 import BibleAssistant from './pages/BibleAssistant';
@@ -73,6 +75,8 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "RiskAssessment": RiskAssessment,
+    "RiskDashboard": RiskDashboard,
     "AIChat": AIChat,
     "AISettings": AISettings,
     "BibleAssistant": BibleAssistant,

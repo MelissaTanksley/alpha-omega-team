@@ -1,0 +1,167 @@
+{
+  "name": "Book",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Book title"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author name"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Author's email"
+    },
+    "description": {
+      "type": "string",
+      "description": "Book description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "bible_study",
+        "theology",
+        "devotional",
+        "christian_living",
+        "biblical_commentary",
+        "apologetics",
+        "church_history",
+        "biography"
+      ],
+      "default": "bible_study",
+      "description": "Book category"
+    },
+    "price": {
+      "type": "number",
+      "description": "Book price in USD"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "Book cover image URL"
+    },
+    "preview_pdf_url": {
+      "type": "string",
+      "description": "Preview PDF URL"
+    },
+    "full_pdf_url": {
+      "type": "string",
+      "description": "Full book PDF URL (for purchased)"
+    },
+    "page_count": {
+      "type": "number",
+      "description": "Number of pages"
+    },
+    "isbn": {
+      "type": "string",
+      "description": "ISBN number"
+    },
+    "publisher": {
+      "type": "string",
+      "description": "Publisher name"
+    },
+    "publication_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Publication date"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Book tags"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average rating"
+    },
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "review": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Book reviews"
+    },
+    "sales_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of sales"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured book"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the book is published and visible"
+    }
+  },
+  "required": [
+    "title",
+    "author",
+    "description",
+    "price"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "user",
+            "admin"
+          ]
+        }
+      }
+    },
+    "read": {
+      "is_published": true
+    },
+    "update": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

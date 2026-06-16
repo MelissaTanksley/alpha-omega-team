@@ -1,0 +1,57 @@
+{
+  "name": "BibleStudy",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Study title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the study"
+    },
+    "book": {
+      "type": "string",
+      "description": "Bible book being studied"
+    },
+    "chapters": {
+      "type": "string",
+      "description": "Chapter range (e.g., '1-3')"
+    },
+    "content": {
+      "type": "string",
+      "description": "Study content in rich text"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "introductory",
+        "intermediate",
+        "advanced",
+        "graduate"
+      ],
+      "default": "intermediate"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "exegesis",
+        "hermeneutics",
+        "theology",
+        "historical_context",
+        "word_study",
+        "application"
+      ],
+      "description": "Study category"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the study is publicly visible"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

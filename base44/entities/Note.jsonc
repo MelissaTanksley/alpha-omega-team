@@ -1,0 +1,81 @@
+{
+  "name": "Note",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Note title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Note content in rich text"
+    },
+    "verse_reference": {
+      "type": "string",
+      "description": "Associated Bible verse reference"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for organization"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "user",
+            "admin"
+          ]
+        }
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

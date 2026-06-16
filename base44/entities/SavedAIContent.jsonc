@@ -1,0 +1,50 @@
+{
+  "name": "SavedAIContent",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Content title"
+    },
+    "content": {
+      "type": "string",
+      "description": "AI-generated content"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "study",
+        "explanation",
+        "word_study",
+        "application",
+        "sermon_notes",
+        "devotional"
+      ],
+      "default": "study",
+      "description": "Type of saved content"
+    },
+    "scripture_reference": {
+      "type": "string",
+      "description": "Related Bible verse"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Organization tags"
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "Original AI conversation ID"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

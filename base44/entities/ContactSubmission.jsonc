@@ -1,0 +1,42 @@
+{
+  "name": "ContactSubmission",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Sender's name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Sender's email"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es"
+      ],
+      "default": "en",
+      "description": "Form language"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "read",
+        "replied"
+      ],
+      "default": "new",
+      "description": "Submission status"
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "message"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "name": "AIRiskAssessment",
+  "type": "object",
+  "properties": {
+    "system_name": {
+      "type": "string",
+      "description": "Name of the AI system"
+    },
+    "system_type": {
+      "type": "string",
+      "enum": [
+        "diagnostic_imaging",
+        "clinical_decision_support",
+        "administrative",
+        "predictive_analytics",
+        "nlp_documentation",
+        "medication_management",
+        "other"
+      ],
+      "description": "Type of AI system"
+    },
+    "vendor": {
+      "type": "string",
+      "description": "Vendor or developer name"
+    },
+    "deployment_context": {
+      "type": "string",
+      "enum": [
+        "clinical",
+        "administrative",
+        "research",
+        "hybrid"
+      ],
+      "description": "Deployment context"
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Data sources used by the system"
+    },
+    "population_diversity": {
+      "type": "string",
+      "description": "Population diversity consideration level"
+    },
+    "bias_testing": {
+      "type": "string",
+      "description": "Bias testing status"
+    },
+    "data_documented": {
+      "type": "string",
+      "description": "Training data documentation status"
+    },
+    "security_controls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Security controls in place"
+    },
+    "encryption": {
+      "type": "string",
+      "description": "Data encryption status"
+    },
+    "hipaa_baa": {
+      "type": "string",
+      "description": "HIPAA BAA status"
+    },
+    "pen_testing": {
+      "type": "string",
+      "description": "Penetration testing status"
+    },
+    "fda_status": {
+      "type": "string",
+      "description": "FDA oversight status"
+    },
+    "hipaa_compliance": {
+      "type": "string",
+      "description": "HIPAA compliance status"
+    },
+    "governance_policy": {
+      "type": "string",
+      "description": "Internal governance policy status"
+    },
+    "clinical_validation": {
+      "type": "string",
+      "description": "Clinical validation study status"
+    },
+    "bias_score": {
+      "type": "number",
+      "description": "Algorithmic bias risk score (0-100, higher = more risk)"
+    },
+    "cybersecurity_score": {
+      "type": "number",
+      "description": "Cybersecurity risk score (0-100)"
+    },
+    "compliance_score": {
+      "type": "number",
+      "description": "Compliance risk score (0-100)"
+    },
+    "clinical_impact_score": {
+      "type": "number",
+      "description": "Clinical impact risk score (0-100)"
+    },
+    "overall_risk_score": {
+      "type": "number",
+      "description": "Overall risk score (0-100)"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Overall risk classification"
+    },
+    "summary": {
+      "type": "string",
+      "description": "AI-generated risk summary narrative"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Actionable risk reduction recommendations"
+    },
+    "governance_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Identified governance and compliance gaps"
+    }
+  },
+  "required": [
+    "system_name"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "name": "Purchase",
+  "type": "object",
+  "properties": {
+    "book_id": {
+      "type": "string",
+      "description": "Book ID"
+    },
+    "book_title": {
+      "type": "string",
+      "description": "Book title"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Buyer email"
+    },
+    "buyer_name": {
+      "type": "string",
+      "description": "Buyer name"
+    },
+    "price_paid": {
+      "type": "number",
+      "description": "Price paid"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "paypal",
+        "stripe",
+        "other"
+      ],
+      "default": "paypal",
+      "description": "Payment method"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "Payment transaction ID"
+    },
+    "download_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times downloaded"
+    },
+    "last_download_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last download timestamp"
+    }
+  },
+  "required": [
+    "book_id",
+    "book_title",
+    "price_paid"
+  ],
+  "rls": {
+    "create": {
+      "buyer_email": "{{user.email}}",
+      "user_condition": {
+        "role": {
+          "$in": [
+            "user",
+            "admin"
+          ]
+        }
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "buyer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "buyer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

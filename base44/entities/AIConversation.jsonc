@@ -1,0 +1,144 @@
+{
+  "name": "AIConversation",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Conversation title"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Which AI provider was used"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Chat messages"
+    },
+    "current_provider": {
+      "type": "string",
+      "enum": [
+        "chatgpt",
+        "gemini",
+        "claude",
+        "perplexity",
+        "veo",
+        "sora",
+        "grok",
+        "flux",
+        "stable_diffusion",
+        "midjourney",
+        "ideogram",
+        "luma",
+        "deepseek",
+        "gamma",
+        "kling",
+        "hailuo",
+        "runway",
+        "heygen",
+        "elevenlabs",
+        "higgsfield",
+        "nano_banana",
+        "gpt_image",
+        "pixverse",
+        "wan",
+        "pika",
+        "vidu",
+        "hedra",
+        "veed",
+        "recraft",
+        "hunyuan",
+        "bytedance",
+        "reve",
+        "meshy",
+        "ltx",
+        "topaz",
+        "llama",
+        "mistral",
+        "copyai",
+        "firefly",
+        "copilot",
+        "mm1",
+        "huggingface",
+        "jasper",
+        "techpresso",
+        "synthesia"
+      ],
+      "default": "chatgpt",
+      "description": "Currently active AI provider"
+    },
+    "provider_rotation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "chatgpt",
+        "gemini",
+        "claude",
+        "perplexity",
+        "veo",
+        "sora",
+        "grok",
+        "flux",
+        "stable_diffusion",
+        "midjourney",
+        "ideogram",
+        "luma",
+        "deepseek",
+        "gamma",
+        "kling",
+        "hailuo",
+        "runway",
+        "heygen",
+        "elevenlabs",
+        "higgsfield",
+        "nano_banana",
+        "gpt_image",
+        "pixverse",
+        "wan",
+        "pika",
+        "vidu",
+        "hedra",
+        "veed",
+        "recraft",
+        "hunyuan",
+        "bytedance",
+        "reve",
+        "meshy",
+        "ltx",
+        "topaz"
+      ],
+      "description": "List of providers to rotate through"
+    },
+    "context_summary": {
+      "type": "string",
+      "description": "Summary of conversation for context switching"
+    },
+    "is_shared": {
+      "type": "boolean",
+      "default": false,
+      "description": "Shared with team members"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

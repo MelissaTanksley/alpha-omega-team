@@ -1,0 +1,41 @@
+{
+  "name": "Church",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Church name"
+    },
+    "denomination": {
+      "type": "string",
+      "description": "Church denomination"
+    },
+    "location": {
+      "type": "string",
+      "description": "City, State"
+    },
+    "website": {
+      "type": "string",
+      "description": "Church website URL"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Church logo image URL"
+    },
+    "description": {
+      "type": "string",
+      "description": "About the church"
+    },
+    "pastor_name": {
+      "type": "string",
+      "description": "Lead pastor name"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

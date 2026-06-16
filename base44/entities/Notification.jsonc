@@ -1,0 +1,63 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Recipient's email"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "reply",
+        "message",
+        "mention",
+        "upvote",
+        "system"
+      ],
+      "description": "Notification type"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Notification content"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Read status"
+    },
+    "related_id": {
+      "type": "string",
+      "description": "Related post/message ID"
+    },
+    "related_type": {
+      "type": "string",
+      "description": "Type of related item"
+    },
+    "from_user": {
+      "type": "string",
+      "description": "User who triggered notification"
+    }
+  },
+  "required": [
+    "user_email",
+    "type",
+    "title",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "user_email": "{{user.email}}"
+    },
+    "update": {
+      "user_email": "{{user.email}}"
+    },
+    "delete": {
+      "user_email": "{{user.email}}"
+    }
+  }
+}

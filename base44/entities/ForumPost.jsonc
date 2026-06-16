@@ -1,0 +1,191 @@
+{
+  "name": "ForumPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Post title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Post content in rich text"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "bible_study",
+        "theology",
+        "prayer_requests",
+        "testimonies",
+        "questions",
+        "discussion"
+      ],
+      "default": "discussion",
+      "description": "Post category"
+    },
+    "scripture_reference": {
+      "type": "string",
+      "description": "Related Bible verse reference"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topic tags"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Author's name"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Author's email"
+    },
+    "author_profile_picture": {
+      "type": "string",
+      "description": "Author's profile picture URL"
+    },
+    "replies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "author_email": {
+            "type": "string"
+          },
+          "author_profile_picture": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "upvotes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "downvotes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "parent_reply_id": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Post replies with nested threading"
+    },
+    "upvotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User emails who upvoted"
+    },
+    "downvotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User emails who downvoted"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "reputation": {
+      "type": "object",
+      "properties": {
+        "thumbs_up": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "thumbs_down": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "default": {
+        "thumbs_up": [],
+        "thumbs_down": []
+      }
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "email": {
+          "$in": [
+            "user",
+            "admin"
+          ]
+        }
+      }
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
