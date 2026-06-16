@@ -39,9 +39,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-              <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Shield className="h-5 w-5 text-white" />
-              </div>
+              <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator Logo" className="w-10 h-10 object-contain" />
               <div>
                 <div className="text-white font-bold text-sm leading-tight">AI Risk Navigator</div>
                 <div className="text-blue-400 text-xs leading-tight">for Healthcare</div>
@@ -134,9 +132,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Shield className="h-4 w-4 text-white" />
-              </div>
+              <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator Logo" className="w-9 h-9 object-contain" />
               <div>
                 <div className="text-white font-semibold text-sm">AI Risk Navigator for Healthcare</div>
                 <div className="text-slate-400 text-xs">AI Governance · Risk Scoring · Decision Support</div>
