@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send } from 'lucide-react';
+import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
 
 const steps = [
@@ -42,11 +43,138 @@ function getRiskColor(score) {
   return { text: 'text-red-600', bg: 'bg-red-500', badge: 'bg-red-100 text-red-700 border-red-200', label: 'Critical Risk' };
 }
 
+function exportToPDF(formData, results) {
+  const doc = new jsPDF();
+  const risk = getRiskColor(results.overall_risk_score);
+  const riskLabel = risk.label;
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Header
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageW, 38, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('AI Risk Navigator for Healthcare', pageW / 2, 16, { align: 'center' });
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(148, 163, 184);
+  doc.text('Risk Assessment Report', pageW / 2, 25, { align: 'center' });
+  doc.setTextColor(203, 213, 225);
+  doc.text(formData.system_name, pageW / 2, 33, { align: 'center' });
+
+  // Score banner
+  const scoreColors = { 'Low Risk': [16, 185, 129], 'Medium Risk': [245, 158, 11], 'High Risk': [249, 115, 22], 'Critical Risk': [239, 68, 68] };
+  const [r, g, b] = scoreColors[riskLabel] || [100, 116, 139];
+  doc.setFillColor(r, g, b);
+  doc.rect(0, 38, pageW, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(28);
+  doc.setFont('helvetica', 'bold');
+  doc.text(String(results.overall_risk_score), 20, 57);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text('/100', 43, 57);
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text(riskLabel, pageW - 20, 57, { align: 'right' });
+
+  let y = 82;
+  doc.setTextColor(30, 41, 59);
+
+  // Summary
+  if (results.summary) {
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 116, 139);
+    doc.text('EXECUTIVE SUMMARY', 14, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(71, 85, 105);
+    const lines = doc.splitTextToSize(results.summary, pageW - 28);
+    doc.text(lines, 14, y);
+    y += lines.length * 5 + 10;
+  }
+
+  // Dimension scores
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(100, 116, 139);
+  doc.text('RISK DIMENSION SCORES', 14, y);
+  y += 7;
+  const dims = [
+    ['Algorithmic Bias', results.bias_score],
+    ['Cybersecurity', results.cybersecurity_score],
+    ['Regulatory Compliance', results.compliance_score],
+    ['Clinical Impact', results.clinical_impact_score],
+  ];
+  dims.forEach(([label, score]) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(71, 85, 105);
+    doc.setFontSize(10);
+    doc.text(label, 14, y);
+    const sc = score ?? 0;
+    const sc2 = sc < 26 ? [16,185,129] : sc < 51 ? [245,158,11] : sc < 76 ? [249,115,22] : [239,68,68];
+    doc.setTextColor(...sc2);
+    doc.setFont('helvetica', 'bold');
+    doc.text(String(sc), pageW - 14, y, { align: 'right' });
+    y += 7;
+  });
+  y += 5;
+
+  // Governance gaps
+  if (results.governance_gaps?.length) {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(194, 65, 12);
+    doc.setFontSize(10);
+    doc.text('GOVERNANCE GAPS', 14, y);
+    y += 6;
+    results.governance_gaps.forEach(gap => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      const lines = doc.splitTextToSize(`• ${gap}`, pageW - 28);
+      doc.text(lines, 14, y);
+      y += lines.length * 5 + 2;
+    });
+    y += 5;
+  }
+
+  // Recommendations
+  if (results.recommendations?.length) {
+    if (y > 250) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(29, 78, 216);
+    doc.setFontSize(10);
+    doc.text('RECOMMENDATIONS', 14, y);
+    y += 6;
+    results.recommendations.forEach((rec, i) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      const lines = doc.splitTextToSize(`${i + 1}. ${rec}`, pageW - 28);
+      doc.text(lines, 14, y);
+      y += lines.length * 5 + 2;
+    });
+  }
+
+  // Footer
+  doc.setFontSize(9);
+  doc.setTextColor(148, 163, 184);
+  doc.text(`Generated ${new Date().toLocaleDateString()} · AI Risk Navigator for Healthcare`, pageW / 2, 290, { align: 'center' });
+
+  doc.save(`AI-Risk-Report-${formData.system_name.replace(/\s+/g, '-')}.pdf`);
+}
+
 export default function RiskAssessment() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [emailInput, setEmailInput] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const [formData, setFormData] = useState({
     system_name: '', system_type: '', vendor: '', deployment_context: '',
     data_sources: [], population_diversity: '', bias_testing: '', data_documented: '',
@@ -215,11 +343,63 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
           </Card>
         )}
 
+        {/* PDF Export */}
+        <Card className="mb-4 border-slate-200">
+          <CardContent className="p-4 flex flex-col sm:flex-row items-center gap-3">
+            <div className="flex-1">
+              <div className="text-sm font-semibold text-slate-700">Export PDF Report</div>
+              <div className="text-xs text-slate-400">Download a formatted report with all scores and recommendations.</div>
+            </div>
+            <Button onClick={() => exportToPDF(formData, results)} variant="outline" className="flex-shrink-0 border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Download className="h-4 w-4 mr-2" /> Download PDF
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Email Report */}
+        <Card className="mb-6 border-slate-200">
+          <CardContent className="p-4">
+            <div className="text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><Mail className="h-4 w-4 text-blue-500" /> Email Report</div>
+            <div className="text-xs text-slate-400 mb-3">Send this risk assessment report to a stakeholder via email.</div>
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="recipient@hospital.org"
+                value={emailInput}
+                onChange={e => { setEmailInput(e.target.value); setEmailSent(false); }}
+                className="flex-1"
+              />
+              <Button
+                onClick={async () => {
+                  if (!emailInput.trim()) return;
+                  setEmailSending(true);
+                  try {
+                    await base44.functions.invoke('sendAssessmentReport', {
+                      assessmentId: results.id,
+                      recipientEmail: emailInput.trim()
+                    });
+                    setEmailSent(true);
+                    setEmailInput('');
+                  } catch (e) {
+                    alert('Failed to send email. Please try again.');
+                  }
+                  setEmailSending(false);
+                }}
+                disabled={emailSending || !emailInput.trim()}
+                className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0"
+              >
+                {emailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </Button>
+            </div>
+            {emailSent && <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> Report sent successfully!</p>}
+          </CardContent>
+        </Card>
+
         <div className="flex flex-col sm:flex-row gap-3">
           <Button onClick={() => navigate('/RiskDashboard')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
             <TrendingUp className="h-4 w-4 mr-2" /> View in Dashboard
           </Button>
-          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
+          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setEmailInput(''); setEmailSent(false); setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
             New Assessment
           </Button>
         </div>
