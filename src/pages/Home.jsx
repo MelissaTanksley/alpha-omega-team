@@ -128,7 +128,6 @@ export default function Home() {
             <div className="hidden lg:flex flex-col items-end text-right flex-shrink-0">
               <div className="text-blue-400 font-bold text-2xl tracking-widest mb-1">AOAI</div>
               <div className="text-slate-300 text-sm font-medium mb-1">Assessment of Artificial Intelligence</div>
-              <div className="text-white font-semibold text-base mb-3">AI Risk Navigator for Healthcare</div>
               <div className="text-slate-400 text-xs max-w-xs leading-relaxed">
                 Evaluate AI risk across bias, cybersecurity, compliance, and patient safety
               </div>
