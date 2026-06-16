@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart3, Heart, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity } from 'lucide-react';
+import { Shield, BarChart3, Heart, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity, Smartphone } from 'lucide-react';
 
 const features = [
   {
@@ -79,6 +79,31 @@ const mockScores = [
 ];
 
 export default function Home() {
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+  const [showIOSHint, setShowIOSHint] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setInstalled(true));
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') setInstalled(true);
+      setInstallPrompt(null);
+    } else if (isIOS) {
+      setShowIOSHint(true);
+    } else {
+      setShowIOSHint(true);
+    }
+  };
+
   return (
     <div>
       {/* Hero */}
@@ -115,7 +140,23 @@ export default function Home() {
                     View Dashboard
                   </Button>
                 </Link>
+                {!installed && (
+                  <Button size="lg" variant="outline" onClick={handleInstall} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-6 h-12 text-base">
+                    <Smartphone className="mr-2 h-5 w-5" />
+                    Add to Phone
+                  </Button>
+                )}
               </div>
+
+              {/* iOS / install hint */}
+              {showIOSHint && (
+                <div className="mb-8 bg-slate-800 border border-slate-700 rounded-xl px-5 py-4 max-w-md text-sm text-slate-300 leading-relaxed">
+                  <p className="font-semibold text-white mb-1">Install on your device</p>
+                  <p><span className="text-blue-400">iPhone/iPad:</span> Tap the Share icon in Safari, then "Add to Home Screen".</p>
+                  <p className="mt-1"><span className="text-blue-400">Android/Desktop:</span> Open the browser menu (⋮) and tap "Install App" or "Add to Home Screen".</p>
+                  <button onClick={() => setShowIOSHint(false)} className="mt-3 text-xs text-slate-500 hover:text-slate-300 underline">Dismiss</button>
+                </div>
+              )}
               <div className="flex flex-wrap gap-3">
                 {platformTypes.map((type) => (
                   <div key={type.label} className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-full px-4 py-2 text-sm text-slate-300">
