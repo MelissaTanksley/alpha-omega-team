@@ -143,7 +143,7 @@ export default function Home() {
                 {!installed && (
                   <Button size="lg" variant="outline" onClick={handleInstall} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-6 h-12 text-base">
                     <Smartphone className="mr-2 h-5 w-5" />
-                    Add to Phone
+                    Install App On Your Phone
                   </Button>
                 )}
               </div>
