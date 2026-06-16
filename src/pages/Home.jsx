@@ -110,7 +110,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link to="/RiskDashboard">
-                <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8 h-12 text-base">
+                <Button size="lg" variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300 px-8 h-12 text-base">
                   View Dashboard
                 </Button>
               </Link>
