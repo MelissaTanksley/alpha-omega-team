@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart3, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity } from 'lucide-react';
+import { Shield, BarChart3, Heart, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity } from 'lucide-react';
 
 const features = [
   {
@@ -220,6 +220,38 @@ export default function Home() {
               <div className="mt-6 pt-6 border-t border-slate-700 text-xs text-slate-500">
                 ⚠ 3 governance gaps identified · 5 recommendations generated
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why AOAI is Different */}
+      <section className="py-16 bg-white border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-900">Why AOAI is Different</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <Shield className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-slate-900 font-semibold text-base">Built for Healthcare AI</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">Purpose-built for the unique regulatory, clinical, and operational demands of healthcare AI environments.</p>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="text-slate-900 font-semibold text-base">Risk Scoring (Not Just Compliance)</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">Goes beyond checkbox compliance to deliver quantified risk scores across bias, cybersecurity, and governance dimensions.</p>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <Heart className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-slate-900 font-semibold text-base">Patient Safety Focused</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">Every assessment dimension is anchored to patient safety outcomes, ensuring AI risk decisions protect those who matter most.</p>
             </div>
           </div>
         </div>
