@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain } from 'lucide-react';
+import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain, CheckCircle } from 'lucide-react';
 
 const FRAMEWORKS = {
   privacy: {
@@ -11,6 +10,9 @@ const FRAMEWORKS = {
     bg: 'bg-blue-50',
     border: 'border-blue-200',
     badge: 'bg-blue-100 text-blue-700',
+    barColor: 'bg-blue-500',
+    activeBg: 'bg-blue-600',
+    ringColor: 'ring-blue-300',
     items: [
       {
         name: 'HIPAA',
@@ -38,6 +40,9 @@ const FRAMEWORKS = {
     bg: 'bg-violet-50',
     border: 'border-violet-200',
     badge: 'bg-violet-100 text-violet-700',
+    barColor: 'bg-violet-500',
+    activeBg: 'bg-violet-600',
+    ringColor: 'ring-violet-300',
     items: [
       {
         name: 'NIST CSF 2.0',
@@ -77,6 +82,9 @@ const FRAMEWORKS = {
     bg: 'bg-emerald-50',
     border: 'border-emerald-200',
     badge: 'bg-emerald-100 text-emerald-700',
+    barColor: 'bg-emerald-500',
+    activeBg: 'bg-emerald-600',
+    ringColor: 'ring-emerald-300',
     items: [
       {
         name: 'NIST AI RMF',
@@ -116,35 +124,50 @@ const FRAMEWORKS = {
   }
 };
 
-function FrameworkChecklist({ framework }) {
-  const [checked, setChecked] = useState({});
-  const [openSections, setOpenSections] = useState({});
+// compute all item keys for a category
+function getCategoryKeys(catKey) {
+  return FRAMEWORKS[catKey].items.flatMap(fw =>
+    fw.sections.flatMap((sec, si) => {
+      let base = fw.sections.slice(0, si).reduce((a, s) => a + s.items.length, 0);
+      return sec.items.map((_, i) => `${fw.name}-${base + i}`);
+    })
+  );
+}
 
-  const toggle = (key) => setChecked(prev => ({ ...prev, [key]: !prev[key] }));
+function getCategoryStats(catKey, checked) {
+  const keys = getCategoryKeys(catKey);
+  const done = keys.filter(k => checked[k]).length;
+  return { done, total: keys.length, pct: keys.length ? Math.round((done / keys.length) * 100) : 0 };
+}
+
+function FrameworkChecklist({ framework, checked, onToggle }) {
+  const [openSections, setOpenSections] = useState({});
   const toggleSection = (key) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
 
-  const allItems = framework.sections.flatMap(s => s.items);
-  const checkedCount = allItems.filter((_, i) => checked[`${framework.name}-${i}`]).length;
-  const pct = Math.round((checkedCount / allItems.length) * 100);
-
   let itemIndex = 0;
+  const allKeys = framework.sections.flatMap((sec, si) => {
+    const base = framework.sections.slice(0, si).reduce((a, s) => a + s.items.length, 0);
+    return sec.items.map((_, i) => `${framework.name}-${base + i}`);
+  });
+  const checkedCount = allKeys.filter(k => checked[k]).length;
+  const pct = Math.round((checkedCount / allKeys.length) * 100);
 
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-slate-800 text-base">{framework.name}</h3>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">{checkedCount}/{allItems.length} complete</span>
-          <div className="w-20 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-            <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+          <span className="text-xs text-slate-500">{checkedCount}/{allKeys.length}</span>
+          <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-500 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
           </div>
-          <span className="text-xs font-semibold text-emerald-600">{pct}%</span>
+          <span className="text-xs font-semibold text-emerald-600 w-8 text-right">{pct}%</span>
         </div>
       </div>
 
       {framework.sections.map((section) => {
         const sectionKey = `${framework.name}-${section.title}`;
-        const isOpen = openSections[sectionKey] !== false; // open by default
+        const isOpen = openSections[sectionKey] !== false;
         const startIndex = itemIndex;
         itemIndex += section.items.length;
 
@@ -163,7 +186,7 @@ function FrameworkChecklist({ framework }) {
                   const key = `${framework.name}-${startIndex + i}`;
                   return (
                     <label key={key} className="flex items-start gap-2.5 cursor-pointer group py-1">
-                      <button onClick={() => toggle(key)} className="mt-0.5 flex-shrink-0 text-slate-400 hover:text-blue-600 transition-colors">
+                      <button onClick={() => onToggle(key)} className="mt-0.5 flex-shrink-0 text-slate-400 hover:text-blue-600 transition-colors">
                         {checked[key]
                           ? <CheckSquare className="h-4 w-4 text-emerald-500" />
                           : <Square className="h-4 w-4" />}
@@ -183,10 +206,9 @@ function FrameworkChecklist({ framework }) {
   );
 }
 
-function CategoryPanel({ categoryKey }) {
+function CategoryPanel({ categoryKey, checked, onToggle }) {
   const cat = FRAMEWORKS[categoryKey];
   const Icon = cat.icon;
-
   return (
     <div className={`rounded-2xl border ${cat.border} p-6`}>
       <div className={`flex items-center gap-3 mb-6 pb-4 border-b ${cat.border}`}>
@@ -203,7 +225,7 @@ function CategoryPanel({ categoryKey }) {
         </div>
       </div>
       {cat.items.map(framework => (
-        <FrameworkChecklist key={framework.name} framework={framework} />
+        <FrameworkChecklist key={framework.name} framework={framework} checked={checked} onToggle={onToggle} />
       ))}
     </div>
   );
@@ -211,45 +233,92 @@ function CategoryPanel({ categoryKey }) {
 
 export default function ComplianceChecklists() {
   const [activeCategory, setActiveCategory] = useState(null);
+  const [checked, setChecked] = useState({});
+
+  const toggle = (key) => setChecked(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const stats = useMemo(() => ({
+    privacy: getCategoryStats('privacy', checked),
+    cyber: getCategoryStats('cyber', checked),
+    ai: getCategoryStats('ai', checked),
+  }), [checked]);
+
+  const overallDone = stats.privacy.done + stats.cyber.done + stats.ai.done;
+  const overallTotal = stats.privacy.total + stats.cyber.total + stats.ai.total;
+  const overallPct = overallTotal ? Math.round((overallDone / overallTotal) * 100) : 0;
 
   const categories = [
-    { key: 'privacy', label: 'Healthcare Privacy & Security', icon: Shield, color: 'text-blue-600', bg: 'bg-blue-600' },
-    { key: 'cyber', label: 'Cybersecurity & Risk Management', icon: Lock, color: 'text-violet-600', bg: 'bg-violet-600' },
-    { key: 'ai', label: 'AI Governance & Safety', icon: Brain, color: 'text-emerald-600', bg: 'bg-emerald-600' },
+    { key: 'privacy', label: 'Healthcare Privacy & Security', icon: Shield, color: 'text-blue-600', activeBg: 'bg-blue-600', barColor: 'bg-blue-500', border: 'border-blue-200' },
+    { key: 'cyber', label: 'Cybersecurity & Risk Management', icon: Lock, color: 'text-violet-600', activeBg: 'bg-violet-600', barColor: 'bg-violet-500', border: 'border-violet-200' },
+    { key: 'ai', label: 'AI Governance & Safety', icon: Brain, color: 'text-emerald-600', activeBg: 'bg-emerald-600', barColor: 'bg-emerald-500', border: 'border-emerald-200' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Compliance Checklists</h1>
-        <p className="text-slate-500 text-sm">Interactive checklists aligned to major healthcare AI governance frameworks. Track progress per framework.</p>
+        <p className="text-slate-500 text-sm">Interactive checklists aligned to major healthcare AI governance frameworks.</p>
       </div>
 
-      {/* Category selector */}
+      {/* Overall progress bar */}
+      <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold text-slate-700">Overall Completion</span>
+          <span className="text-sm font-bold text-slate-900">{overallDone} / {overallTotal} items &nbsp;·&nbsp; {overallPct}%</span>
+        </div>
+        <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 via-violet-500 to-emerald-500 rounded-full transition-all duration-500"
+            style={{ width: `${overallPct}%` }}
+          />
+        </div>
+        {overallPct === 100 && (
+          <div className="flex items-center gap-2 mt-2 text-emerald-600 text-sm font-medium">
+            <CheckCircle className="h-4 w-4" /> All frameworks complete!
+          </div>
+        )}
+      </div>
+
+      {/* Category selector cards with progress */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
         {categories.map(cat => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.key;
+          const s = stats[cat.key];
           return (
             <button
               key={cat.key}
               onClick={() => setActiveCategory(isActive ? null : cat.key)}
-              className={`flex items-center gap-3 px-5 py-4 rounded-xl border-2 font-medium text-sm transition-all text-left ${
+              className={`flex flex-col gap-3 px-5 py-4 rounded-xl border-2 font-medium text-sm transition-all text-left ${
                 isActive
-                  ? `${cat.bg} text-white border-transparent shadow-md`
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:shadow-sm'
+                  ? `${cat.activeBg} text-white border-transparent shadow-md`
+                  : `bg-white ${cat.border} text-slate-700 hover:shadow-sm`
               }`}
             >
-              <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : cat.color}`} />
-              <span>{cat.label}</span>
+              <div className="flex items-center gap-2.5">
+                <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : cat.color}`} />
+                <span className="leading-tight">{cat.label}</span>
+              </div>
+              <div className="w-full">
+                <div className={`h-1.5 rounded-full overflow-hidden ${isActive ? 'bg-white/30' : 'bg-slate-100'}`}>
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${isActive ? 'bg-white' : cat.barColor}`}
+                    style={{ width: `${s.pct}%` }}
+                  />
+                </div>
+                <div className={`flex justify-between text-xs mt-1.5 ${isActive ? 'text-white/80' : 'text-slate-500'}`}>
+                  <span>{s.done}/{s.total} items</span>
+                  <span className={`font-semibold ${isActive ? 'text-white' : cat.color}`}>{s.pct}%</span>
+                </div>
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Panel */}
+      {/* Checklist panel */}
       {activeCategory ? (
-        <CategoryPanel key={activeCategory} categoryKey={activeCategory} />
+        <CategoryPanel key={activeCategory} categoryKey={activeCategory} checked={checked} onToggle={toggle} />
       ) : (
         <div className="text-center py-20 text-slate-400">
           <Shield className="h-12 w-12 mx-auto mb-3 text-slate-200" />
