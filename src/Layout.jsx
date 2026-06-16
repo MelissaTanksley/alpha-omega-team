@@ -29,6 +29,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Assess AI System', path: '/RiskAssessment', page: 'RiskAssessment' },
     { name: 'Executive Dashboard', path: '/ExecutiveDashboard', page: 'ExecutiveDashboard' },
     { name: 'All Assessments', path: '/RiskDashboard', page: 'RiskDashboard' },
+    { name: 'Checklists', path: '/ComplianceChecklists', page: 'ComplianceChecklists' },
   ];
 
   return (
