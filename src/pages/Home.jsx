@@ -88,40 +88,50 @@ export default function Home() {
           backgroundSize: '64px 64px'
         }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-4xl">
-            <Badge className="mb-6 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
-              Healthcare AI Governance Platform
-            </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight">
-              AI Risk Navigator
-              <span className="block text-blue-400">for Healthcare</span>
-            </h1>
-            <p className="text-xl text-slate-300 mb-3 max-w-2xl font-medium">
-              Transform complex AI risks into clear, actionable insights for safer healthcare decisions.
-            </p>
-            <p className="text-base text-slate-400 mb-10 max-w-3xl leading-relaxed">
-              A decision-support platform enabling healthcare leaders, GRC analysts, and technology teams to assess risks associated with AI systems in clinical and operational environments.
-            </p>
-            <div className="flex flex-wrap gap-4 mb-14">
-              <Link to="/RiskAssessment">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 text-base font-semibold">
-                  Start Risk Assessment
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/RiskDashboard">
-                <Button size="lg" variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300 px-8 h-12 text-base">
-                  View Dashboard
-                </Button>
-              </Link>
+          <div className="flex items-start justify-between gap-8">
+            <div className="max-w-3xl flex-1">
+              <Badge className="mb-6 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
+                Healthcare AI Governance Platform
+              </Badge>
+              <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight">
+                AI Risk Navigator
+                <span className="block text-blue-400">for Healthcare</span>
+              </h1>
+              <p className="text-xl text-slate-300 mb-3 max-w-2xl font-medium">
+                Transform complex AI risks into clear, actionable insights for safer healthcare decisions.
+              </p>
+              <p className="text-base text-slate-400 mb-10 max-w-3xl leading-relaxed">
+                A decision-support platform enabling healthcare leaders, GRC analysts, and technology teams to assess risks associated with AI systems in clinical and operational environments.
+              </p>
+              <div className="flex flex-wrap gap-4 mb-14">
+                <Link to="/RiskAssessment">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 text-base font-semibold">
+                    Start Risk Assessment
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/RiskDashboard">
+                  <Button size="lg" variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300 px-8 h-12 text-base">
+                    View Dashboard
+                  </Button>
+                </Link>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {platformTypes.map((type) => (
+                  <div key={type.label} className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-full px-4 py-2 text-sm text-slate-300">
+                    <type.icon className="h-4 w-4 text-blue-400" />
+                    {type.label}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {platformTypes.map((type) => (
-                <div key={type.label} className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-full px-4 py-2 text-sm text-slate-300">
-                  <type.icon className="h-4 w-4 text-blue-400" />
-                  {type.label}
-                </div>
-              ))}
+            <div className="hidden lg:flex flex-col items-end text-right flex-shrink-0">
+              <div className="text-blue-400 font-bold text-2xl tracking-widest mb-1">AOAI</div>
+              <div className="text-slate-300 text-sm font-medium mb-1">Assessment of Artificial Intelligence</div>
+              <div className="text-white font-semibold text-base mb-3">AI Risk Navigator for Healthcare</div>
+              <div className="text-slate-400 text-xs max-w-xs leading-relaxed">
+                Evaluate AI risk across bias, cybersecurity, compliance, and patient safety
+              </div>
             </div>
           </div>
         </div>
