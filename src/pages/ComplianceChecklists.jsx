@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain, CheckCircle } from 'lucide-react';
+import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain, CheckCircle, MessageSquare, MessageSquarePlus } from 'lucide-react';
 
 const FRAMEWORKS = {
   privacy: {
@@ -140,9 +140,11 @@ function getCategoryStats(catKey, checked) {
   return { done, total: keys.length, pct: keys.length ? Math.round((done / keys.length) * 100) : 0 };
 }
 
-function FrameworkChecklist({ framework, checked, onToggle }) {
+function FrameworkChecklist({ framework, checked, onToggle, notes, onNoteChange }) {
   const [openSections, setOpenSections] = useState({});
+  const [openNotes, setOpenNotes] = useState({});
   const toggleSection = (key) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggleNote = (key) => setOpenNotes(prev => ({ ...prev, [key]: !prev[key] }));
 
   let itemIndex = 0;
   const allKeys = framework.sections.flatMap((sec, si) => {
@@ -184,17 +186,42 @@ function FrameworkChecklist({ framework, checked, onToggle }) {
               <div className="px-4 py-2 space-y-1.5">
                 {section.items.map((item, i) => {
                   const key = `${framework.name}-${startIndex + i}`;
+                  const hasNote = notes[key] && notes[key].trim().length > 0;
+                  const noteOpen = openNotes[key];
                   return (
-                    <label key={key} className="flex items-start gap-2.5 cursor-pointer group py-1">
-                      <button onClick={() => onToggle(key)} className="mt-0.5 flex-shrink-0 text-slate-400 hover:text-blue-600 transition-colors">
-                        {checked[key]
-                          ? <CheckSquare className="h-4 w-4 text-emerald-500" />
-                          : <Square className="h-4 w-4" />}
-                      </button>
-                      <span className={`text-sm transition-colors ${checked[key] ? 'line-through text-slate-400' : 'text-slate-700 group-hover:text-slate-900'}`}>
-                        {item}
-                      </span>
-                    </label>
+                    <div key={key} className="py-1">
+                      <div className="flex items-start gap-2.5 group">
+                        <button onClick={() => onToggle(key)} className="mt-0.5 flex-shrink-0 text-slate-400 hover:text-blue-600 transition-colors">
+                          {checked[key]
+                            ? <CheckSquare className="h-4 w-4 text-emerald-500" />
+                            : <Square className="h-4 w-4" />}
+                        </button>
+                        <span className={`text-sm flex-1 transition-colors ${checked[key] ? 'line-through text-slate-400' : 'text-slate-700 group-hover:text-slate-900'}`}>
+                          {item}
+                        </span>
+                        <button
+                          onClick={() => toggleNote(key)}
+                          title={noteOpen ? 'Hide note' : (hasNote ? 'View/edit note' : 'Add note')}
+                          className={`flex-shrink-0 transition-colors ${hasNote ? 'text-amber-500 hover:text-amber-600' : 'text-slate-300 hover:text-slate-500 opacity-0 group-hover:opacity-100'}`}
+                        >
+                          {hasNote
+                            ? <MessageSquare className="h-3.5 w-3.5" />
+                            : <MessageSquarePlus className="h-3.5 w-3.5" />}
+                        </button>
+                      </div>
+                      {noteOpen && (
+                        <div className="mt-1.5 ml-7">
+                          <textarea
+                            autoFocus
+                            value={notes[key] || ''}
+                            onChange={e => onNoteChange(key, e.target.value)}
+                            placeholder="Add internal note or justification…"
+                            rows={2}
+                            className="w-full text-xs text-slate-700 placeholder-slate-400 border border-amber-200 bg-amber-50 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-amber-300"
+                          />
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -206,7 +233,7 @@ function FrameworkChecklist({ framework, checked, onToggle }) {
   );
 }
 
-function CategoryPanel({ categoryKey, checked, onToggle }) {
+function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) {
   const cat = FRAMEWORKS[categoryKey];
   const Icon = cat.icon;
   return (
@@ -225,7 +252,7 @@ function CategoryPanel({ categoryKey, checked, onToggle }) {
         </div>
       </div>
       {cat.items.map(framework => (
-        <FrameworkChecklist key={framework.name} framework={framework} checked={checked} onToggle={onToggle} />
+        <FrameworkChecklist key={framework.name} framework={framework} checked={checked} onToggle={onToggle} notes={notes} onNoteChange={onNoteChange} />
       ))}
     </div>
   );
@@ -234,8 +261,10 @@ function CategoryPanel({ categoryKey, checked, onToggle }) {
 export default function ComplianceChecklists() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [checked, setChecked] = useState({});
+  const [notes, setNotes] = useState({});
 
   const toggle = (key) => setChecked(prev => ({ ...prev, [key]: !prev[key] }));
+  const handleNoteChange = (key, value) => setNotes(prev => ({ ...prev, [key]: value }));
 
   const stats = useMemo(() => ({
     privacy: getCategoryStats('privacy', checked),
@@ -318,7 +347,7 @@ export default function ComplianceChecklists() {
 
       {/* Checklist panel */}
       {activeCategory ? (
-        <CategoryPanel key={activeCategory} categoryKey={activeCategory} checked={checked} onToggle={toggle} />
+        <CategoryPanel key={activeCategory} categoryKey={activeCategory} checked={checked} onToggle={toggle} notes={notes} onNoteChange={handleNoteChange} />
       ) : (
         <div className="text-center py-20 text-slate-400">
           <Shield className="h-12 w-12 mx-auto mb-3 text-slate-200" />
