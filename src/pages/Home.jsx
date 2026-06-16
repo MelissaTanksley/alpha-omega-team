@@ -225,6 +225,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-16 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-900">How It Works</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {[
+              { step: '1', label: 'Input AI System', desc: 'Enter details about your AI system — type, vendor, deployment context, and data sources.', color: 'bg-blue-600' },
+              { step: '2', label: 'Analyze Risk', desc: 'The platform evaluates bias, cybersecurity posture, compliance status, and clinical impact.', color: 'bg-violet-600' },
+              { step: '3', label: 'Generate Score', desc: 'Receive a unified risk score with dimension breakdowns and identified governance gaps.', color: 'bg-amber-500' },
+              { step: '4', label: 'Take Action', desc: 'Act on prioritized recommendations to reduce risk and strengthen patient safety.', color: 'bg-green-600' },
+            ].map((item) => (
+              <div key={item.step} className="flex flex-col items-center text-center gap-3">
+                <div className={`w-12 h-12 ${item.color} rounded-full flex items-center justify-center text-white font-bold text-lg`}>
+                  {item.step}
+                </div>
+                <h3 className="text-slate-900 font-semibold text-base">{item.label}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Why AOAI is Different */}
       <section className="py-16 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
