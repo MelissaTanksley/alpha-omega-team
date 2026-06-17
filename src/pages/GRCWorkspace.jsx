@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2 } from 'lucide-react';
+import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame } from 'lucide-react';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -143,6 +143,54 @@ const STRIDE_COLORS = {
   'Training Data Leakage': { bg: 'bg-teal-50', text: 'text-teal-800', badge: 'bg-teal-100 text-teal-700' },
   'Unauthorized AI Access': { bg: 'bg-pink-50', text: 'text-pink-800', badge: 'bg-pink-100 text-pink-700' },
 };
+
+// Score a threat by keywords in impact text — higher = more critical
+function scoreThreat(item) {
+  const text = (item.impact + ' ' + item.scenario).toLowerCase();
+  let score = 0;
+  if (/critical|severe|life.threat|fatality|death|irreversible/.test(text)) score += 4;
+  if (/high|major|significant|serious/.test(text)) score += 3;
+  if (/medium|moderate|potential/.test(text)) score += 2;
+  if (/low|minor|limited/.test(text)) score += 1;
+  // Boost AI-specific & high-impact categories
+  const highPriority = ['Prompt Injection', 'Model Hallucination', 'Information Disclosure', 'Elevation of Privilege', 'Tampering'];
+  if (highPriority.includes(item.threat_category)) score += 2;
+  return score;
+}
+
+function Top3Threats({ threats }) {
+  const top3 = [...threats].sort((a, b) => scoreThreat(b) - scoreThreat(a)).slice(0, 3);
+  const medals = ['🥇', '🥈', '🥉'];
+  return (
+    <div className="bg-red-950 border border-red-800 rounded-xl p-5 mb-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Flame className="h-5 w-5 text-red-400" />
+        <h3 className="text-white font-bold text-base">Top 3 Critical Threats</h3>
+        <span className="text-xs text-red-400 ml-1">Ranked by impact & likelihood</span>
+      </div>
+      <div className="space-y-3">
+        {top3.map((item, i) => {
+          const colors = STRIDE_COLORS[item.threat_category] || { badge: 'bg-slate-100 text-slate-700' };
+          return (
+            <div key={i} className="bg-red-900/50 border border-red-800/60 rounded-lg p-3 flex items-start gap-3">
+              <span className="text-xl flex-shrink-0 mt-0.5">{medals[i]}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>{item.threat_category}</span>
+                </div>
+                <p className="text-red-100 text-sm font-medium leading-snug mb-1">{item.scenario}</p>
+                <div className="flex flex-wrap gap-3 text-xs text-red-300">
+                  <span><span className="text-red-500">Asset:</span> {item.affected_asset}</span>
+                  <span><span className="text-red-500">Impact:</span> {item.impact}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function ThreatCard({ item, index }) {
   const colors = STRIDE_COLORS[item.threat_category] || { bg: 'bg-slate-50', text: 'text-slate-800', badge: 'bg-slate-100 text-slate-700' };
@@ -484,6 +532,8 @@ export default function GRCWorkspace() {
                 <p className="font-semibold text-slate-800">{threatResults.length} Threat Scenario{threatResults.length !== 1 ? 's' : ''} Generated</p>
                 <span className="text-xs text-slate-400 ml-1">STRIDE + AI-specific</span>
               </div>
+              {threatResults.length >= 3 && <Top3Threats threats={threatResults} />}
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide pt-1">All Threat Scenarios</p>
               {threatResults.map((item, i) => <ThreatCard key={i} item={item} index={i} />)}
             </div>
           )}
