@@ -304,12 +304,12 @@ export default function Home() {
                   <Target className="h-6 w-6 text-red-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-red-400 font-semibold uppercase tracking-widest mb-1">Informed by STRIDE / MITRE ATT&CK</p>
-                  <h3 className="text-white font-bold text-lg">Threat-Aware Risk Analysis</h3>
+                  <p className="text-xs text-red-400 font-semibold uppercase tracking-widest mb-1">STRIDE + MITRE ATT&CK</p>
+                  <h3 className="text-white font-bold text-lg">Threat Scenario Generator</h3>
                 </div>
               </div>
               <ul className="space-y-2.5">
-                {['Identifies potential threats during AI risk analysis', 'Uses structured threat concepts including prompt injection, hallucinations, and data leakage', 'Informed by STRIDE and MITRE ATT&CK frameworks', 'Does not currently generate a full STRIDE threat model'].map((item, i) => (
+                {['Generates structured STRIDE + AI-specific threat scenarios on demand', 'Covers prompt injection, model hallucination, data leakage, and privilege escalation', 'Informed by STRIDE and MITRE ATT&CK frameworks', 'Each scenario includes affected asset, clinical impact, and compliance relevance'].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
                     <CheckCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
                     {item}
@@ -351,7 +351,7 @@ export default function Home() {
                 </div>
               </div>
               <ul className="space-y-2.5">
-                {['Uses risk scoring concepts inspired by the FAIR model', 'Helps prioritize which risks to address first', 'Supports executive decision-making with clear risk ratings', 'Does not currently produce financial cost estimates'].map((item, i) => (
+                {['Produces a FAIR-aligned financial exposure estimate per assessment', 'Estimates breach cost ranges based on ePHI exposure and regulatory penalty risk', 'Helps prioritize remediation based on financial impact', 'Shown directly in assessment results with clear methodology disclosure'].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
                     <CheckCircle className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
                     {item}
