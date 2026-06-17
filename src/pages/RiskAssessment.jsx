@@ -484,6 +484,7 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
                   <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="diagnostic_imaging">Diagnostic Imaging</SelectItem>
+                    <SelectItem value="diagnostic_labs">Diagnostic Labs</SelectItem>
                     <SelectItem value="clinical_decision_support">Clinical Decision Support</SelectItem>
                     <SelectItem value="administrative">Administrative / Operational</SelectItem>
                     <SelectItem value="predictive_analytics">Predictive Analytics</SelectItem>
