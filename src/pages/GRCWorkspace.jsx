@@ -244,7 +244,7 @@ export default function GRCWorkspace() {
           <Shield className="h-6 w-6 text-blue-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">GRC Workspace</h1>
+          <h1 className="text-2xl font-bold text-slate-900">AI Healthcare Risk Analyzer</h1>
           <p className="text-slate-500 text-sm mt-0.5">ISO 27005 · HIPAA · HITECH · NIST CSF 2.0 — Structured AI Risk Analysis</p>
           <div className="flex gap-2 mt-2 flex-wrap">
             {['Risk Analysis', 'Compliance Mapping', 'Control Design', 'Audit Check'].map((s, i) => (

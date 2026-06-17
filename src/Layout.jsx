@@ -30,7 +30,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Executive Dashboard', path: '/ExecutiveDashboard', page: 'ExecutiveDashboard' },
     { name: 'All Assessments', path: '/RiskDashboard', page: 'RiskDashboard' },
     { name: 'Checklists', path: '/ComplianceChecklists', page: 'ComplianceChecklists' },
-    { name: 'GRC Workspace', path: '/GRCWorkspace', page: 'GRCWorkspace' },
+    { name: 'AI Healthcare Risk Analyzer', path: '/GRCWorkspace', page: 'GRCWorkspace' },
   ];
 
   return (
