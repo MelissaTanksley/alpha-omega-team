@@ -18,6 +18,26 @@ Concerns:
 - ePHI leakage
 - Unauthorized access`;
 
+const VALIDATION_PROMPT = (input) => `You are a strict input validator for a healthcare AI GRC system.
+
+Determine if the following input describes a real system (AI or non-AI) in a healthcare or regulated environment.
+
+A VALID input must include at least:
+- Some description of a system, tool, or technology
+- Some indication of context, environment, or use case
+
+An INVALID input is one that is:
+- Random text, gibberish, or lorem ipsum
+- A single word with no context
+- Completely unrelated to any real system (e.g. "banana", "hello", "???")
+- Too vague to derive any system type or environment
+
+Respond with ONLY valid JSON, no prose:
+{"valid": true} or {"valid": false, "reason": "brief explanation of what is missing"}
+
+Input:
+${input}`;
+
 const GRC_PROMPT = (input) => `Act as a healthcare Governance, Risk, and Compliance (GRC) system.
 
 Perform the following steps in order:
@@ -202,6 +222,7 @@ export default function GRCWorkspace() {
   const [input, setInput] = useState(EXAMPLE_INPUT);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [validationError, setValidationError] = useState(null);
   const [error, setError] = useState(null);
   const [rawJson, setRawJson] = useState(null);
   const [showRaw, setShowRaw] = useState(false);
@@ -211,8 +232,20 @@ export default function GRCWorkspace() {
     setLoading(true);
     setResults(null);
     setError(null);
+    setValidationError(null);
     setRawJson(null);
     try {
+      // Step 0: Validate input first
+      const validationRaw = await base44.integrations.Core.InvokeLLM({ prompt: VALIDATION_PROMPT(input) });
+      const validationCleaned = (typeof validationRaw === 'string' ? validationRaw : JSON.stringify(validationRaw))
+        .replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      const validation = JSON.parse(validationCleaned);
+      if (!validation.valid) {
+        setValidationError(validation.reason || 'Input does not describe a valid system.');
+        setLoading(false);
+        return;
+      }
+
       const raw = await base44.integrations.Core.InvokeLLM({ prompt: GRC_PROMPT(input) });
       // Strip markdown code fences if present
       const cleaned = (typeof raw === 'string' ? raw : JSON.stringify(raw))
@@ -275,19 +308,36 @@ export default function GRCWorkspace() {
             <Play className="h-4 w-4" />
             {loading ? 'Analyzing…' : 'Run GRC Analysis'}
           </Button>
-          {results && (
-            <Button variant="ghost" onClick={() => { setResults(null); setRawJson(null); setError(null); }} disabled={loading} className="gap-2 text-slate-500">
+          {(results || validationError) && (
+            <Button variant="ghost" onClick={() => { setResults(null); setRawJson(null); setError(null); setValidationError(null); }} disabled={loading} className="gap-2 text-slate-500">
               <RotateCcw className="h-4 w-4" /> Reset
             </Button>
           )}
         </div>
       </div>
 
+      {/* Validation Error */}
+      {validationError && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 text-sm text-amber-800">
+          <p className="font-semibold mb-1 flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-500" /> Input Validation Failed
+          </p>
+          <p className="mb-3">{validationError}</p>
+          <p className="font-medium text-amber-700 mb-1">Please provide:</p>
+          <ul className="list-disc list-inside space-y-0.5 text-amber-700 mb-3">
+            <li>A description of the system or tool</li>
+            <li>The environment (e.g. hospital, clinic, payer)</li>
+            <li>AI functionality or use case (if applicable)</li>
+          </ul>
+          <p className="text-xs text-amber-600 italic">Example: "AI clinical charting assistant used in a hospital to convert conversations to medical notes"</p>
+        </div>
+      )}
+
       {/* Loading */}
       {loading && (
         <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-5 text-blue-700 text-sm">
           <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-          Running 4-step GRC analysis — Risk → Compliance → Controls → Audit…
+          Validating input, then running 4-step GRC analysis — Risk → Compliance → Controls → Audit…
         </div>
       )}
 
