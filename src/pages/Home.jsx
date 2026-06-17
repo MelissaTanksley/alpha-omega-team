@@ -297,7 +297,7 @@ export default function Home() {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-slate-900">Why AOAI is Different</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div className="flex flex-col items-center text-center gap-3">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <Shield className="h-6 w-6 text-blue-600" />
@@ -318,6 +318,13 @@ export default function Home() {
               </div>
               <h3 className="text-slate-900 font-semibold text-base">Patient Safety Focused</h3>
               <p className="text-slate-500 text-sm leading-relaxed">Every assessment dimension is anchored to patient safety outcomes, ensuring AI risk decisions protect those who matter most.</p>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-violet-600" />
+              </div>
+              <h3 className="text-slate-900 font-semibold text-base">Built-in Input Validation</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">Prevents invalid or unsafe risk assessments before they run — ensuring every analysis is grounded in a real, describable healthcare system.</p>
             </div>
           </div>
         </div>
