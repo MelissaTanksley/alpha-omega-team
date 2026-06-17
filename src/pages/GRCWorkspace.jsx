@@ -289,6 +289,25 @@ export default function GRCWorkspace() {
         </div>
       </div>
 
+      {/* Why This Matters */}
+      <div className="bg-slate-900 border border-slate-700 rounded-xl p-5 mb-6">
+        <p className="text-xs font-semibold text-blue-400 uppercase tracking-widest mb-3">Why This Matters in GRC</p>
+        <div className="flex flex-col sm:flex-row gap-3">
+          {[
+            { label: 'Bad input', consequence: 'Bad risk analysis', icon: '⚠️' },
+            { label: 'Bad analysis', consequence: 'Compliance failure', icon: '📋' },
+            { label: 'Compliance failure', consequence: 'Legal + patient safety risk', icon: '⚖️' },
+          ].map((item, i) => (
+            <div key={i} className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-3">
+              <p className="text-lg mb-1">{item.icon}</p>
+              <p className="text-xs text-slate-400">{item.label}</p>
+              <p className="text-sm font-semibold text-white mt-0.5">{item.consequence}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-slate-400 mt-3 italic">Even small input quality issues matter in regulated healthcare environments.</p>
+      </div>
+
       {/* Input */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
         <div className="flex items-center justify-between mb-3">
