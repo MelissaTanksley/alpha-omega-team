@@ -304,12 +304,12 @@ export default function Home() {
                   <Target className="h-6 w-6 text-red-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-red-400 font-semibold uppercase tracking-widest mb-1">STRIDE / MITRE ATT&CK</p>
-                  <h3 className="text-white font-bold text-lg">Threat Modeling Engine</h3>
+                  <p className="text-xs text-red-400 font-semibold uppercase tracking-widest mb-1">Informed by STRIDE / MITRE ATT&CK</p>
+                  <h3 className="text-white font-bold text-lg">Threat-Aware Risk Analysis</h3>
                 </div>
               </div>
               <ul className="space-y-2.5">
-                {['Identifies attack paths and adversarial threat vectors', 'Models AI-specific threats: prompt injection, hallucinations, data leakage', 'Maps threats to known attack patterns', 'Differentiates from generic GRC tooling'].map((item, i) => (
+                {['Identifies potential threats during AI risk analysis', 'Uses structured threat concepts including prompt injection, hallucinations, and data leakage', 'Informed by STRIDE and MITRE ATT&CK frameworks', 'Does not currently generate a full STRIDE threat model'].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
                     <CheckCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
                     {item}
@@ -346,12 +346,12 @@ export default function Home() {
                   <DollarSign className="h-6 w-6 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-widest mb-1">FAIR Model</p>
-                  <h3 className="text-white font-bold text-lg">Financial Risk Estimation</h3>
+                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-widest mb-1">Inspired by FAIR</p>
+                  <h3 className="text-white font-bold text-lg">FAIR-Informed Risk Prioritization</h3>
                 </div>
               </div>
               <ul className="space-y-2.5">
-                {['Estimates potential financial exposure from identified risks', 'Presents cost impact in executive-friendly language', 'Supports prioritization and budget decisions', 'Example output: "Potential breach cost: $2.1M"'].map((item, i) => (
+                {['Uses risk scoring concepts inspired by the FAIR model', 'Helps prioritize which risks to address first', 'Supports executive decision-making with clear risk ratings', 'Does not currently produce financial cost estimates'].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
                     <CheckCircle className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
                     {item}
