@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
+import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap } from 'lucide-react';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -98,6 +98,83 @@ OUTPUT FORMAT (return ONLY this JSON array, no prose, no markdown):
 
 Input:
 ${input}`;
+
+const THREAT_PROMPT = (input) => `You are a healthcare AI security expert applying STRIDE threat modeling and MITRE ATT&CK concepts to AI systems in regulated healthcare environments.
+
+Given the system description below, generate structured threat scenarios covering all STRIDE categories plus AI-specific threats.
+
+STRIDE Categories to cover:
+- Spoofing
+- Tampering
+- Repudiation
+- Information Disclosure
+- Denial of Service
+- Elevation of Privilege
+
+Also include AI-specific threats:
+- Prompt Injection
+- Model Hallucination
+- Training Data Leakage
+- Unauthorized AI Access
+
+Output ONLY a valid JSON array. No prose, no markdown fences:
+[
+  {
+    "threat_category": "",
+    "scenario": "",
+    "affected_asset": "",
+    "impact": "",
+    "related_frameworks": ["NIST CSF", "HIPAA"]
+  }
+]
+
+System Description:
+${input}`;
+
+const STRIDE_COLORS = {
+  'Spoofing': { bg: 'bg-purple-50', text: 'text-purple-800', badge: 'bg-purple-100 text-purple-700' },
+  'Tampering': { bg: 'bg-red-50', text: 'text-red-800', badge: 'bg-red-100 text-red-700' },
+  'Repudiation': { bg: 'bg-slate-50', text: 'text-slate-800', badge: 'bg-slate-100 text-slate-700' },
+  'Information Disclosure': { bg: 'bg-amber-50', text: 'text-amber-800', badge: 'bg-amber-100 text-amber-700' },
+  'Denial of Service': { bg: 'bg-orange-50', text: 'text-orange-800', badge: 'bg-orange-100 text-orange-700' },
+  'Elevation of Privilege': { bg: 'bg-rose-50', text: 'text-rose-800', badge: 'bg-rose-100 text-rose-700' },
+  'Prompt Injection': { bg: 'bg-blue-50', text: 'text-blue-800', badge: 'bg-blue-100 text-blue-700' },
+  'Model Hallucination': { bg: 'bg-indigo-50', text: 'text-indigo-800', badge: 'bg-indigo-100 text-indigo-700' },
+  'Training Data Leakage': { bg: 'bg-teal-50', text: 'text-teal-800', badge: 'bg-teal-100 text-teal-700' },
+  'Unauthorized AI Access': { bg: 'bg-pink-50', text: 'text-pink-800', badge: 'bg-pink-100 text-pink-700' },
+};
+
+function ThreatCard({ item, index }) {
+  const colors = STRIDE_COLORS[item.threat_category] || { bg: 'bg-slate-50', text: 'text-slate-800', badge: 'bg-slate-100 text-slate-700' };
+  return (
+    <div className={`border border-slate-200 rounded-xl p-4 ${colors.bg}`}>
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+          {index + 1}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-2">
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>{item.threat_category}</span>
+            {(item.related_frameworks || []).map((f, i) => (
+              <span key={i} className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full">{f}</span>
+            ))}
+          </div>
+          <p className={`text-sm font-medium mb-2 ${colors.text}`}>{item.scenario}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+            <div className="bg-white/70 rounded-lg px-3 py-2">
+              <p className="text-xs text-slate-400 mb-0.5">Affected Asset</p>
+              <p className="text-xs text-slate-700 font-medium">{item.affected_asset}</p>
+            </div>
+            <div className="bg-white/70 rounded-lg px-3 py-2">
+              <p className="text-xs text-slate-400 mb-0.5">Impact</p>
+              <p className="text-xs text-slate-700 font-medium">{item.impact}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function RiskCard({ item, index }) {
   const [expanded, setExpanded] = useState(false);
@@ -227,6 +304,10 @@ export default function GRCWorkspace() {
   const [rawJson, setRawJson] = useState(null);
   const [showRaw, setShowRaw] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState('grc');
+  const [threatLoading, setThreatLoading] = useState(false);
+  const [threatResults, setThreatResults] = useState(null);
+  const [threatError, setThreatError] = useState(null);
 
   const run = async () => {
     setLoading(true);
@@ -269,6 +350,31 @@ export default function GRCWorkspace() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const runThreatScenarios = async () => {
+    setThreatLoading(true);
+    setThreatResults(null);
+    setThreatError(null);
+    try {
+      const validationRaw = await base44.integrations.Core.InvokeLLM({ prompt: VALIDATION_PROMPT(input) });
+      const validationCleaned = (typeof validationRaw === 'string' ? validationRaw : JSON.stringify(validationRaw))
+        .replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      const validation = JSON.parse(validationCleaned);
+      if (!validation.valid) {
+        setThreatError(validation.reason || 'Input does not describe a valid system.');
+        setThreatLoading(false);
+        return;
+      }
+      const raw = await base44.integrations.Core.InvokeLLM({ prompt: THREAT_PROMPT(input) });
+      const cleaned = (typeof raw === 'string' ? raw : JSON.stringify(raw))
+        .replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      setThreatResults(JSON.parse(cleaned));
+    } catch (e) {
+      setThreatError('Failed to generate threat scenarios. Please try again.');
+    } finally {
+      setThreatLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Header */}
@@ -294,6 +400,24 @@ export default function GRCWorkspace() {
         <p className="font-semibold">✓ Built-in input validation prevents invalid or unsafe risk assessments</p>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 mb-5 bg-slate-100 rounded-xl p-1">
+        <button
+          onClick={() => setActiveTab('grc')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${activeTab === 'grc' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Shield className="h-4 w-4" />
+          GRC Analysis
+        </button>
+        <button
+          onClick={() => setActiveTab('threats')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${activeTab === 'threats' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Target className="h-4 w-4" />
+          Threat Scenarios
+        </button>
+      </div>
+
       {/* Input */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
         <div className="flex items-center justify-between mb-3">
@@ -304,93 +428,150 @@ export default function GRCWorkspace() {
           value={input}
           onChange={e => setInput(e.target.value)}
           rows={9}
-          disabled={loading}
+          disabled={loading || threatLoading}
           placeholder="Describe your AI system, functions, environment, and concerns…"
           className="w-full text-sm font-mono bg-slate-50 border border-slate-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 disabled:opacity-60"
         />
         <div className="flex items-center gap-3 mt-3">
-          <Button onClick={run} disabled={loading || !input.trim()} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-            <Play className="h-4 w-4" />
-            {loading ? 'Analyzing…' : 'Run GRC Analysis'}
-          </Button>
-          {(results || validationError) && (
-            <Button variant="ghost" onClick={() => { setResults(null); setRawJson(null); setError(null); setValidationError(null); }} disabled={loading} className="gap-2 text-slate-500">
-              <RotateCcw className="h-4 w-4" /> Reset
-            </Button>
+          {activeTab === 'grc' ? (
+            <>
+              <Button onClick={run} disabled={loading || !input.trim()} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                <Play className="h-4 w-4" />
+                {loading ? 'Analyzing…' : 'Run GRC Analysis'}
+              </Button>
+              {(results || validationError) && (
+                <Button variant="ghost" onClick={() => { setResults(null); setRawJson(null); setError(null); setValidationError(null); }} disabled={loading} className="gap-2 text-slate-500">
+                  <RotateCcw className="h-4 w-4" /> Reset
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Button onClick={runThreatScenarios} disabled={threatLoading || !input.trim()} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+                <Zap className="h-4 w-4" />
+                {threatLoading ? 'Generating…' : 'Generate Threat Scenarios'}
+              </Button>
+              {(threatResults || threatError) && (
+                <Button variant="ghost" onClick={() => { setThreatResults(null); setThreatError(null); }} disabled={threatLoading} className="gap-2 text-slate-500">
+                  <RotateCcw className="h-4 w-4" /> Reset
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {/* Validation Error */}
-      {validationError && (
-        <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 text-sm text-amber-800">
-          <p className="font-semibold mb-1 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500" /> Input Validation Failed
-          </p>
-          <p className="mb-3">{validationError}</p>
-          <p className="font-medium text-amber-700 mb-1">Please provide:</p>
-          <ul className="list-disc list-inside space-y-0.5 text-amber-700 mb-3">
-            <li>A description of the system or tool</li>
-            <li>The environment (e.g. hospital, clinic, payer)</li>
-            <li>AI functionality or use case (if applicable)</li>
-          </ul>
-          <p className="text-xs text-amber-600 italic">Example: "AI clinical charting assistant used in a hospital to convert conversations to medical notes"</p>
-        </div>
-      )}
-
-      {/* Loading */}
-      {loading && (
-        <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-5 text-blue-700 text-sm">
-          <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-          Validating input, then running 4-step GRC analysis — Risk → Compliance → Controls → Audit…
-        </div>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 mb-4">
-          <p className="font-semibold mb-1">Parse Error</p>
-          <p>{error}</p>
-        </div>
-      )}
-
-      {/* Results */}
-      {results && (
+      {/* ── THREAT SCENARIOS TAB ── */}
+      {activeTab === 'threats' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-emerald-500" />
-              <p className="font-semibold text-slate-800">{results.length} Risk{results.length !== 1 ? 's' : ''} Identified</p>
+          {threatLoading && (
+            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-5 text-red-700 text-sm">
+              <div className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              Generating STRIDE + AI-specific threat scenarios…
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => setShowRaw(!showRaw)} className="text-xs text-slate-500 hover:text-slate-700 underline">
-                {showRaw ? 'Hide' : 'Show'} raw JSON
-              </button>
-              <button onClick={handleCopy} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                <Copy className="h-3 w-3" /> {copied ? 'Copied!' : 'Copy JSON'}
-              </button>
+          )}
+          {threatError && (
+            <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 text-sm text-amber-800">
+              <p className="font-semibold flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-500" /> {threatError}
+              </p>
             </div>
-          </div>
+          )}
+          {threatResults && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-5 w-5 text-emerald-500" />
+                <p className="font-semibold text-slate-800">{threatResults.length} Threat Scenario{threatResults.length !== 1 ? 's' : ''} Generated</p>
+                <span className="text-xs text-slate-400 ml-1">STRIDE + AI-specific</span>
+              </div>
+              {threatResults.map((item, i) => <ThreatCard key={i} item={item} index={i} />)}
+            </div>
+          )}
+          {!threatLoading && !threatResults && !threatError && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center text-slate-500 text-sm">
+              <Target className="h-8 w-8 text-slate-300 mx-auto mb-3" />
+              <p className="font-medium mb-1">No threat scenarios yet</p>
+              <p className="text-xs text-slate-400">Enter a system description above and click "Generate Threat Scenarios"</p>
+            </div>
+          )}
+        </div>
+      )}
 
-          {showRaw && (
-            <pre className="bg-slate-900 text-green-300 text-xs p-4 rounded-xl overflow-auto max-h-72 font-mono border border-slate-700">
-              {rawJson}
-            </pre>
+      {/* ── GRC ANALYSIS TAB ── */}
+      {activeTab === 'grc' && (
+        <div className="space-y-4">
+          {/* Validation Error */}
+          {validationError && (
+            <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 text-sm text-amber-800">
+              <p className="font-semibold mb-1 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-500" /> Input Validation Failed
+              </p>
+              <p className="mb-3">{validationError}</p>
+              <p className="font-medium text-amber-700 mb-1">Please provide:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-amber-700 mb-3">
+                <li>A description of the system or tool</li>
+                <li>The environment (e.g. hospital, clinic, payer)</li>
+                <li>AI functionality or use case (if applicable)</li>
+              </ul>
+              <p className="text-xs text-amber-600 italic">Example: "AI clinical charting assistant used in a hospital to convert conversations to medical notes"</p>
+            </div>
           )}
 
-          <div className="space-y-3">
-            {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
-          </div>
-        </div>
-      )}
+          {/* Loading */}
+          {loading && (
+            <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-5 text-blue-700 text-sm">
+              <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              Validating input, then running 4-step GRC analysis — Risk → Compliance → Controls → Audit…
+            </div>
+          )}
 
-      {/* Raw fallback when parse fails */}
-      {error && rawJson && (
-        <div>
-          <p className="text-xs font-semibold text-slate-500 mb-2">Raw Output</p>
-          <pre className="bg-slate-900 text-green-300 text-xs p-4 rounded-xl overflow-auto max-h-72 font-mono border border-slate-700">
-            {rawJson}
-          </pre>
+          {/* Error */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+              <p className="font-semibold mb-1">Parse Error</p>
+              <p>{error}</p>
+            </div>
+          )}
+
+          {/* Results */}
+          {results && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-emerald-500" />
+                  <p className="font-semibold text-slate-800">{results.length} Risk{results.length !== 1 ? 's' : ''} Identified</p>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setShowRaw(!showRaw)} className="text-xs text-slate-500 hover:text-slate-700 underline">
+                    {showRaw ? 'Hide' : 'Show'} raw JSON
+                  </button>
+                  <button onClick={handleCopy} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                    <Copy className="h-3 w-3" /> {copied ? 'Copied!' : 'Copy JSON'}
+                  </button>
+                </div>
+              </div>
+
+              {showRaw && (
+                <pre className="bg-slate-900 text-green-300 text-xs p-4 rounded-xl overflow-auto max-h-72 font-mono border border-slate-700">
+                  {rawJson}
+                </pre>
+              )}
+
+              <div className="space-y-3">
+                {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
+              </div>
+            </div>
+          )}
+
+          {/* Raw fallback when parse fails */}
+          {error && rawJson && (
+            <div>
+              <p className="text-xs font-semibold text-slate-500 mb-2">Raw Output</p>
+              <pre className="bg-slate-900 text-green-300 text-xs p-4 rounded-xl overflow-auto max-h-72 font-mono border border-slate-700">
+                {rawJson}
+              </pre>
+            </div>
+          )}
         </div>
       )}
     </div>
