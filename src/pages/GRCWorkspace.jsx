@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame } from 'lucide-react';
+import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -97,6 +97,37 @@ OUTPUT FORMAT (return ONLY this JSON array, no prose, no markdown):
 ]
 
 Input:
+${input}`;
+
+const RISK_MEASUREMENT_PROMPT = (input) => `You are a healthcare AI GRC analyst specializing in internal and external cyber risk measurement for AI systems in regulated healthcare environments.
+
+Analyze the following system and generate a structured list of internal and external risk indicators based on:
+- Internal: Access control weaknesses, insider misuse, misconfigured ePHI systems, AI model issues (hallucination, drift, incorrect outputs)
+- External: Threat actors targeting healthcare, MITRE ATT&CK patterns, ransomware threats, third-party/vendor AI risks
+
+For each risk, map to either NIST CSF 2.0 or HIPAA (whichever is most relevant).
+
+IMPORTANT: Output ONLY a valid JSON object. No prose, no markdown. Use this exact structure:
+{
+  "internal_trend": "A one-sentence analytical statement starting with 'Internal risk exposure is...' based on the system's profile",
+  "external_trend": "A one-sentence analytical statement starting with 'External threat exposure is...' based on the system's profile",
+  "risks": [
+    {
+      "category": "Internal",
+      "indicator": "",
+      "risk_level": "Low|Medium|High",
+      "description": "",
+      "likelihood": "Low|Medium|High",
+      "clinical_impact": "",
+      "compliance_impact": "",
+      "framework": "NIST CSF 2.0|HIPAA"
+    }
+  ]
+}
+
+Generate at least 3 internal risks and 3 external risks (6+ total). Be specific to the system described.
+
+System Description:
 ${input}`;
 
 const THREAT_PROMPT = (input) => `You are a healthcare AI security expert applying STRIDE threat modeling and MITRE ATT&CK concepts to AI systems in regulated healthcare environments.
@@ -218,6 +249,129 @@ function ThreatCard({ item, index }) {
               <p className="text-xs text-slate-700 font-medium">{item.impact}</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const RISK_LEVEL_STYLES = {
+  High: { badge: 'bg-red-100 text-red-800', dot: 'bg-red-500' },
+  Medium: { badge: 'bg-amber-100 text-amber-800', dot: 'bg-amber-500' },
+  Low: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-500' },
+};
+
+function RiskMeasurementResults({ data }) {
+  const risks = data.risks || [];
+  const internal = risks.filter(r => r.category === 'Internal');
+  const external = risks.filter(r => r.category === 'External');
+
+  // Rank top 3 by risk_level + likelihood combined score
+  const levelScore = { High: 3, Medium: 2, Low: 1 };
+  const ranked = [...risks].sort((a, b) =>
+    (levelScore[b.risk_level] || 0) + (levelScore[b.likelihood] || 0) -
+    ((levelScore[a.risk_level] || 0) + (levelScore[a.likelihood] || 0))
+  ).slice(0, 3);
+  const medals = ['🥇', '🥈', '🥉'];
+
+  const RiskRow = ({ item }) => {
+    const style = RISK_LEVEL_STYLES[item.risk_level] || RISK_LEVEL_STYLES.Low;
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${style.dot}`} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${style.badge}`}>{item.risk_level} Risk</span>
+              <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full">{item.framework}</span>
+              <span className="text-xs text-slate-400">Likelihood: {item.likelihood}</span>
+            </div>
+            <p className="text-sm font-semibold text-slate-800 mb-1">{item.indicator}</p>
+            <p className="text-xs text-slate-600 mb-2">{item.description}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="bg-slate-50 rounded-lg px-3 py-2">
+                <p className="text-xs text-slate-400 mb-0.5">Clinical Impact</p>
+                <p className="text-xs text-slate-700 font-medium">{item.clinical_impact}</p>
+              </div>
+              <div className="bg-slate-50 rounded-lg px-3 py-2">
+                <p className="text-xs text-slate-400 mb-0.5">Compliance Impact</p>
+                <p className="text-xs text-slate-700 font-medium">{item.compliance_impact}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Disclaimer */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center gap-2">
+        <Activity className="h-4 w-4 text-blue-500 flex-shrink-0" />
+        <p className="text-xs text-blue-800 font-medium">Near Real-Time Risk Insight (AI-generated) — This analysis is AI-driven analytical estimation, not live threat intelligence or real-time monitoring.</p>
+      </div>
+
+      {/* Trend Messages */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
+          <TrendingUp className="h-4 w-4 text-orange-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-orange-900">{data.internal_trend}</p>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+          <TrendingDown className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-red-900">{data.external_trend}</p>
+        </div>
+      </div>
+
+      {/* Top 3 Highest Risks */}
+      {ranked.length >= 3 && (
+        <div className="bg-slate-900 border border-slate-700 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="h-5 w-5 text-red-400" />
+            <h3 className="text-white font-bold text-base">Top 3 Highest Risks</h3>
+            <span className="text-xs text-slate-400 ml-1">Ranked by likelihood & impact</span>
+          </div>
+          <div className="space-y-3">
+            {ranked.map((item, i) => {
+              const style = RISK_LEVEL_STYLES[item.risk_level] || RISK_LEVEL_STYLES.Low;
+              return (
+                <div key={i} className="bg-slate-800 border border-slate-700 rounded-lg p-3 flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0 mt-0.5">{medals[i]}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${style.badge}`}>{item.risk_level} · {item.category}</span>
+                      <span className="text-xs text-slate-400">{item.framework}</span>
+                    </div>
+                    <p className="text-slate-100 text-sm font-medium leading-snug mb-1">{item.indicator}</p>
+                    <p className="text-slate-400 text-xs">{item.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Internal Risks */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-3 h-3 rounded-full bg-orange-500" />
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">Internal Risk Indicators ({internal.length})</h3>
+        </div>
+        <div className="space-y-3">
+          {internal.map((item, i) => <RiskRow key={i} item={item} />)}
+        </div>
+      </div>
+
+      {/* External Risks */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-3 h-3 rounded-full bg-red-500" />
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">External Risk Indicators ({external.length})</h3>
+        </div>
+        <div className="space-y-3">
+          {external.map((item, i) => <RiskRow key={i} item={item} />)}
         </div>
       </div>
     </div>
@@ -356,6 +510,9 @@ export default function GRCWorkspace() {
   const [threatLoading, setThreatLoading] = useState(false);
   const [threatResults, setThreatResults] = useState(null);
   const [threatError, setThreatError] = useState(null);
+  const [riskMeasureLoading, setRiskMeasureLoading] = useState(false);
+  const [riskMeasureResults, setRiskMeasureResults] = useState(null);
+  const [riskMeasureError, setRiskMeasureError] = useState(null);
 
   const run = async () => {
     setLoading(true);
@@ -396,6 +553,31 @@ export default function GRCWorkspace() {
     navigator.clipboard.writeText(rawJson || '');
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const runRiskMeasurement = async () => {
+    setRiskMeasureLoading(true);
+    setRiskMeasureResults(null);
+    setRiskMeasureError(null);
+    try {
+      const validationRaw = await base44.integrations.Core.InvokeLLM({ prompt: VALIDATION_PROMPT(input) });
+      const validationCleaned = (typeof validationRaw === 'string' ? validationRaw : JSON.stringify(validationRaw))
+        .replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      const validation = JSON.parse(validationCleaned);
+      if (!validation.valid) {
+        setRiskMeasureError(validation.reason || 'Input does not describe a valid system.');
+        setRiskMeasureLoading(false);
+        return;
+      }
+      const raw = await base44.integrations.Core.InvokeLLM({ prompt: RISK_MEASUREMENT_PROMPT(input) });
+      const cleaned = (typeof raw === 'string' ? raw : JSON.stringify(raw))
+        .replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      setRiskMeasureResults(JSON.parse(cleaned));
+    } catch (e) {
+      setRiskMeasureError('Failed to generate risk measurement. Please try again.');
+    } finally {
+      setRiskMeasureLoading(false);
+    }
   };
 
   const runThreatScenarios = async () => {
@@ -464,6 +646,13 @@ export default function GRCWorkspace() {
           <Target className="h-4 w-4" />
           Threat Scenarios
         </button>
+        <button
+          onClick={() => setActiveTab('riskmeasure')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${activeTab === 'riskmeasure' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Activity className="h-4 w-4" />
+          Risk Measurement
+        </button>
       </div>
 
       {/* Input */}
@@ -493,7 +682,7 @@ export default function GRCWorkspace() {
                 </Button>
               )}
             </>
-          ) : (
+          ) : activeTab === 'threats' ? (
             <>
               <Button onClick={runThreatScenarios} disabled={threatLoading || !input.trim()} className="bg-red-600 hover:bg-red-700 text-white gap-2">
                 <Zap className="h-4 w-4" />
@@ -501,6 +690,18 @@ export default function GRCWorkspace() {
               </Button>
               {(threatResults || threatError) && (
                 <Button variant="ghost" onClick={() => { setThreatResults(null); setThreatError(null); }} disabled={threatLoading} className="gap-2 text-slate-500">
+                  <RotateCcw className="h-4 w-4" /> Reset
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Button onClick={runRiskMeasurement} disabled={riskMeasureLoading || !input.trim()} className="bg-orange-600 hover:bg-orange-700 text-white gap-2">
+                <Activity className="h-4 w-4" />
+                {riskMeasureLoading ? 'Analyzing…' : 'Analyze Internal & External Risks'}
+              </Button>
+              {(riskMeasureResults || riskMeasureError) && (
+                <Button variant="ghost" onClick={() => { setRiskMeasureResults(null); setRiskMeasureError(null); }} disabled={riskMeasureLoading} className="gap-2 text-slate-500">
                   <RotateCcw className="h-4 w-4" /> Reset
                 </Button>
               )}
@@ -542,6 +743,42 @@ export default function GRCWorkspace() {
               <Target className="h-8 w-8 text-slate-300 mx-auto mb-3" />
               <p className="font-medium mb-1">No threat scenarios yet</p>
               <p className="text-xs text-slate-400">Enter a system description above and click "Generate Threat Scenarios"</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── RISK MEASUREMENT TAB ── */}
+      {activeTab === 'riskmeasure' && (
+        <div className="space-y-4">
+          {riskMeasureLoading && (
+            <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl p-5 text-orange-700 text-sm">
+              <div className="w-5 h-5 border-2 border-orange-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              Analyzing internal and external risk indicators…
+            </div>
+          )}
+          {riskMeasureError && (
+            <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 text-sm text-amber-800">
+              <p className="font-semibold flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-500" /> {riskMeasureError}
+              </p>
+            </div>
+          )}
+          {riskMeasureResults && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle className="h-5 w-5 text-emerald-500" />
+                <p className="font-semibold text-slate-800">{(riskMeasureResults.risks || []).length} Risk Indicators Identified</p>
+                <span className="text-xs text-slate-400 ml-1">Internal & External</span>
+              </div>
+              <RiskMeasurementResults data={riskMeasureResults} />
+            </div>
+          )}
+          {!riskMeasureLoading && !riskMeasureResults && !riskMeasureError && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center text-slate-500 text-sm">
+              <Activity className="h-8 w-8 text-slate-300 mx-auto mb-3" />
+              <p className="font-medium mb-1">No risk measurement yet</p>
+              <p className="text-xs text-slate-400">Enter a system description above and click "Analyze Internal & External Risks"</p>
             </div>
           )}
         </div>
@@ -611,9 +848,29 @@ export default function GRCWorkspace() {
                 {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
               </div>
 
-              {/* Generate Threat Scenarios button after results */}
-              <div className="mt-6 border-t border-slate-200 pt-6">
+              {/* Next steps after GRC results */}
+              <div className="mt-6 border-t border-slate-200 pt-6 space-y-3">
+                {/* Risk Measurement CTA */}
                 <div className="bg-slate-900 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Activity className="h-5 w-5 text-orange-400" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-semibold">Risk Measurement & Monitoring</p>
+                      <p className="text-slate-400 text-xs mt-0.5">Internal & external risk indicators — where risks come from and how they evolve</p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => { setActiveTab('riskmeasure'); runRiskMeasurement(); }}
+                    disabled={riskMeasureLoading}
+                    className="bg-orange-600 hover:bg-orange-700 text-white gap-2 flex-shrink-0"
+                  >
+                    {riskMeasureLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing…</> : <><Activity className="h-4 w-4" /> Analyze Internal & External Risks</>}
+                  </Button>
+                </div>
+                {/* Threat Scenarios CTA */}
+                <div className="bg-slate-800 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Target className="h-5 w-5 text-red-400" />
