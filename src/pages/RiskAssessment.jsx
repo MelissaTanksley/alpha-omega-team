@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send, DollarSign } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
 
@@ -123,6 +123,21 @@ function exportToPDF(formData, results) {
   });
   y += 5;
 
+  // Financial Exposure
+  if (results.financial_exposure) {
+    if (y > 260) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(146, 64, 14);
+    doc.setFontSize(10);
+    doc.text('FINANCIAL EXPOSURE ESTIMATE (FAIR-INFORMED)', 14, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(71, 85, 105);
+    const fLines = doc.splitTextToSize(results.financial_exposure, pageW - 28);
+    doc.text(fLines, 14, y);
+    y += fLines.length * 5 + 10;
+  }
+
   // Governance gaps
   if (results.governance_gaps?.length) {
     doc.setFont('helvetica', 'bold');
@@ -220,7 +235,7 @@ Compliance:
 - Governance policy: ${formData.governance_policy}
 - Clinical validation: ${formData.clinical_validation}
 
-Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, up to 5 actionable recommendations, and up to 4 governance gaps.`;
+Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, up to 5 actionable recommendations, up to 4 governance gaps, and a FAIR-informed financial exposure estimate (e.g. "Estimated breach cost: $1.2M–$3.5M based on ePHI exposure and regulatory penalty risk"). Be specific and realistic for healthcare.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -235,7 +250,8 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
             summary: { type: 'string' },
             recommendations: { type: 'array', items: { type: 'string' } },
-            governance_gaps: { type: 'array', items: { type: 'string' } }
+            governance_gaps: { type: 'array', items: { type: 'string' } },
+            financial_exposure: { type: 'string' }
           }
         }
       });
@@ -283,6 +299,22 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             </div>
           </CardContent>
         </Card>
+
+        {/* Financial Exposure */}
+        {results.financial_exposure && (
+          <Card className="mb-6 border-amber-200 bg-amber-50">
+            <CardContent className="p-5 flex items-start gap-4">
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <DollarSign className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">FAIR-Informed Financial Exposure Estimate</p>
+                <p className="text-sm text-amber-900 font-medium">{results.financial_exposure}</p>
+                <p className="text-xs text-amber-600 mt-1">Estimate based on risk scoring methodology inspired by the FAIR model. Not a certified financial assessment.</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Dimension Scores */}
         <Card className="mb-6">
