@@ -52,6 +52,7 @@ import ComplianceChecklists from './pages/ComplianceChecklists';
 import RiskAssessment from './pages/RiskAssessment';
 import RiskDashboard from './pages/RiskDashboard';
 import Home from './pages/Home';
+import GRCWorkspace from './pages/GRCWorkspace';
 import __Layout from './Layout.jsx';
 
 
@@ -61,6 +62,7 @@ export const PAGES = {
     "ExecutiveDashboard": ExecutiveDashboard,
     "RiskAssessment": RiskAssessment,
     "RiskDashboard": RiskDashboard,
+    "GRCWorkspace": GRCWorkspace,
 }
 
 export const pagesConfig = {
