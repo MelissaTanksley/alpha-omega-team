@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart3, Heart, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity, Smartphone } from 'lucide-react';
+import { Shield, BarChart3, Heart, Lock, AlertTriangle, CheckCircle, ArrowRight, Brain, FileCheck, Activity, Smartphone, Target, DollarSign, GitBranch, Zap } from 'lucide-react';
 
 const features = [
   {
@@ -262,6 +262,112 @@ export default function Home() {
                 ⚠ 3 governance gaps identified · 5 recommendations generated
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Capabilities */}
+      <section className="py-20 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">AI Risk Navigator Capabilities</Badge>
+            <h2 className="text-3xl font-bold text-white mb-4">What This Tool Does For You</h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">Four integrated engines working together to deliver comprehensive, actionable AI risk intelligence for healthcare.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* 1. Risk Scoring */}
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-7">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <BarChart3 className="h-6 w-6 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-1">ISO 27005</p>
+                  <h3 className="text-white font-bold text-lg">Risk Scoring Engine</h3>
+                </div>
+              </div>
+              <ul className="space-y-2.5">
+                {['Calculates likelihood × impact for every risk', 'Produces Low / Medium / High / Critical ratings', 'Generates a unified numeric risk score (0–100)', 'Used as the baseline for all GRC outputs'].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <CheckCircle className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 2. Threat Modeling */}
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-7">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-red-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Target className="h-6 w-6 text-red-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-red-400 font-semibold uppercase tracking-widest mb-1">STRIDE / MITRE ATT&CK</p>
+                  <h3 className="text-white font-bold text-lg">Threat Modeling Engine</h3>
+                </div>
+              </div>
+              <ul className="space-y-2.5">
+                {['Identifies attack paths and adversarial threat vectors', 'Models AI-specific threats: prompt injection, hallucinations, data leakage', 'Maps threats to known attack patterns', 'Differentiates from generic GRC tooling'].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <CheckCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 3. Compliance Mapping */}
+            <div className="bg-slate-800 border border-blue-700/50 rounded-2xl p-7 ring-1 ring-blue-500/20">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-emerald-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <GitBranch className="h-6 w-6 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-emerald-400 font-semibold uppercase tracking-widest mb-1">NIST CSF 2.0 + HIPAA — Core Engine</p>
+                  <h3 className="text-white font-bold text-lg">Compliance Mapping Engine</h3>
+                </div>
+              </div>
+              <ul className="space-y-2.5">
+                {['Auto-maps each risk to HIPAA Technical Safeguards', 'Aligns controls with NIST CSF Govern / Protect / Respond functions', 'Shows regulatory gaps by framework section', 'Makes your AI system compliance-aware and audit-ready'].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <CheckCircle className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 4. Financial Risk Estimation */}
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-7">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-11 h-11 bg-amber-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="h-6 w-6 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-widest mb-1">FAIR Model</p>
+                  <h3 className="text-white font-bold text-lg">Financial Risk Estimation</h3>
+                </div>
+              </div>
+              <ul className="space-y-2.5">
+                {['Estimates potential financial exposure from identified risks', 'Presents cost impact in executive-friendly language', 'Supports prioritization and budget decisions', 'Example output: "Potential breach cost: $2.1M"'].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <CheckCircle className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+          <div className="text-center mt-10">
+            <Link to="/GRCWorkspace">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 text-base font-semibold">
+                <Zap className="mr-2 h-5 w-5" />
+                Run a Full Analysis
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
