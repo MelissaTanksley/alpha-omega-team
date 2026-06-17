@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap } from 'lucide-react';
+import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2 } from 'lucide-react';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -559,6 +559,28 @@ export default function GRCWorkspace() {
 
               <div className="space-y-3">
                 {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
+              </div>
+
+              {/* Generate Threat Scenarios button after results */}
+              <div className="mt-6 border-t border-slate-200 pt-6">
+                <div className="bg-slate-900 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Target className="h-5 w-5 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-semibold">Generate Threat Scenarios</p>
+                      <p className="text-slate-400 text-xs mt-0.5">STRIDE categories + AI-specific risks based on this system</p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => { setActiveTab('threats'); runThreatScenarios(); }}
+                    disabled={threatLoading}
+                    className="bg-red-600 hover:bg-red-700 text-white gap-2 flex-shrink-0"
+                  >
+                    {threatLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</> : <><Zap className="h-4 w-4" /> Generate Threat Scenarios</>}
+                  </Button>
+                </div>
               </div>
             </div>
           )}
