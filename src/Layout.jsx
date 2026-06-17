@@ -2,11 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { Shield, BarChart3, LogOut, LogIn, User, Menu, X, Activity, Brain } from 'lucide-react';
+import { Shield, BarChart3, LogOut, LogIn, User, Menu, X, Activity, Brain, Sun, Moon } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     loadUser();
@@ -94,6 +108,15 @@ export default function Layout({ children, currentPageName }) {
                   Sign In
                 </Button>
               )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setDarkMode(!darkMode)}
+                className="text-slate-300 hover:text-white hover:bg-slate-800 h-8 w-8"
+                title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
