@@ -1,0 +1,72 @@
+{
+  "name": "ManualRisk",
+  "type": "object",
+  "properties": {
+    "risk_description": {
+      "type": "string",
+      "description": "Description of the risk"
+    },
+    "affected_asset": {
+      "type": "string",
+      "description": "Asset affected by this risk"
+    },
+    "likelihood": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Likelihood of the risk occurring"
+    },
+    "impact": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Potential impact if risk occurs"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Overall risk level"
+    },
+    "recommended_control": {
+      "type": "string",
+      "description": "Recommended control or mitigation"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Risk owner or responsible person"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Due date for remediation"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "in_progress",
+        "closed"
+      ],
+      "default": "open",
+      "description": "Status of the risk"
+    }
+  },
+  "required": [
+    "risk_description",
+    "likelihood",
+    "impact"
+  ]
+}
