@@ -467,24 +467,35 @@ function RiskCard({ item, index }) {
             ))}
           </div>
 
-          {/* Controls */}
+          {/* Controls (NIST CSF 2.0 Alignment) */}
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Controls</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { label: 'Administrative', key: 'administrative', color: 'slate' },
-                { label: 'Technical', key: 'technical', color: 'emerald' },
-                { label: 'Physical', key: 'physical', color: 'amber' },
-              ].map(({ label, key, color }) => (
-                <div key={key}>
-                  <p className={`text-xs font-semibold text-${color}-700 mb-1`}>{label}</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Controls (Protect & Detect Functions)</p>
+            <div className="space-y-2">
+              <div className="bg-emerald-50 rounded-lg p-3 border-l-4 border-l-emerald-600">
+                <p className="text-xs font-semibold text-emerald-700 mb-1">🛡️ Protect Controls</p>
+                <p className="text-xs text-slate-500 mb-2">Preventive measures aligned to NIST CSF Protect function</p>
+                <ul className="space-y-0.5">
+                  {(item.controls?.administrative || []).map((c, i) => (
+                    <li key={i} className="text-xs bg-white text-emerald-800 rounded px-2 py-1 border border-emerald-200">• {c}</li>
+                  ))}
+                  {(item.controls?.technical || []).map((c, i) => (
+                    <li key={i} className="text-xs bg-white text-emerald-800 rounded px-2 py-1 border border-emerald-200">• {c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-3 border-l-4 border-l-orange-600">
+                <p className="text-xs font-semibold text-orange-700 mb-1">⚠️ Detect Controls</p>
+                <p className="text-xs text-slate-500 mb-2">Detective measures for monitoring & event logging</p>
+                {(item.controls?.physical || []).length > 0 ? (
                   <ul className="space-y-0.5">
-                    {(item.controls?.[key] || []).map((c, i) => (
-                      <li key={i} className={`text-xs bg-${color}-50 text-${color}-800 rounded px-2 py-1`}>{c}</li>
+                    {(item.controls?.physical || []).map((c, i) => (
+                      <li key={i} className="text-xs bg-white text-orange-800 rounded px-2 py-1 border border-orange-200">• {c}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
+                ) : (
+                  <p className="text-xs text-orange-700">Consider adding monitoring, audit logging, and anomaly detection controls.</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -859,6 +870,26 @@ export default function GRCWorkspace() {
                   {rawJson}
                 </pre>
               )}
+
+              {/* NIST CSF 2.0 Lifecycle Summary */}
+              <div className="bg-slate-100 rounded-xl p-4 mb-4">
+                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Aligned to NIST CSF 2.0 Lifecycle</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                  {[
+                    { name: 'Govern', icon: '⚙️', color: 'bg-slate-200' },
+                    { name: 'Identify', icon: '🔍', color: 'bg-blue-200' },
+                    { name: 'Protect', icon: '🛡️', color: 'bg-emerald-200' },
+                    { name: 'Detect', icon: '⚠️', color: 'bg-orange-200' },
+                    { name: 'Respond', icon: '🚨', color: 'bg-red-200' },
+                    { name: 'Recover', icon: '↩️', color: 'bg-purple-200' },
+                  ].map(fn => (
+                    <div key={fn.name} className={`${fn.color} rounded-lg p-2 text-center text-xs font-semibold text-slate-700`}>
+                      <div className="text-lg">{fn.icon}</div>
+                      <div>{fn.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <div className="space-y-3">
                 {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}

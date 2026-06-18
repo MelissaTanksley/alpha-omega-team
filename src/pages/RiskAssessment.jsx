@@ -355,6 +355,18 @@ Be specific, asset-aware, and realistic for healthcare.`;
           <p className="text-slate-500 text-sm">{formData.system_name}</p>
         </div>
 
+        {/* NIST CSF 2.0 Lifecycle Header */}
+        <div className="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Assessment Aligned to NIST CSF 2.0</p>
+          <div className="flex flex-wrap gap-2">
+            {['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'].map((fn) => (
+              <span key={fn} className="text-xs bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">
+                {fn}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* Overall Score */}
         <Card className="mb-6 border-2 border-slate-200">
           <CardContent className="p-8">
@@ -367,6 +379,63 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 <Badge className={`${risk.badge} border text-sm px-3 py-1 mb-3`}>{risk.label}</Badge>
                 <p className="text-slate-600 text-sm leading-relaxed">{results.summary}</p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ═════════════════════════════════════════════════════════════════════════════ */}
+        {/* NIST CSF 2.0 LIFECYCLE ALIGNMENT */}
+        {/* ═════════════════════════════════════════════════════════════════════════════ */}
+
+        {/* 1. GOVERN */}
+        <Card className="mb-6 border-l-4 border-l-slate-700">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 bg-slate-700 text-white text-xs font-bold rounded-full">1</span>
+              Govern
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="bg-slate-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Risk Appetite (Healthcare)</p>
+              <p className="text-sm text-slate-700">Low risk tolerance — Clinical AI systems require robust governance, audit trails, and human oversight.</p>
+            </div>
+            <div className="bg-slate-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">AI Governance Requirements</p>
+              <ul className="text-xs text-slate-700 space-y-1 list-disc list-inside">
+                <li>Model validation & clinical validation before deployment</li>
+                <li>Continuous performance monitoring and bias detection</li>
+                <li>Documentation of training data, limitations, and use cases</li>
+                <li>Escalation protocols for unexpected outputs</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 2. IDENTIFY */}
+        <Card className="mb-6 border-l-4 border-l-blue-600">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full">2</span>
+              Identify
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="bg-blue-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Key Assets Involved</p>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {getEffectiveAssets().map((asset, i) => (
+                  <span key={i} className="text-xs bg-white border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full">
+                    {asset}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Risk Profile</p>
+              <p className="text-sm text-slate-700">
+                <strong>{risk.label}</strong> — {formData.system_name} has identified risks across {Object.keys(dimScores).length} dimensions. See dimension breakdown below for specific risk areas.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -387,7 +456,34 @@ Be specific, asset-aware, and realistic for healthcare.`;
           </Card>
         )}
 
-        {/* Dimension Scores */}
+        {/* 3. PROTECT */}
+        <Card className="mb-6 border-l-4 border-l-emerald-600">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 bg-emerald-600 text-white text-xs font-bold rounded-full">3</span>
+              Protect
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-emerald-50 rounded-lg p-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Current Controls</p>
+              {formData.security_controls?.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {formData.security_controls.map((ctl, i) => (
+                    <span key={i} className="text-xs bg-white border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full">
+                      {ctl}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-600 italic">No controls selected.</p>
+              )}
+              <p className="text-xs text-emerald-600 mt-2">ℹ️ Enhance with recommendations below.</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Risk Dimension Breakdown (Under Identify/Protect) */}
         <Card className="mb-6">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Risk Dimension Breakdown</CardTitle>
@@ -407,6 +503,73 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 </div>
               );
             })}
+          </CardContent>
+        </Card>
+
+        {/* 4. DETECT + 5. RESPOND */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="border-l-4 border-l-orange-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-orange-600 text-white text-xs font-bold rounded-full">4</span>
+                Detect
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-orange-50 rounded-lg p-3 space-y-2 text-xs">
+                <p className="font-semibold text-slate-600">Monitoring Recommendations:</p>
+                <ul className="list-disc list-inside text-slate-700 space-y-1">
+                  <li>AI output anomaly detection</li>
+                  <li>Audit logs for all AI decisions</li>
+                  <li>Performance monitoring vs. baseline</li>
+                  <li>User feedback/complaint tracking</li>
+                  <li>Security event monitoring</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-red-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-red-600 text-white text-xs font-bold rounded-full">5</span>
+                Respond
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-red-50 rounded-lg p-3 space-y-2 text-xs">
+                <p className="font-semibold text-slate-600">Response Actions:</p>
+                <ul className="list-disc list-inside text-slate-700 space-y-1">
+                  <li>Disable AI output if anomalies detected</li>
+                  <li>Escalate to clinician immediately</li>
+                  <li>Document incident and root cause</li>
+                  <li>Notify relevant stakeholders</li>
+                  <li>Initiate investigation procedure</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 6. RECOVER */}
+        <Card className="mb-6 border-l-4 border-l-purple-600">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white text-xs font-bold rounded-full">6</span>
+              Recover
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-purple-50 rounded-lg p-3 space-y-2 text-xs">
+              <p className="font-semibold text-slate-600">Recovery Considerations:</p>
+              <ul className="list-disc list-inside text-slate-700 space-y-1">
+                <li>Restore system integrity after incident</li>
+                <li>Validate AI outputs before re-enabling</li>
+                <li>Verify data consistency and completeness</li>
+                <li>Retrain or recalibrate model if needed</li>
+                <li>Document lessons learned & improvements</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
 
