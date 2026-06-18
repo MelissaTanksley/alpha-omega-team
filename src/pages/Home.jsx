@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail } from 'lucide-react';
+import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail, Download } from 'lucide-react';
 
 const mockScores = [
   { label: 'Algorithmic Bias', score: 68, color: 'bg-amber-500' },
@@ -42,6 +42,23 @@ const useCases = [
 export default function Home() {
   const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [demoEmail, setDemoEmail] = useState('');
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setInstalled(true));
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setInstalled(true);
+    setInstallPrompt(null);
+  };
 
   const handleDemoRequest = async (e) => {
     e.preventDefault();
@@ -54,6 +71,30 @@ export default function Home() {
 
   return (
     <div>
+      {/* ── ADD TO DEVICE BANNER ── */}
+      {(installPrompt || installed) && (
+        <div className="bg-slate-800 border-b border-slate-700 py-2.5">
+          <div className="flex items-center justify-center gap-3">
+            {installed ? (
+              <span className="text-emerald-400 text-sm font-medium flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4" /> App installed successfully
+              </span>
+            ) : (
+              <>
+                <span className="text-slate-300 text-sm">Add AI Risk Navigator to your device for quick access</span>
+                <button
+                  onClick={handleInstall}
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Add to Device
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.07]" style={{
