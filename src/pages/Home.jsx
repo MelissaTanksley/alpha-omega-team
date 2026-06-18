@@ -132,37 +132,47 @@ export default function Home() {
             </div>
 
             {/* Mock risk score card */}
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-7 shadow-2xl">
-              <div className="text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">Aligned with ISO 27005, NIST CSF 2.0, and HIPAA</div>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <div className="text-slate-400 text-xs uppercase tracking-wider mb-1">Sample Risk Analysis</div>
-                  <div className="text-white font-semibold text-sm">Clinical Decision Support AI</div>
-                </div>
-                <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs">High Risk</Badge>
-              </div>
-              <div className="mb-5">
-                <div className="text-slate-400 text-xs mb-1">Overall Risk Score</div>
-                <div className="flex items-end gap-2">
-                  <span className="text-5xl font-bold text-amber-400">72</span>
-                  <span className="text-slate-400 text-sm mb-1">/ 100</span>
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+              <div className="border-b border-slate-700 px-7 py-4">
+                <p className="text-slate-400 text-xs mb-2.5">Uses a hybrid risk modeling approach:</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs bg-blue-600/20 text-blue-300 border border-blue-500/30 rounded-full px-3 py-1">Qualitative scoring (ISO 27005)</span>
+                  <span className="text-xs bg-violet-600/20 text-violet-300 border border-violet-500/30 rounded-full px-3 py-1">Numeric risk scoring (0–100)</span>
+                  <span className="text-xs bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 rounded-full px-3 py-1">FAIR-informed prioritization methods</span>
                 </div>
               </div>
-              <div className="space-y-3.5">
-                {mockScores.map((item) => (
-                  <div key={item.label}>
-                    <div className="flex justify-between mb-1.5">
-                      <span className="text-slate-400 text-xs">{item.label}</span>
-                      <span className="text-white font-semibold text-xs">{item.score}</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                      <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.score}%` }} />
-                    </div>
+              <div className="p-7">
+                <div className="text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">Aligned with ISO 27005, NIST CSF 2.0, and HIPAA</div>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <div className="text-slate-400 text-xs uppercase tracking-wider mb-1">Sample Risk Analysis</div>
+                    <div className="text-white font-semibold text-sm">Clinical Decision Support AI</div>
                   </div>
-                ))}
-              </div>
-              <div className="mt-5 pt-5 border-t border-slate-700 text-xs text-slate-500">
-                ⚠ 3 governance gaps identified · 5 recommendations generated
+                  <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs">High Risk</Badge>
+                </div>
+                <div className="mb-5">
+                  <div className="text-slate-400 text-xs mb-1">Overall Risk Score</div>
+                  <div className="flex items-end gap-2">
+                    <span className="text-5xl font-bold text-amber-400">72</span>
+                    <span className="text-slate-400 text-sm mb-1">/ 100</span>
+                  </div>
+                </div>
+                <div className="space-y-3.5">
+                  {mockScores.map((item) => (
+                    <div key={item.label}>
+                      <div className="flex justify-between mb-1.5">
+                        <span className="text-slate-400 text-xs">{item.label}</span>
+                        <span className="text-white font-semibold text-xs">{item.score}</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                        <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.score}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-5 pt-5 border-t border-slate-700 text-xs text-slate-500">
+                  ⚠ 3 governance gaps identified · 5 recommendations generated
+                </div>
               </div>
             </div>
           </div>
