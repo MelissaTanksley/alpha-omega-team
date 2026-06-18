@@ -1,0 +1,31 @@
+{
+  "name": "AI Risk Navigator for Healthcare",
+  "short_name": "AI Risk Navigator",
+  "description": "A GRC platform for evaluating AI systems in healthcare across bias, cybersecurity, compliance, and patient safety dimensions. Aligned with HIPAA, NIST CSF 2.0, and ISO/IEC 27005.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://media.base44.com/images/public/69552d682a4e973d9943fc93/7aa0d2082_generated_image.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69552d682a4e973d9943fc93/7aa0d2082_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69552d682a4e973d9943fc93/7aa0d2082_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
