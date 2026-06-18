@@ -12,10 +12,30 @@ import { base44 } from '@/api/base44Client';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
-  { id: 2, title: 'Bias & Data', icon: Activity },
-  { id: 3, title: 'Security', icon: Lock },
-  { id: 4, title: 'Compliance', icon: CheckCircle },
+  { id: 2, title: 'Key Assets', icon: Activity },
+  { id: 3, title: 'Bias & Data', icon: Activity },
+  { id: 4, title: 'Security', icon: Lock },
+  { id: 5, title: 'Compliance', icon: CheckCircle },
 ];
+
+const assetOptions = [
+  { id: 'ai_model', label: 'AI Model / Algorithm' },
+  { id: 'ephi', label: 'Patient Data (ePHI)' },
+  { id: 'ehr', label: 'EHR / EMR System' },
+  { id: 'api', label: 'API Integrations' },
+  { id: 'vendor', label: 'External Vendors / Third Parties' },
+];
+
+const inferredAssets = {
+  diagnostic_imaging: ['ai_model', 'ephi', 'ehr'],
+  diagnostic_labs: ['ai_model', 'ephi', 'ehr'],
+  clinical_decision_support: ['ai_model', 'ephi', 'ehr', 'api'],
+  administrative: ['api', 'ehr', 'vendor'],
+  predictive_analytics: ['ai_model', 'ephi', 'api'],
+  nlp_documentation: ['ai_model', 'ephi', 'ehr'],
+  medication_management: ['ai_model', 'ephi', 'ehr', 'vendor'],
+  other: ['ai_model', 'ephi'],
+};
 
 const dataSourceOptions = ['EHR / EMR', 'Claims Data', 'Medical Imaging', 'Genomic Data', 'Wearable Devices', 'External Datasets', 'Lab Results', 'Patient-Reported Outcomes'];
 const securityControlOptions = ['Multi-Factor Authentication (MFA)', 'Single Sign-On (SSO)', 'Role-Based Access Control', 'Audit Logging', 'Intrusion Detection System', 'Data Loss Prevention (DLP)', 'API Gateway Controls', 'VPN / Network Segmentation'];
@@ -192,6 +212,7 @@ export default function RiskAssessment() {
   const [emailSent, setEmailSent] = useState(false);
   const [formData, setFormData] = useState({
     system_name: '', system_type: '', vendor: '', deployment_context: '',
+    key_assets: [], custom_asset: '',
     data_sources: [], population_diversity: '', bias_testing: '', data_documented: '',
     security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '',
     fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: ''
@@ -208,14 +229,24 @@ export default function RiskAssessment() {
     }));
   };
 
+  const getEffectiveAssets = () => {
+    const selected = formData.key_assets.length > 0 ? formData.key_assets : (inferredAssets[formData.system_type] || ['ai_model', 'ephi']);
+    const labels = selected.map(id => assetOptions.find(a => a.id === id)?.label).filter(Boolean);
+    if (formData.custom_asset?.trim()) labels.push(formData.custom_asset.trim());
+    return labels;
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
+    const effectiveAssets = getEffectiveAssets();
     try {
       const prompt = `You are a senior healthcare AI risk analyst. Analyze the following AI system and return a structured risk assessment with scores from 0–100 where higher = more risk.
 
 AI System: ${formData.system_name} (${formData.system_type})
 Vendor: ${formData.vendor || 'Not specified'}
 Deployment: ${formData.deployment_context}
+
+Key Assets Involved: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' (inferred from system type)' : ''}
 
 Bias & Data:
 - Data sources: ${formData.data_sources.join(', ') || 'None specified'}
@@ -234,6 +265,11 @@ Compliance:
 - HIPAA compliance: ${formData.hipaa_compliance}
 - Governance policy: ${formData.governance_policy}
 - Clinical validation: ${formData.clinical_validation}
+
+IMPORTANT: Reference the key assets (${effectiveAssets.join(', ')}) specifically in:
+- Risk descriptions (e.g. "The AI Model and ePHI are exposed to...")
+- Threat scenarios (e.g. "Unauthorized access to the EHR System could...")
+- Compliance gaps (e.g. "The API Integrations lack...")
 
 Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, up to 5 actionable recommendations, up to 4 governance gaps, and a FAIR-informed financial exposure estimate (e.g. "Estimated breach cost: $1.2M–$3.5M based on ePHI exposure and regulatory penalty risk"). Be specific and realistic for healthcare.`;
 
@@ -256,7 +292,7 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
         }
       });
 
-      const saved = await base44.entities.AIRiskAssessment.create({ ...formData, ...response });
+      const saved = await base44.entities.AIRiskAssessment.create({ ...formData, key_assets: getEffectiveAssets(), ...response });
       setResults({ ...response, id: saved.id });
     } catch (err) {
       console.error(err);
@@ -431,7 +467,7 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
           <Button onClick={() => navigate('/RiskDashboard')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
             <TrendingUp className="h-4 w-4 mr-2" /> View in Dashboard
           </Button>
-          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setEmailInput(''); setEmailSent(false); setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
+          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setEmailInput(''); setEmailSent(false);           setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', key_assets: [], custom_asset: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
             New Assessment
           </Button>
         </div>
@@ -467,7 +503,13 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
 
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">{steps[step - 1].title === 'System Info' ? 'AI System Information' : steps[step - 1].title === 'Bias & Data' ? 'Bias & Data Factors' : steps[step - 1].title === 'Security' ? 'Security Controls' : 'Compliance & Governance'}</CardTitle>
+          <CardTitle className="text-lg">{
+            step === 1 ? 'AI System Information' :
+            step === 2 ? 'Key Assets Involved' :
+            step === 3 ? 'Bias & Data Factors' :
+            step === 4 ? 'Security Controls' :
+            'Compliance & Governance'
+          }</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
 
@@ -513,8 +555,58 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             </>
           )}
 
-          {/* Step 2 */}
+          {/* Step 2 — Key Assets */}
           {step === 2 && (
+            <>
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-1">
+                <p className="text-xs text-blue-700 font-medium">Select up to 5 key assets involved in this AI system. If you skip this, assets will be inferred automatically from the system type.</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-slate-700 mb-3 block">Key Assets Involved</Label>
+                <div className="space-y-2.5">
+                  {assetOptions.map(asset => {
+                    const checked = formData.key_assets.includes(asset.id);
+                    const atLimit = formData.key_assets.length >= 5 && !checked;
+                    return (
+                      <label key={asset.id} className={`flex items-center gap-3 cursor-pointer group p-3 rounded-lg border transition-colors ${checked ? 'border-blue-300 bg-blue-50' : 'border-slate-200 hover:border-blue-200 bg-white'} ${atLimit ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                        <div
+                          onClick={() => !atLimit && toggleArray('key_assets', asset.id)}
+                          className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}
+                        >
+                          {checked && <CheckCircle className="h-3 w-3 text-white" />}
+                        </div>
+                        <span className="text-sm text-slate-700 font-medium">{asset.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Other Asset <span className="text-slate-400 font-normal">(optional)</span></Label>
+                <input
+                  type="text"
+                  value={formData.custom_asset}
+                  onChange={e => update('custom_asset', e.target.value)}
+                  placeholder="e.g. PACS system, imaging archive..."
+                  disabled={formData.key_assets.length >= 5}
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-slate-400 disabled:opacity-40"
+                />
+              </div>
+              {formData.key_assets.length === 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="text-xs text-slate-500">Will auto-infer:</span>
+                  {(inferredAssets[formData.system_type] || ['ai_model', 'ephi']).map(id => (
+                    <span key={id} className="text-xs bg-slate-100 text-slate-600 border border-slate-200 rounded-full px-2 py-0.5">
+                      {assetOptions.find(a => a.id === id)?.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Step 3 — Bias & Data */}
+          {step === 3 && (
             <>
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-3 block">Data Sources Used</Label>
@@ -563,8 +655,8 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             </>
           )}
 
-          {/* Step 3 */}
-          {step === 3 && (
+          {/* Step 4 — Security */}
+          {step === 4 && (
             <>
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-3 block">Security Controls In Place</Label>
@@ -614,8 +706,8 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             </>
           )}
 
-          {/* Step 4 */}
-          {step === 4 && (
+          {/* Step 5 — Compliance */}
+          {step === 5 && (
             <>
               <div>
                 <Label className="text-sm font-medium text-slate-700 mb-1.5 block">FDA Oversight Status</Label>
@@ -682,7 +774,7 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </Button>
-        {step < 4 ? (
+        {step < 5 ? (
           <Button
             onClick={() => setStep(s => s + 1)}
             disabled={step === 1 && !formData.system_name.trim()}

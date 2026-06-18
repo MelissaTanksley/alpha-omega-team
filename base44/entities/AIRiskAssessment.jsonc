@@ -34,6 +34,13 @@
       ],
       "description": "Deployment context"
     },
+    "key_assets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Key assets involved (e.g. AI Model, ePHI, EHR System)"
+    },
     "data_sources": {
       "type": "array",
       "items": {
@@ -90,7 +97,7 @@
     },
     "bias_score": {
       "type": "number",
-      "description": "Algorithmic bias risk score (0-100, higher = more risk)"
+      "description": "Algorithmic bias risk score (0-100)"
     },
     "cybersecurity_score": {
       "type": "number",
