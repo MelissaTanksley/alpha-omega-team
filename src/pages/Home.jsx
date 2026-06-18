@@ -220,7 +220,7 @@ export default function Home() {
             <Badge className="mb-4 bg-white/20 text-white border border-white/30 text-xs px-3 py-1 rounded-full">Available Now</Badge>
             <h2 className="text-3xl font-bold text-white mb-4">A Completed, Working Tool — Ready for Handoff or Integration</h2>
             <p className="text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              This is a fully functional AI risk assessment platform. It is available for handoff, white-labeling, integration into an existing GRC program, or further development. All assessment modules, compliance mapping, and reporting features are operational.
+              This is a fully functional AI risk assessment platform.<br />Ready for handoff, white-labeling, integration into an existing GRC program, or further development. All assessment modules, compliance mapping, and reporting features are operational.
             </p>
           </div>
 
