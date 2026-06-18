@@ -58,9 +58,18 @@ export default function Home() {
       const { outcome } = await installPrompt.userChoice;
       if (outcome === 'accepted') setInstalled(true);
       setInstallPrompt(null);
+      return;
+    }
+    // Detect platform and show tailored instructions
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPhone|iPad|iPod/.test(ua);
+    const isAndroid = /Android/.test(ua);
+    if (isIOS) {
+      alert('To add to your iPhone/iPad:\n\n1. Tap the Share button (□↑) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to confirm');
+    } else if (isAndroid) {
+      alert('To add to your Android device:\n\n1. Tap the three-dot menu (⋮) in Chrome\n2. Tap "Add to Home Screen" or "Install app"\n3. Tap "Add" to confirm');
     } else {
-      // Fallback: guide user to install manually
-      alert('To add this app to your device:\n\n• Chrome/Edge (desktop): Click the install icon (⊕) in the address bar\n• iPhone/Safari: Tap Share → "Add to Home Screen"\n• Android/Chrome: Tap the three-dot menu → "Add to Home Screen"');
+      alert('To add this app:\n\n• Chrome/Edge: Click the install icon (⊕) in the address bar\n• Safari: File → Add to Dock');
     }
   };
 
@@ -86,7 +95,7 @@ export default function Home() {
             <>
               <span className="text-slate-300 text-sm">Run a full AI risk & compliance analysis anytime</span>
               <button
-                onClick={installPrompt ? handleInstall : undefined}
+                onClick={handleInstall}
                 className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
