@@ -137,83 +137,73 @@ export default function GRCReport() {
           </CardHeader>
           {expandedSections.executive && (
             <CardContent className="space-y-5">
-              {/* Opening Statement */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              {/* Opening Context */}
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
                 <p className="text-sm text-slate-700 leading-relaxed">
-                  <strong>{assessment.system_name}</strong> represents a {riskLevel.toUpperCase()} risk to organizational operations in a regulated healthcare environment. While AI-driven tools offer significant clinical value, inadequate governance and control architecture create material exposure to patient safety incidents, regulatory penalties, and operational disruption.
+                  The use of AI-driven clinical documentation systems introduces significant risks to patient safety, data integrity, and regulatory compliance. In healthcare environments, these systems operate within strict HIPAA requirements and must ensure the confidentiality, integrity, and availability of electronic protected health information (ePHI).
+                </p>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  This assessment identifies an overall <strong>{riskLevel.toUpperCase()} RISK</strong> level associated with {assessment.system_name}. Key concerns include the potential for AI-generated clinical inaccuracies (hallucinations), insufficient access controls over sensitive patient data, and reliance on third-party vendors without adequate oversight.
                 </p>
               </div>
 
               {/* Overall Risk Level */}
               <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg">
                 <div>
-                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Overall Risk Assessment</p>
-                  <p className="text-sm text-slate-900 font-semibold">Risk Score: {assessment.overall_risk_score || 0}/100</p>
+                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Risk Score & Classification</p>
+                  <p className="text-sm text-slate-900 font-semibold">{assessment.overall_risk_score || 0}/100</p>
                 </div>
                 <Badge className={`text-sm font-bold px-4 py-2 ${riskColor.replace('bg-', 'bg-').replace('border-', '').split(' ')[0]}`}>
-                  {riskLevel.toUpperCase()} RISK
+                  {riskLevel.toUpperCase()}
                 </Badge>
               </div>
 
-              {/* Key Findings */}
+              {/* Critical Risks */}
               <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Key Findings</h4>
-                <p className="text-sm text-slate-700 leading-relaxed mb-3">
-                  This assessment identified critical gaps in operational oversight, technical controls, and compliance infrastructure. The system operates with {assessment.security_controls?.length === 0 ? 'minimal' : 'limited'} protective mechanisms for patient data, creating substantial exposure to unauthorized access and regulatory non-compliance. Without immediate remediation, this system poses unacceptable risk to clinical operations and organizational reputation.
-                </p>
-              </div>
-
-              {/* Top 3 Risks */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Critical Risk Areas</h4>
+                <h4 className="text-sm font-bold text-slate-900 mb-3">The Most Critical Risks Include:</h4>
                 <div className="space-y-2">
                   <div className="flex gap-3 items-start bg-red-50 border border-red-200 p-3 rounded-lg">
-                    <span className="text-lg font-bold text-red-600 flex-shrink-0 w-6 text-center">1</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">AI Model Reliability & Clinical Validation</p>
-                      <p className="text-xs text-slate-600 mt-0.5">Hallucinations and unvalidated outputs could result in diagnostic errors, treatment delays, and patient harm.</p>
-                    </div>
+                    <span className="text-lg font-bold text-red-600 flex-shrink-0 w-6 text-center">•</span>
+                    <span className="text-sm text-slate-900"><strong>AI-generated errors</strong> impacting clinical decision-making</span>
                   </div>
                   <div className="flex gap-3 items-start bg-orange-50 border border-orange-200 p-3 rounded-lg">
-                    <span className="text-lg font-bold text-orange-600 flex-shrink-0 w-6 text-center">2</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">Patient Data Protection & Privacy Breach</p>
-                      <p className="text-xs text-slate-600 mt-0.5">Inadequate access controls and encryption create material risk of ePHI compromise, HIPAA violation, and significant financial and reputational damage.</p>
-                    </div>
+                    <span className="text-lg font-bold text-orange-600 flex-shrink-0 w-6 text-center">•</span>
+                    <span className="text-sm text-slate-900"><strong>Unauthorized access</strong> to ePHI</span>
                   </div>
                   <div className="flex gap-3 items-start bg-amber-50 border border-amber-200 p-3 rounded-lg">
-                    <span className="text-lg font-bold text-amber-600 flex-shrink-0 w-6 text-center">3</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">Third-Party & Supply Chain Vulnerability</p>
-                      <p className="text-xs text-slate-600 mt-0.5">Vendor dependencies and external integrations lack sufficient oversight, creating pathway for ransomware, data theft, and operational sabotage.</p>
-                    </div>
+                    <span className="text-lg font-bold text-amber-600 flex-shrink-0 w-6 text-center">•</span>
+                    <span className="text-sm text-slate-900"><strong>External threats</strong> associated with vendor and infrastructure dependencies</span>
                   </div>
                 </div>
               </div>
 
-              {/* Recommended Actions */}
+              {/* Mitigation Strategy */}
               <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Immediate Actions Required</h4>
-                <div className="space-y-2">
-                  <div className="border-l-4 border-l-red-600 bg-red-50 p-3 rounded">
-                    <p className="text-xs font-semibold text-red-800 uppercase tracking-wide mb-1">PRIORITY 1 — 0–30 Days</p>
-                    <p className="text-sm text-slate-900">Implement mandatory human review of all AI outputs before clinical use. Establish audit logging for every decision. Disable system access until validation controls are in place.</p>
-                  </div>
-                  <div className="border-l-4 border-l-orange-600 bg-orange-50 p-3 rounded">
-                    <p className="text-xs font-semibold text-orange-800 uppercase tracking-wide mb-1">PRIORITY 2 — 30–90 Days</p>
-                    <p className="text-sm text-slate-900">Deploy role-based access controls (RBAC), multi-factor authentication (MFA), and encryption for data in transit and at rest. Conduct security assessment of vendor integrations.</p>
-                  </div>
-                  <div className="border-l-4 border-l-amber-600 bg-amber-50 p-3 rounded">
-                    <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-1">PRIORITY 3 — 90+ Days</p>
-                    <p className="text-sm text-slate-900">Commission independent security assessment and penetration testing. Establish governance committee for ongoing AI oversight. Document compliance alignment with HIPAA, NIST CSF, and internal policy.</p>
-                  </div>
-                </div>
+                <h4 className="text-sm font-bold text-slate-900 mb-3">Recommended Mitigation Strategy</h4>
+                <p className="text-sm text-slate-700 leading-relaxed mb-3">
+                  To mitigate these risks, immediate actions are recommended, including:
+                </p>
+                <ul className="space-y-2 text-sm text-slate-700">
+                  <li className="flex gap-2">
+                    <span className="text-blue-600 font-bold">✓</span>
+                    <span>Implementation of human-in-the-loop validation processes for all AI outputs</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-blue-600 font-bold">✓</span>
+                    <span>Strengthening of access control mechanisms and encryption protocols</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-blue-600 font-bold">✓</span>
+                    <span>Deployment of monitoring capabilities for AI system performance and behavioral anomalies</span>
+                  </li>
+                </ul>
               </div>
 
-              {/* Bottom Line */}
-              <div className="bg-slate-100 border border-slate-300 p-4 rounded-lg">
-                <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">Executive Conclusion</p>
-                <p className="text-sm text-slate-900">This system cannot be safely operated in its current state. Immediate remediation is required to reduce risk to acceptable levels. Failure to act on these recommendations creates material liability exposure for the organization.</p>
+              {/* Compliance Alignment */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  Addressing these areas will significantly reduce exposure and support alignment with <strong>HIPAA safeguards</strong> and <strong>NIST CSF 2.0</strong> requirements, establishing a defensible control environment for clinical AI deployment.
+                </p>
               </div>
             </CardContent>
           )}
