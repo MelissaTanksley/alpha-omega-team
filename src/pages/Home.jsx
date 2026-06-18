@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail, Download } from 'lucide-react';
 import NISTExampleCard from '@/components/NISTExampleCard';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
+import InstallPrompt from '@/components/InstallPrompt';
 
 const mockScores = [
   { label: 'Algorithmic Bias', score: 68, color: 'bg-amber-500' },
@@ -44,31 +45,6 @@ const useCases = [
 export default function Home() {
   const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [demoEmail, setDemoEmail] = useState('');
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [installed, setInstalled] = useState(false);
-  const [showInstallModal, setShowInstallModal] = useState(false);
-  const [installPlatform, setInstallPlatform] = useState('android');
-
-  useEffect(() => {
-    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
-    window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => setInstalled(true));
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstall = async () => {
-    if (installPrompt) {
-      installPrompt.prompt();
-      const { outcome } = await installPrompt.userChoice;
-      if (outcome === 'accepted') setInstalled(true);
-      setInstallPrompt(null);
-      return;
-    }
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPhone|iPad|iPod/.test(ua);
-    setInstallPlatform(isIOS ? 'ios' : 'android');
-    setShowInstallModal(true);
-  };
 
   const handleDemoRequest = async (e) => {
     e.preventDefault();
@@ -81,78 +57,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* ── INSTALL MODAL ── */}
-      {showInstallModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => setShowInstallModal(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Download className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-900">Add to Home Screen</h3>
-                <p className="text-xs text-slate-500">AI Risk Navigator for Healthcare</p>
-              </div>
-            </div>
-            {installPlatform === 'ios' ? (
-              <ol className="space-y-3 text-sm text-slate-700 mb-5">
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <span>Tap the <strong>Share button</strong> <span className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">□↑</span> at the bottom of Safari</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <span>Scroll down and tap <strong>"Add to Home Screen"</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <span>Tap <strong>"Add"</strong> to confirm</span>
-                </li>
-              </ol>
-            ) : (
-              <ol className="space-y-3 text-sm text-slate-700 mb-5">
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <span>Tap the <strong>three-dot menu</strong> <span className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">⋮</span> in Chrome</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <span>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install app"</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <span>Tap <strong>"Add"</strong> to confirm</span>
-                </li>
-              </ol>
-            )}
-            <Button onClick={() => setShowInstallModal(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-              Got it
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* ── ADD TO DEVICE BANNER ── */}
-      <div className="bg-slate-800 border-b border-slate-700 py-2.5">
-        <div className="flex items-center justify-center gap-3">
-          {installed ? (
-            <span className="text-emerald-400 text-sm font-medium flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4" /> App installed successfully
-            </span>
-          ) : (
-            <>
-              <span className="text-slate-300 text-sm">Run a full AI risk & compliance analysis anytime</span>
-              <button
-                onClick={handleInstall}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors cursor-pointer"
-              >
-                <Download className="h-3.5 w-3.5" />
-                Add to Device
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <InstallPrompt />
 
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
