@@ -152,7 +152,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">The Solution</Badge>
             <h2 className="text-3xl font-bold text-white mb-4">A Structured, Framework-Aligned AI Risk Platform</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">This tool provides everything needed to assess, document, and act on AI risks in healthcare environments.</p>
+            <p className="text-slate-400 max-w-2xl mx-auto">This tool provides everything needed to assess, document,<br />and act on AI risks in healthcare environments.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
