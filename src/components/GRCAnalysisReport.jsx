@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Shield, AlertTriangle, Copy, FileText } from 'lucide-react';
+import { ChevronDown, ChevronRight, Shield, AlertTriangle, Copy, FileText, Download, RotateCcw, ClipboardList } from 'lucide-react';
 
 const LIKELIHOOD_CONFIG = {
   critical: { label: 'Critical', bar: 'bg-red-600', text: 'text-red-700', badge: 'bg-red-100 text-red-800 border border-red-200' },
@@ -163,7 +163,7 @@ function RiskRow({ item, index }) {
   );
 }
 
-export default function GRCAnalysisReport({ results, rawJson, onCopy, copied }) {
+export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, onReset }) {
   const [showRaw, setShowRaw] = useState(false);
 
   if (!results || results.length === 0) return null;
@@ -189,6 +189,50 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied }) 
 
   const allHipaa = [...new Set(results.flatMap(r => r.hipaa_mapping || []))];
   const allNist  = [...new Set(results.flatMap(r => r.nist_csf_mapping || []))];
+
+  const downloadBrief = () => {
+    const overall = overallRisk(results);
+    const lines = [
+      'GRC RISK ASSESSMENT — EXECUTIVE BRIEF',
+      '======================================',
+      `Overall Risk Level: ${overall.toUpperCase()}`,
+      `Total Risks Identified: ${results.length}`,
+      '',
+      'TOP 3 RISKS',
+      '-----------',
+      ...topRisks.map((r, i) => `${i + 1}. [${r.likelihood?.toUpperCase()}] ${r.risk} (Asset: ${r.affected_asset || 'N/A'})`),
+      '',
+      'CONTROL PRIORITIES',
+      '------------------',
+      ...topControls.map((c, i) => `${i + 1}. ${c}`),
+      '',
+      `Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
+      'AI Risk Navigator for Healthcare | Confidential',
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GRC_Executive_Brief.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyReport = () => {
+    const overall = overallRisk(results);
+    const text = [
+      `GRC Risk Assessment Report — Overall Risk: ${overall}`,
+      `${results.length} risks identified.`,
+      '',
+      'Top Risks:',
+      ...topRisks.map((r, i) => `  ${i + 1}. ${r.risk} [${r.likelihood}]`),
+      '',
+      'Control Priorities:',
+      ...topControls.map((c, i) => `  ${i + 1}. ${c}`),
+    ].join('\n');
+    navigator.clipboard.writeText(text);
+    onCopy();
+  };
 
   return (
     <div className="space-y-0 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
@@ -232,6 +276,33 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied }) 
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ── ACTION BAR ── */}
+      <div className="border-b border-slate-200 bg-slate-50 px-8 py-3 flex flex-wrap items-center gap-2">
+        <button
+          onClick={downloadBrief}
+          className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+        >
+          <Download className="h-4 w-4" />
+          Download Executive Brief
+        </button>
+        <button
+          onClick={copyReport}
+          className="flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-700 text-sm font-semibold px-4 py-2 rounded-lg border border-slate-200 transition-colors"
+        >
+          <ClipboardList className="h-4 w-4" />
+          {copied ? 'Copied!' : 'Copy Report'}
+        </button>
+        {onReset && (
+          <button
+            onClick={onReset}
+            className="flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-500 text-sm font-medium px-4 py-2 rounded-lg border border-slate-200 transition-colors ml-auto"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Run New Analysis
+          </button>
+        )}
       </div>
 
       <div className="px-8 py-8 space-y-10">

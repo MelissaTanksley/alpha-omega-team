@@ -883,6 +883,7 @@ export default function GRCWorkspace() {
                 rawJson={rawJson}
                 onCopy={handleCopy}
                 copied={copied}
+                onReset={() => { setResults(null); setRawJson(null); setError(null); setValidationError(null); }}
               />
 
               {/* Report Generator */}
