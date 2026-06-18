@@ -499,17 +499,29 @@ function RiskCard({ item, index }) {
             </div>
           </div>
 
-          {/* AI Safeguards */}
+          {/* AI Safeguards (Protect Function) */}
           {item.ai_safeguards?.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">AI Safeguards</p>
+            <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+              <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-2">🛡️ Protect: AI Safeguards</p>
               <div className="flex flex-wrap gap-1">
                 {item.ai_safeguards.map((s, i) => (
-                  <span key={i} className="text-xs bg-blue-50 text-blue-800 border border-blue-100 rounded-full px-2 py-0.5">{s}</span>
+                  <span key={i} className="text-xs bg-white text-emerald-700 border border-emerald-200 rounded-full px-2 py-0.5 font-medium">{s}</span>
                 ))}
               </div>
             </div>
           )}
+
+          {/* Response & Recovery Actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+              <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">🚨 Respond</p>
+              <p className="text-xs text-red-700">If {item.risk?.toLowerCase()} is detected, escalate to incident management and clinician review immediately.</p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+              <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">↩️ Recover</p>
+              <p className="text-xs text-purple-700">Restore system to trusted state, validate outputs, and re-enable only after full investigation.</p>
+            </div>
+          </div>
 
           {/* Audit Notes */}
           {item.audit_notes && (

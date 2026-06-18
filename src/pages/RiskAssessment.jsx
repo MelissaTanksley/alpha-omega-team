@@ -401,7 +401,11 @@ Be specific, asset-aware, and realistic for healthcare.`;
               <p className="text-sm text-slate-700">Low risk tolerance — Clinical AI systems require robust governance, audit trails, and human oversight.</p>
             </div>
             <div className="bg-slate-50 rounded-lg p-3">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">AI Governance Requirements</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Governance Context</p>
+              <p className="text-xs text-slate-700 mb-3 italic">
+                {formData.system_name} operates under <strong>low risk tolerance</strong> in a regulated healthcare environment. AI governance policies must ensure clinical validation, audit trails, and continuous oversight.
+              </p>
+              <p className="text-xs font-semibold text-slate-600 mb-1">Key Requirements:</p>
               <ul className="text-xs text-slate-700 space-y-1 list-disc list-inside">
                 <li>Model validation & clinical validation before deployment</li>
                 <li>Continuous performance monitoring and bias detection</li>
@@ -579,16 +583,43 @@ Be specific, asset-aware, and realistic for healthcare.`;
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Actionable Recommendations</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-2.5">
               {results.recommendations.map((r, i) => {
                 const recText = typeof r === 'string' ? r : r.recommendation;
                 const asset = typeof r === 'object' && r.affected_asset ? r.affected_asset : null;
+                
+                // Determine NIST CSF 2.0 function based on recommendation text
+                let nistFn = 'Protect';
+                let tagBg = 'bg-emerald-100';
+                let tagText = 'text-emerald-700';
+                
+                const lowerRec = recText.toLowerCase();
+                if (lowerRec.includes('monitor') || lowerRec.includes('audit') || lowerRec.includes('log') || lowerRec.includes('detect')) {
+                  nistFn = 'Detect';
+                  tagBg = 'bg-orange-100';
+                  tagText = 'text-orange-700';
+                } else if (lowerRec.includes('policy') || lowerRec.includes('governance') || lowerRec.includes('procedure') || lowerRec.includes('govern')) {
+                  nistFn = 'Govern';
+                  tagBg = 'bg-slate-200';
+                  tagText = 'text-slate-700';
+                } else if (lowerRec.includes('respond') || lowerRec.includes('escalate') || lowerRec.includes('incident') || lowerRec.includes('disable')) {
+                  nistFn = 'Respond';
+                  tagBg = 'bg-red-100';
+                  tagText = 'text-red-700';
+                } else if (lowerRec.includes('recover') || lowerRec.includes('restore') || lowerRec.includes('validate') || lowerRec.includes('retrain')) {
+                  nistFn = 'Recover';
+                  tagBg = 'bg-purple-100';
+                  tagText = 'text-purple-700';
+                }
+
                 return (
-                  <div key={i} className="flex gap-3 text-sm">
-                    <span className="w-5 h-5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold mt-0.5">{i + 1}</span>
+                  <div key={i} className="flex gap-2 items-start text-sm">
+                    <span className={`${tagBg} ${tagText} text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 mt-0.5`}>
+                      {nistFn}
+                    </span>
                     <div className="flex-1">
                       <div className="text-slate-700">{recText}</div>
-                      {asset && <div className="text-xs text-blue-600 mt-1">📍 {asset}</div>}
+                      {asset && <div className="text-xs text-blue-600 mt-1">📍 Affects: {asset}</div>}
                     </div>
                   </div>
                 );
@@ -610,15 +641,44 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 const gapText = typeof g === 'string' ? g : g.gap;
                 const asset = typeof g === 'object' && g.affected_asset ? g.affected_asset : null;
                 const framework = typeof g === 'object' && g.control_framework ? g.control_framework : null;
+                
+                // Tag governance gaps with NIST function and response action
+                const lowerGap = gapText.toLowerCase();
+                let nistFn = 'Govern';
+                let responseAction = '';
+                
+                if (lowerGap.includes('monitor') || lowerGap.includes('audit') || lowerGap.includes('log')) {
+                  nistFn = 'Detect';
+                  responseAction = 'Implement continuous monitoring and audit logging.';
+                } else if (lowerGap.includes('control') || lowerGap.includes('security')) {
+                  nistFn = 'Protect';
+                  responseAction = 'Deploy technical and administrative controls to protect system.';
+                } else if (lowerGap.includes('incident') || lowerGap.includes('response') || lowerGap.includes('escalat')) {
+                  nistFn = 'Respond';
+                  responseAction = 'Establish incident response procedures and escalation protocols.';
+                } else if (lowerGap.includes('recover') || lowerGap.includes('restore') || lowerGap.includes('backup')) {
+                  nistFn = 'Recover';
+                  responseAction = 'Develop recovery procedures and backup/restore capabilities.';
+                } else {
+                  responseAction = 'Establish governance policies and procedures.';
+                }
+
                 return (
-                  <div key={i} className="flex gap-2 text-sm bg-orange-50 border border-orange-100 rounded-lg p-3">
-                    <span className="text-orange-500 flex-shrink-0 mt-0.5">⚠</span>
-                    <div className="flex-1">
-                      <div className="text-slate-800 font-medium">{gapText}</div>
-                      <div className="flex items-center gap-3 mt-1.5 text-xs">
-                        {asset && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Asset:</strong> {asset}</span>}
-                        {framework && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Framework:</strong> {framework}</span>}
+                  <div key={i} className="border border-orange-100 rounded-lg p-3 bg-orange-50">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-xs font-bold bg-orange-200 text-orange-700 px-2 py-0.5 rounded-full whitespace-nowrap mt-0.5">
+                        ⚠ {nistFn} Gap
+                      </span>
+                      <div className="flex-1">
+                        <div className="text-slate-800 font-medium text-sm">{gapText}</div>
                       </div>
+                    </div>
+                    <div className="text-xs text-orange-700 bg-orange-100 rounded p-2 mb-2">
+                      <strong>Response:</strong> {responseAction}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+                      {asset && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Asset:</strong> {asset}</span>}
+                      {framework && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Framework:</strong> {framework}</span>}
                     </div>
                   </div>
                 );

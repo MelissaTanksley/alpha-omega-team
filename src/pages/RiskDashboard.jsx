@@ -217,11 +217,40 @@ function AssessmentCard({ assessment }) {
               )}
               {assessment.recommendations?.length > 0 && (
                 <div>
-                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Recommendations</div>
-                  <ul className="space-y-1">
-                    {assessment.recommendations.slice(0, 3).map((r, i) => (
-                      <li key={i} className="text-xs text-slate-600 flex gap-1.5"><span className="text-blue-400 mt-0.5">→</span>{r}</li>
-                    ))}
+                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">Recommendations (NIST CSF 2.0 Aligned)</div>
+                  <ul className="space-y-1.5">
+                    {assessment.recommendations.slice(0, 3).map((r, i) => {
+                      const recText = typeof r === 'string' ? r : r;
+                      const lowerRec = recText.toLowerCase();
+                      let nistTag = 'Protect';
+                      let tagBg = 'bg-emerald-100';
+                      let tagText = 'text-emerald-600';
+                      
+                      if (lowerRec.includes('monitor') || lowerRec.includes('audit') || lowerRec.includes('log')) {
+                        nistTag = 'Detect';
+                        tagBg = 'bg-orange-100';
+                        tagText = 'text-orange-600';
+                      } else if (lowerRec.includes('policy') || lowerRec.includes('governance') || lowerRec.includes('procedure')) {
+                        nistTag = 'Govern';
+                        tagBg = 'bg-slate-200';
+                        tagText = 'text-slate-700';
+                      } else if (lowerRec.includes('respond') || lowerRec.includes('escalate') || lowerRec.includes('incident')) {
+                        nistTag = 'Respond';
+                        tagBg = 'bg-red-100';
+                        tagText = 'text-red-600';
+                      } else if (lowerRec.includes('recover') || lowerRec.includes('restore') || lowerRec.includes('validate')) {
+                        nistTag = 'Recover';
+                        tagBg = 'bg-purple-100';
+                        tagText = 'text-purple-600';
+                      }
+
+                      return (
+                        <li key={i} className="text-xs text-slate-600 flex gap-1.5 items-start">
+                          <span className={`${tagBg} ${tagText} text-xs font-bold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 mt-0.5`}>{nistTag}</span>
+                          <span className="flex-1">{recText}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
