@@ -145,6 +145,24 @@ export default function GRCReport() {
               </div>
 
               <div>
+                <h4 className="text-sm font-bold text-slate-900 mb-3">Top 3 Risks</h4>
+                <div className="space-y-2 mb-4">
+                  <div className="flex gap-3 items-start bg-red-50 border border-red-200 p-3 rounded-lg">
+                    <span className="text-lg font-bold text-red-600 flex-shrink-0 w-6 text-center">1</span>
+                    <span className="text-sm text-slate-900 font-semibold">AI Hallucination & Output Errors</span>
+                  </div>
+                  <div className="flex gap-3 items-start bg-orange-50 border border-orange-200 p-3 rounded-lg">
+                    <span className="text-lg font-bold text-orange-600 flex-shrink-0 w-6 text-center">2</span>
+                    <span className="text-sm text-slate-900 font-semibold">Unauthorized ePHI Access & Data Breach</span>
+                  </div>
+                  <div className="flex gap-3 items-start bg-amber-50 border border-amber-200 p-3 rounded-lg">
+                    <span className="text-lg font-bold text-amber-600 flex-shrink-0 w-6 text-center">3</span>
+                    <span className="text-sm text-slate-900 font-semibold">Third-Party Vendor & Supply Chain Risk</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <h4 className="text-sm font-bold text-slate-900 mb-3">Key Findings</h4>
                 <ul className="space-y-2">
                   <li className="text-sm text-slate-700 flex gap-3">
@@ -160,15 +178,6 @@ export default function GRCReport() {
                     <span>External threats include ransomware targeting healthcare systems and vendor compromise</span>
                   </li>
                 </ul>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Top 3 Risks</h4>
-                <ol className="space-y-2 list-decimal list-inside">
-                  <li className="text-sm text-slate-700">AI hallucination affecting clinical decisions</li>
-                  <li className="text-sm text-slate-700">Unauthorized access to ePHI</li>
-                  <li className="text-sm text-slate-700">Third-party vendor risk and supply chain compromise</li>
-                </ol>
               </div>
 
               <div>
