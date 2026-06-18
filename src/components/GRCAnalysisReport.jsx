@@ -511,6 +511,62 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
           </div>
         </section>
 
+        {/* ── SECTION 5: CONCLUSION & NEXT STEPS ── */}
+        <section className="bg-slate-900 rounded-xl p-6">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-xs font-bold tracking-widest uppercase text-slate-400">Section 5</span>
+            <div className="flex-1 h-px bg-slate-700" />
+            <span className="text-xs font-bold tracking-widest uppercase text-white">Conclusion &amp; Next Steps</span>
+          </div>
+
+          {/* Residual Risk */}
+          <div className="mb-5">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Residual Risk Level</p>
+            {(() => {
+              const residualCounts = results.reduce((acc, r) => {
+                const lvl = r.residual_risk?.toLowerCase();
+                if (lvl) acc[lvl] = (acc[lvl] || 0) + 1;
+                return acc;
+              }, {});
+              const dominant = ['critical','high','medium','low'].find(l => residualCounts[l]) || overall;
+              const styleMap = { critical: 'bg-red-600 text-white', high: 'bg-orange-500 text-white', medium: 'bg-amber-400 text-white', low: 'bg-emerald-500 text-white' };
+              return (
+                <div className="flex items-center gap-3">
+                  <span className={`px-4 py-1.5 rounded-lg text-sm font-bold capitalize ${styleMap[dominant] || 'bg-slate-600 text-white'}`}>
+                    {dominant}
+                  </span>
+                  <p className="text-xs text-slate-400">After applying recommended controls, residual exposure remains at this level pending full implementation.</p>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Recommended Actions */}
+          <div className="mb-5">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Recommended Actions</p>
+            <div className="space-y-2">
+              {[
+                topControls[0] && { label: 'Immediate', text: topControls[0], color: 'bg-red-500' },
+                topControls[1] && { label: 'Short-Term', text: topControls[1], color: 'bg-amber-500' },
+                topControls[2] && { label: 'Ongoing', text: topControls[2], color: 'bg-blue-500' },
+              ].filter(Boolean).map((action, i) => (
+                <div key={i} className="flex items-start gap-3 bg-slate-800 rounded-lg px-4 py-3">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded flex-shrink-0 text-white ${action.color}`}>{action.label}</span>
+                  <p className="text-sm text-slate-200 leading-snug">{action.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Reassessment */}
+          <div className="flex items-start gap-3 border border-slate-700 rounded-lg px-4 py-3">
+            <Shield className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-slate-300 leading-relaxed">
+              <span className="font-semibold text-white">Reassessment recommended</span> within 90 days of implementing priority controls, or sooner if system configuration, data flows, or clinical context change materially.
+            </p>
+          </div>
+        </section>
+
         {/* ── FOOTER / RAW JSON ── */}
         <div className="flex items-center justify-between pt-2 border-t border-slate-100">
           <button onClick={() => setShowRaw(!showRaw)} className="text-xs text-slate-400 hover:text-slate-600 underline">
