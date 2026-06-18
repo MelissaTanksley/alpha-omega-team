@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail, Download } from 'lucide-react';
+import NISTExampleCard from '@/components/NISTExampleCard';
 
 const mockScores = [
   { label: 'Algorithmic Bias', score: 68, color: 'bg-amber-500' },
@@ -250,6 +251,18 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── NIST CSF 2.0 EXAMPLE ── */}
+      <section className="py-20 bg-white border-y border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">Example Workflow</Badge>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">See NIST CSF 2.0 in Action</h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">A complete risk from identification through recovery, mapped to all six NIST functions.</p>
+          </div>
+          <NISTExampleCard />
         </div>
       </section>
 
