@@ -5,6 +5,7 @@ import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown,
 import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
+import GRCReportGenerator from '@/components/GRCReportGenerator';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -921,6 +922,9 @@ export default function GRCWorkspace() {
               <div className="space-y-3">
                 {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
               </div>
+
+              {/* Report Generator */}
+              <GRCReportGenerator results={results} systemDescription={input} />
 
               {/* Next steps after GRC results */}
               <div className="mt-6 border-t border-slate-200 pt-6 space-y-3">
