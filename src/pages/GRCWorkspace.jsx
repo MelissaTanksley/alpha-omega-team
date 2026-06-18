@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
@@ -553,6 +553,7 @@ function RiskCard({ item, index }) {
 }
 
 export default function GRCWorkspace() {
+  useEffect(() => { document.title = 'GRC Workspace | AI Risk Navigator'; }, []);
   const [input, setInput] = useState(EXAMPLE_INPUT);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);

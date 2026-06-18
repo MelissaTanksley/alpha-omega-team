@@ -7,6 +7,7 @@ import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File } fro
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 
 export default function GRCReport() {
+  useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
   const [assessments, setAssessments] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [expandedSections, setExpandedSections] = useState({

@@ -43,6 +43,7 @@ const useCases = [
 ];
 
 export default function Home() {
+  useEffect(() => { document.title = 'AI Risk Navigator | Healthcare AI Risk & Compliance'; }, []);
   const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [demoEmail, setDemoEmail] = useState('');
 

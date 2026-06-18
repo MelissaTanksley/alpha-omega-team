@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain, CheckCircle, MessageSquare, MessageSquarePlus } from 'lucide-react';
 
@@ -259,6 +259,7 @@ function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) 
 }
 
 export default function ComplianceChecklists() {
+  useEffect(() => { document.title = 'Compliance Checklists | AI Risk Navigator'; }, []);
   const [activeCategory, setActiveCategory] = useState(null);
   const [checked, setChecked] = useState({});
   const [notes, setNotes] = useState({});

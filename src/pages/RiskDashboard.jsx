@@ -282,6 +282,7 @@ function AssessmentCard({ assessment }) {
 }
 
 export default function RiskDashboard() {
+  useEffect(() => { document.title = 'AI Risk Reports | AI Risk Navigator'; }, []);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');

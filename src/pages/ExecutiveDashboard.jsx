@@ -64,6 +64,7 @@ function KPICard({ title, value, sub, icon: Icon, iconColor, iconBg, trend, tren
 }
 
 export default function ExecutiveDashboard() {
+  useEffect(() => { document.title = 'Executive Dashboard | AI Risk Navigator'; }, []);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
 
