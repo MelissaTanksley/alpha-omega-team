@@ -80,7 +80,7 @@ export default function Home() {
             </span>
           ) : (
             <>
-              <span className="text-slate-300 text-sm">Identify, measure, and manage AI risks anytime</span>
+              <span className="text-slate-300 text-sm">Run a full AI risk & compliance analysis anytime</span>
               <button
                 onClick={installPrompt ? handleInstall : undefined}
                 className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors cursor-pointer"
