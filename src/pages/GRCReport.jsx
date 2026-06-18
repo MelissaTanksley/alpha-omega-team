@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File } from 'lucide-react';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
+import RiskRegisterTable from '@/components/RiskRegisterTable';
+import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 
 export default function GRCReport() {
   useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
@@ -17,7 +19,8 @@ export default function GRCReport() {
     compliance: true,
     controls: true,
     threats: true,
-    lifecycle: true
+    lifecycle: true,
+    register: true
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,6 +47,10 @@ export default function GRCReport() {
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const getRisks = () => {
+    return parseAssessmentToRiskRegister(selectedAssessment);
   };
 
   const getRiskColor = (level) => {
@@ -506,6 +513,26 @@ export default function GRCReport() {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* RISK REGISTER */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('register')}>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">📋</span> Risk Register (Derived from Assessment Results)
+              </CardTitle>
+              {expandedSections.register ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </div>
+          </CardHeader>
+          {expandedSections.register && (
+            <CardContent>
+              <p className="text-sm text-slate-600 mb-4">
+                The following risks have been automatically identified from this assessment. This register serves as an audit-ready record aligned with healthcare GRC practices.
+              </p>
+              <RiskRegisterTable risks={getRisks()} compact={true} />
             </CardContent>
           )}
         </Card>

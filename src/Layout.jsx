@@ -28,6 +28,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Assess AI System', path: '/RiskAssessment', page: 'RiskAssessment' },
     { name: 'Executive Dashboard', path: '/ExecutiveDashboard', page: 'ExecutiveDashboard' },
     { name: 'All Assessments', path: '/RiskDashboard', page: 'RiskDashboard' },
+    { name: 'Risk Register', path: '/RiskRegister', page: 'RiskRegister' },
     { name: 'GRC Report', path: '/GRCReport', page: 'GRCReport' },
     { name: 'Checklists', path: '/ComplianceChecklists', page: 'ComplianceChecklists' },
     { name: 'AI Healthcare Risk Analyzer', path: '/GRCWorkspace', page: 'GRCWorkspace' },
