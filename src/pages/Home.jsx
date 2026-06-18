@@ -90,6 +90,7 @@ export default function Home() {
 
             {/* Mock risk score card */}
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-7 shadow-2xl">
+              <div className="text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">Aligned with ISO 27005, NIST CSF 2.0, and HIPAA</div>
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <div className="text-slate-400 text-xs uppercase tracking-wider mb-1">Sample Risk Analysis</div>
