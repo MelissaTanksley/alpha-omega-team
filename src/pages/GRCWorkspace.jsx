@@ -724,7 +724,10 @@ export default function GRCWorkspace() {
           placeholder="Describe your AI system, functions, environment, and concerns…"
           className="w-full text-sm font-mono bg-slate-50 border border-slate-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 disabled:opacity-60"
         />
-        <div className="flex items-center gap-3 mt-3">
+        <p className="text-xs text-slate-400 mt-3 mb-2 italic">
+          This tool provides analytical risk insights and does not constitute medical, legal, or compliance advice.
+        </p>
+        <div className="flex items-center gap-3">
           {activeTab === 'grc' ? (
             <>
               <Button onClick={run} disabled={loading || !input.trim()} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
