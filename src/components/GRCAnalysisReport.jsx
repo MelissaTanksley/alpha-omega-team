@@ -42,17 +42,17 @@ function assetBadge(asset) {
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
-function SectionHeading({ number, title, subtitle }) {
+function SectionHeading({ number, title, subtitle, dark }) {
   return (
     <div className="flex items-center gap-3 mb-6">
-      <div className="w-8 h-8 rounded-lg bg-slate-900 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+      <div className="w-8 h-8 rounded-lg bg-teal-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
         {number}
       </div>
       <div>
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none">{title}</h3>
-        {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+        <h3 className={`text-sm font-bold uppercase tracking-widest leading-none ${dark ? 'text-white' : 'text-slate-900'}`}>{title}</h3>
+        {subtitle && <p className={`text-xs mt-0.5 ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{subtitle}</p>}
       </div>
-      <div className="flex-1 h-px bg-slate-200 ml-2" />
+      <div className={`flex-1 h-px ml-2 ${dark ? 'bg-teal-800' : 'bg-teal-100'}`} />
     </div>
   );
 }
@@ -519,7 +519,7 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
 
         {/* ── CONCLUSION & NEXT STEPS ───────────────────────────────────── */}
         <section className="bg-slate-900 rounded-2xl p-7">
-          <SectionHeading number="VII" title="Conclusion & Next Steps" subtitle="" />
+          <SectionHeading number="VII" title="Conclusion & Next Steps" subtitle="" dark />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="md:col-span-1">
