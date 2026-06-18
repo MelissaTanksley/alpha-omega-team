@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send, DollarSign } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send, DollarSign, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
 import RiskMappingCard from '@/components/RiskMappingCard';
@@ -797,6 +797,9 @@ Be specific, asset-aware, and realistic for healthcare.`;
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3">
+          <Button onClick={() => window.location.href = '/GRCReport'} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
+            <FileText className="h-4 w-4 mr-2" /> Export GRC Report
+          </Button>
           <Button onClick={() => navigate('/RiskDashboard')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
             <TrendingUp className="h-4 w-4 mr-2" /> View in Dashboard
           </Button>
