@@ -72,28 +72,26 @@ export default function Home() {
   return (
     <div>
       {/* ── ADD TO DEVICE BANNER ── */}
-      {(installPrompt || installed) && (
-        <div className="bg-slate-800 border-b border-slate-700 py-2.5">
-          <div className="flex items-center justify-center gap-3">
-            {installed ? (
-              <span className="text-emerald-400 text-sm font-medium flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4" /> App installed successfully
-              </span>
-            ) : (
-              <>
-                <span className="text-slate-300 text-sm">Add AI Risk Navigator to your device for quick access</span>
-                <button
-                  onClick={handleInstall}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  Add to Device
-                </button>
-              </>
-            )}
-          </div>
+      <div className="bg-slate-800 border-b border-slate-700 py-2.5">
+        <div className="flex items-center justify-center gap-3">
+          {installed ? (
+            <span className="text-emerald-400 text-sm font-medium flex items-center gap-1.5">
+              <CheckCircle className="h-4 w-4" /> App installed successfully
+            </span>
+          ) : (
+            <>
+              <span className="text-slate-300 text-sm">Add AI Risk Navigator to your device for quick access</span>
+              <button
+                onClick={installPrompt ? handleInstall : undefined}
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors cursor-pointer"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Add to Device
+              </button>
+            </>
+          )}
         </div>
-      )}
+      </div>
 
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
@@ -261,7 +259,7 @@ export default function Home() {
             <Badge className="mb-4 bg-white/20 text-white border border-white/30 text-xs px-3 py-1 rounded-full">Available Now</Badge>
             <h2 className="text-3xl font-bold text-white mb-4">A Completed, Working Tool — Ready for Handoff or Integration</h2>
             <p className="text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              This is a fully functional AI risk assessment platform.<br />Ready for handoff, white-labeling, integration into an existing GRC program, or further development. All assessment modules, compliance mapping, and reporting features are operational.
+              This is a fully functional AI risk assessment platform.<br />Ready for handoff, white-labeling, or integration into an existing GRC program. All assessment modules, compliance mapping, and reporting features are operational.
             </p>
           </div>
 
