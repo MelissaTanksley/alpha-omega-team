@@ -236,6 +236,58 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied }) 
 
       <div className="px-8 py-8 space-y-10">
 
+        {/* ── EXECUTIVE SUMMARY ── */}
+        <section className="bg-blue-950 border border-blue-800 rounded-xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-bold tracking-widest uppercase text-blue-400">Executive Summary</span>
+            <div className="flex-1 h-px bg-blue-800" />
+          </div>
+
+          {/* Risk Level + Recommendation row */}
+          <div className="flex flex-col sm:flex-row gap-5 mb-5">
+            <div className="flex-shrink-0">
+              <p className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-1.5">Overall Risk Level</p>
+              <span className={`inline-block px-6 py-2.5 rounded-lg text-xl font-extrabold tracking-wide ${overallStyle.bg} ${overallStyle.text}`}>
+                {overallStyle.label}
+              </span>
+            </div>
+            <div className="flex-1 border-l border-blue-800 pl-5">
+              <p className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-1.5">Key Recommendation</p>
+              <p className="text-sm text-blue-100 leading-relaxed">
+                {topControls[0]
+                  ? `Immediate action required: ${topControls[0]}${topControls[1] ? ` Additionally, prioritize: ${topControls[1]}` : ''}`
+                  : 'Implement identified controls in priority order, focusing on high-likelihood risks with clinical impact.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Top 3 Risks inline */}
+          <div>
+            <p className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-3">Top 3 Risks</p>
+            <div className="space-y-2">
+              {topRisks.map((item, i) => {
+                const lc = getLikelihood(item.likelihood);
+                return (
+                  <div key={i} className="flex items-start gap-3 bg-blue-900/50 border border-blue-800/60 rounded-lg px-4 py-3">
+                    <span className="text-blue-500 font-bold text-sm flex-shrink-0 w-4">{i + 1}.</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${lc.badge}`}>{lc.label}</span>
+                        {item.affected_asset && (
+                          <span className={`text-xs px-2 py-0.5 rounded font-medium ${assetBadge(item.affected_asset)}`}>
+                            {item.affected_asset}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-blue-100 font-medium leading-snug">{item.risk}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* ── SECTION 1: TOP RISKS ── */}
         <section>
           <SectionLabel number="1" title="Top Risks" />
