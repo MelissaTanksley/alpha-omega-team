@@ -53,11 +53,15 @@ export default function Home() {
   }, []);
 
   const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') setInstalled(true);
-    setInstallPrompt(null);
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') setInstalled(true);
+      setInstallPrompt(null);
+    } else {
+      // Fallback: guide user to install manually
+      alert('To add this app to your device:\n\n• Chrome/Edge (desktop): Click the install icon (⊕) in the address bar\n• iPhone/Safari: Tap Share → "Add to Home Screen"\n• Android/Chrome: Tap the three-dot menu → "Add to Home Screen"');
+    }
   };
 
   const handleDemoRequest = async (e) => {
