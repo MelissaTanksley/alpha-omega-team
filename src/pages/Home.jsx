@@ -140,6 +140,9 @@ export default function Home() {
                   </Button>
                 </a>
               </div>
+              <p className="text-sm text-slate-400 mt-4">
+                <span className="font-semibold text-slate-300">Privacy Note:</span> Designed with data privacy in mind. Analysis is session-based and not used to train models or shared between users.
+              </p>
             </div>
 
             {/* Mock risk score card */}
