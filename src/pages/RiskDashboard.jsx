@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Shield, Plus, ChevronDown, ChevronUp, Calendar, Building2, Download, RefreshCw } from 'lucide-react';
+import RiskMappingCard from '@/components/RiskMappingCard';
 import { base44 } from '@/api/base44Client';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import moment from 'moment';
@@ -203,6 +204,20 @@ function AssessmentCard({ assessment }) {
                   <p className="text-sm text-slate-600 leading-relaxed">{assessment.summary}</p>
                 </div>
               )}
+              {assessment.key_assets && assessment.key_assets.length > 0 && (
+                <div>
+                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">Risk Mapping (Asset → Threat → Risk → Control)</div>
+                  <RiskMappingCard
+                    asset={assessment.key_assets[0] || 'AI System'}
+                    threat={assessment.governance_gaps?.[0] || 'System failure or output error'}
+                    risk={assessment.summary?.substring(0, 50) + '...' || 'Risk identified'}
+                    control={assessment.recommendations?.[0] || 'Implement security controls'}
+                    riskLevel={assessment.risk_level}
+                    compact={true}
+                  />
+                </div>
+              )}
+
               {assessment.governance_gaps?.length > 0 && (
                 <div>
                   <div className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-1 flex items-center gap-1">

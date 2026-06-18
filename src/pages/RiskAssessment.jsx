@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, TrendingUp, Lock, Activity, Download, Mail, Send, DollarSign } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
+import RiskMappingCard from '@/components/RiskMappingCard';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -456,6 +457,50 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 <p className="text-sm text-amber-900 font-medium">{results.financial_exposure}</p>
                 <p className="text-xs text-amber-600 mt-1">Estimate based on risk scoring methodology inspired by the FAIR model. Not a certified financial assessment.</p>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Asset → Threat → Risk → Control Mappings */}
+        {results.recommendations?.length > 0 && (
+          <Card className="mb-6 border-l-4 border-l-blue-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full">⚡</span>
+                Risk Mapping Chain
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                {
+                  asset: getEffectiveAssets()[0] || 'AI Model',
+                  threat: 'System failure or incorrect output',
+                  risk: 'Clinical impact and patient safety',
+                  control: results.recommendations[0] || 'Implement recommended controls'
+                },
+                {
+                  asset: 'ePHI / Patient Records',
+                  threat: 'Unauthorized access or data leakage',
+                  risk: 'HIPAA violations and privacy breach',
+                  control: results.recommendations[1] || 'Enhance security controls'
+                },
+                {
+                  asset: 'System Access Controls',
+                  threat: 'Insider misuse or privilege escalation',
+                  risk: 'Unauthorized modifications to data',
+                  control: results.recommendations[2] || 'Implement access controls'
+                }
+              ].map((mapping, i) => (
+                <RiskMappingCard
+                  key={i}
+                  asset={mapping.asset}
+                  threat={mapping.threat}
+                  risk={mapping.risk}
+                  control={mapping.control}
+                  riskLevel={results.risk_level || 'medium'}
+                  compact={true}
+                />
+              ))}
             </CardContent>
           </Card>
         )}

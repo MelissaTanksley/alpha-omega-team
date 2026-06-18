@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import RiskMappingCard from '@/components/RiskMappingCard';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -436,6 +437,16 @@ function RiskCard({ item, index }) {
 
       {expanded && (
         <div className="border-t border-slate-100 p-4 space-y-4">
+          {/* Asset → Threat → Risk → Control Mapping */}
+          <RiskMappingCard
+            asset={item.affected_asset || 'Multiple Assets'}
+            threat={item.threat || item.risk}
+            risk={item.risk}
+            control={item.recommended_control || (item.controls?.administrative?.[0] || 'Review and implement controls')}
+            riskLevel={item.likelihood?.toLowerCase() || 'medium'}
+            compact={false}
+          />
+
           {/* Impact */}
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Impact</p>
