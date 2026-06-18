@@ -136,66 +136,84 @@ export default function GRCReport() {
             </div>
           </CardHeader>
           {expandedSections.executive && (
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-                <span className="text-sm font-semibold text-slate-700">Overall Risk Level</span>
-                <Badge className={`text-sm font-bold px-3 py-1 ${riskColor.replace('bg-', 'bg-').replace('border-', '').split(' ')[0]}`}>
-                  {riskLevel.toUpperCase()}
+            <CardContent className="space-y-5">
+              {/* Opening Statement */}
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  <strong>{assessment.system_name}</strong> represents a {riskLevel.toUpperCase()} risk to organizational operations in a regulated healthcare environment. While AI-driven tools offer significant clinical value, inadequate governance and control architecture create material exposure to patient safety incidents, regulatory penalties, and operational disruption.
+                </p>
+              </div>
+
+              {/* Overall Risk Level */}
+              <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg">
+                <div>
+                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Overall Risk Assessment</p>
+                  <p className="text-sm text-slate-900 font-semibold">Risk Score: {assessment.overall_risk_score || 0}/100</p>
+                </div>
+                <Badge className={`text-sm font-bold px-4 py-2 ${riskColor.replace('bg-', 'bg-').replace('border-', '').split(' ')[0]}`}>
+                  {riskLevel.toUpperCase()} RISK
                 </Badge>
               </div>
 
+              {/* Key Findings */}
               <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Top 3 Risks</h4>
-                <div className="space-y-2 mb-4">
+                <h4 className="text-sm font-bold text-slate-900 mb-3">Key Findings</h4>
+                <p className="text-sm text-slate-700 leading-relaxed mb-3">
+                  This assessment identified critical gaps in operational oversight, technical controls, and compliance infrastructure. The system operates with {assessment.security_controls?.length === 0 ? 'minimal' : 'limited'} protective mechanisms for patient data, creating substantial exposure to unauthorized access and regulatory non-compliance. Without immediate remediation, this system poses unacceptable risk to clinical operations and organizational reputation.
+                </p>
+              </div>
+
+              {/* Top 3 Risks */}
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 mb-3">Critical Risk Areas</h4>
+                <div className="space-y-2">
                   <div className="flex gap-3 items-start bg-red-50 border border-red-200 p-3 rounded-lg">
                     <span className="text-lg font-bold text-red-600 flex-shrink-0 w-6 text-center">1</span>
-                    <span className="text-sm text-slate-900 font-semibold">AI Hallucination & Output Errors</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-900">AI Model Reliability & Clinical Validation</p>
+                      <p className="text-xs text-slate-600 mt-0.5">Hallucinations and unvalidated outputs could result in diagnostic errors, treatment delays, and patient harm.</p>
+                    </div>
                   </div>
                   <div className="flex gap-3 items-start bg-orange-50 border border-orange-200 p-3 rounded-lg">
                     <span className="text-lg font-bold text-orange-600 flex-shrink-0 w-6 text-center">2</span>
-                    <span className="text-sm text-slate-900 font-semibold">Unauthorized ePHI Access & Data Breach</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-900">Patient Data Protection & Privacy Breach</p>
+                      <p className="text-xs text-slate-600 mt-0.5">Inadequate access controls and encryption create material risk of ePHI compromise, HIPAA violation, and significant financial and reputational damage.</p>
+                    </div>
                   </div>
                   <div className="flex gap-3 items-start bg-amber-50 border border-amber-200 p-3 rounded-lg">
                     <span className="text-lg font-bold text-amber-600 flex-shrink-0 w-6 text-center">3</span>
-                    <span className="text-sm text-slate-900 font-semibold">Third-Party Vendor & Supply Chain Risk</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-900">Third-Party & Supply Chain Vulnerability</p>
+                      <p className="text-xs text-slate-600 mt-0.5">Vendor dependencies and external integrations lack sufficient oversight, creating pathway for ransomware, data theft, and operational sabotage.</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Recommended Actions */}
               <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Key Findings</h4>
-                <ul className="space-y-2">
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-red-600 font-bold">•</span>
-                    <span>AI model presents {riskLevel} risk of hallucinated outputs affecting clinical decisions</span>
-                  </li>
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-red-600 font-bold">•</span>
-                    <span>ePHI exposure risk due to {assessment.security_controls?.length === 0 ? 'inadequate' : 'insufficient'} controls</span>
-                  </li>
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-red-600 font-bold">•</span>
-                    <span>External threats include ransomware targeting healthcare systems and vendor compromise</span>
-                  </li>
-                </ul>
+                <h4 className="text-sm font-bold text-slate-900 mb-3">Immediate Actions Required</h4>
+                <div className="space-y-2">
+                  <div className="border-l-4 border-l-red-600 bg-red-50 p-3 rounded">
+                    <p className="text-xs font-semibold text-red-800 uppercase tracking-wide mb-1">PRIORITY 1 — 0–30 Days</p>
+                    <p className="text-sm text-slate-900">Implement mandatory human review of all AI outputs before clinical use. Establish audit logging for every decision. Disable system access until validation controls are in place.</p>
+                  </div>
+                  <div className="border-l-4 border-l-orange-600 bg-orange-50 p-3 rounded">
+                    <p className="text-xs font-semibold text-orange-800 uppercase tracking-wide mb-1">PRIORITY 2 — 30–90 Days</p>
+                    <p className="text-sm text-slate-900">Deploy role-based access controls (RBAC), multi-factor authentication (MFA), and encryption for data in transit and at rest. Conduct security assessment of vendor integrations.</p>
+                  </div>
+                  <div className="border-l-4 border-l-amber-600 bg-amber-50 p-3 rounded">
+                    <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-1">PRIORITY 3 — 90+ Days</p>
+                    <p className="text-sm text-slate-900">Commission independent security assessment and penetration testing. Establish governance committee for ongoing AI oversight. Document compliance alignment with HIPAA, NIST CSF, and internal policy.</p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3">Recommendation Summary</h4>
-                <ul className="space-y-2">
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Implement human-in-the-loop validation for AI outputs</span>
-                  </li>
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Strengthen access controls and implement MFA</span>
-                  </li>
-                  <li className="text-sm text-slate-700 flex gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Monitor AI outputs and implement continuous validation</span>
-                  </li>
-                </ul>
+              {/* Bottom Line */}
+              <div className="bg-slate-100 border border-slate-300 p-4 rounded-lg">
+                <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">Executive Conclusion</p>
+                <p className="text-sm text-slate-900">This system cannot be safely operated in its current state. Immediate remediation is required to reduce risk to acceptable levels. Failure to act on these recommendations creates material liability exposure for the organization.</p>
               </div>
             </CardContent>
           )}
