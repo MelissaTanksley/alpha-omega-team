@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, Shield, Plus, ChevronDown, ChevronUp, Calendar, Building2, Download, RefreshCw } from 'lucide-react';
 import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
+import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import { base44 } from '@/api/base44Client';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import moment from 'moment';
@@ -206,24 +207,16 @@ function AssessmentCard({ assessment }) {
                 </div>
               )}
               {assessment.key_assets && assessment.key_assets.length > 0 && (
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Risk Mapping (Asset → Threat → Risk → Control)</div>
-                  <RiskMappingCard
-                    asset={assessment.key_assets[0] || 'AI System'}
+                <div>
+                  <div className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Complete Risk Assessment</div>
+                  <ComprehensiveRiskCard
+                    asset={assessment.key_assets[0] + ' + ePHI' || 'AI System + ePHI'}
                     threat={assessment.governance_gaps?.[0] || 'System failure or output error'}
-                    risk={assessment.summary?.substring(0, 50) + '...' || 'Risk identified'}
+                    risk={assessment.summary || 'Risk identified'}
                     control={assessment.recommendations?.[0] || 'Implement security controls'}
+                    nistFunctions={['Identify', 'Protect', 'Detect']}
+                    hipaaType="Technical Safeguards"
                     riskLevel={assessment.risk_level}
-                    compact={true}
-                  />
-
-                  <div className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mt-3">Compliance Traceability (Asset → HIPAA + NIST)</div>
-                  <ComplianceAssetMap
-                    asset={assessment.key_assets[0] || 'AI System'}
-                    hipaaType={assessment.key_assets.includes('Security Controls') ? 'Technical' : 'Administrative'}
-                    hipaaDescription="Comprehensive safeguards aligned with HIPAA Security and Privacy Rules"
-                    nistFunctions={['Govern', 'Protect', 'Detect']}
-                    justification={`${assessment.key_assets[0] || 'This asset'} is subject to HIPAA requirements. Risk assessment shows ${assessment.risk_level} risk, requiring mapped controls to both HIPAA safeguard types and NIST CSF functions for complete compliance coverage.`}
                     compact={true}
                   />
                 </div>

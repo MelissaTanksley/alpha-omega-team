@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
 import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
+import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -438,24 +439,16 @@ function RiskCard({ item, index }) {
 
       {expanded && (
         <div className="border-t border-slate-100 p-4 space-y-4">
-          {/* Asset → Threat → Risk → Control Mapping */}
-          <RiskMappingCard
-            asset={item.affected_asset || 'Multiple Assets'}
+          {/* Comprehensive Risk Assessment */}
+          <ComprehensiveRiskCard
+            asset={item.affected_asset || 'Healthcare AI System'}
             threat={item.threat || item.risk}
             risk={item.risk}
             control={item.recommended_control || (item.controls?.administrative?.[0] || 'Review and implement controls')}
+            nistFunctions={['Identify', 'Protect', 'Detect']}
+            hipaaType={item.controls?.technical?.length > 0 ? 'Technical Safeguards' : item.controls?.administrative?.length > 0 ? 'Administrative Safeguards' : 'Physical Safeguards'}
             riskLevel={item.likelihood?.toLowerCase() || 'medium'}
             compact={false}
-          />
-
-          {/* Asset → Compliance Mapping */}
-          <ComplianceAssetMap
-            asset={item.affected_asset || 'Healthcare AI System'}
-            hipaaType={item.controls?.technical?.length > 0 ? 'Technical' : item.controls?.administrative?.length > 0 ? 'Administrative' : 'Physical'}
-            hipaaDescription={item.controls?.technical?.[0] || item.controls?.administrative?.[0] || 'Implement compliance controls'}
-            nistFunctions={['Identify', 'Protect', 'Detect']}
-            justification={`This ${item.affected_asset || 'asset'} is subject to HIPAA security requirements and NIST CSF controls. Identified risks map to specific safeguard types and framework functions to ensure comprehensive coverage.`}
-            compact={true}
           />
 
           {/* Impact */}

@@ -12,6 +12,7 @@ import { base44 } from '@/api/base44Client';
 import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
+import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -489,46 +490,26 @@ Be specific, asset-aware, and realistic for healthcare.`;
           </Card>
         )}
 
-        {/* Asset → Threat → Risk → Control Mappings */}
+        {/* Comprehensive Risk Assessment (Complete Chain + Compliance) */}
         {results.recommendations?.length > 0 && (
-          <Card className="mb-6 border-l-4 border-l-blue-600">
+          <Card className="mb-6 border-l-4 border-l-indigo-600">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full">⚡</span>
-                Risk Mapping Chain
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-indigo-600 text-white text-xs font-bold rounded-full">✓</span>
+                Complete Risk Assessment (Asset → Threat → Risk → Control → Compliance)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {[
-                {
-                  asset: getEffectiveAssets()[0] || 'AI Model',
-                  threat: 'System failure or incorrect output',
-                  risk: 'Clinical impact and patient safety',
-                  control: results.recommendations[0] || 'Implement recommended controls'
-                },
-                {
-                  asset: 'ePHI / Patient Records',
-                  threat: 'Unauthorized access or data leakage',
-                  risk: 'HIPAA violations and privacy breach',
-                  control: results.recommendations[1] || 'Enhance security controls'
-                },
-                {
-                  asset: 'System Access Controls',
-                  threat: 'Insider misuse or privilege escalation',
-                  risk: 'Unauthorized modifications to data',
-                  control: results.recommendations[2] || 'Implement access controls'
-                }
-              ].map((mapping, i) => (
-                <RiskMappingCard
-                  key={i}
-                  asset={mapping.asset}
-                  threat={mapping.threat}
-                  risk={mapping.risk}
-                  control={mapping.control}
-                  riskLevel={results.risk_level || 'medium'}
-                  compact={true}
-                />
-              ))}
+              <ComprehensiveRiskCard
+                asset={getEffectiveAssets()[0] + ' + ePHI' || 'AI Model + ePHI'}
+                threat="Model hallucination or incorrect clinical output"
+                risk="Patient safety impact and violation of data integrity requirements"
+                control={results.recommendations[0] || 'Implement human-in-the-loop validation and output monitoring'}
+                nistFunctions={['Identify', 'Protect', 'Detect']}
+                hipaaType="Technical Safeguards"
+                riskLevel={results.risk_level || 'medium'}
+                compact={false}
+              />
             </CardContent>
           </Card>
         )}
