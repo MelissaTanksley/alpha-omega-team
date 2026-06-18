@@ -11,6 +11,7 @@ import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
 import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
+import AssetComplianceExample from '@/components/AssetComplianceExample';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -699,6 +700,9 @@ Be specific, asset-aware, and realistic for healthcare.`;
             </CardContent>
           </Card>
         )}
+
+        {/* Example: ePHI in AI-Generated Notes */}
+        <AssetComplianceExample />
 
         {/* Governance Gaps */}
         {results.governance_gaps?.length > 0 && (
