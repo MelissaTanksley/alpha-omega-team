@@ -145,6 +145,10 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/ExecutiveDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Executive Dashboard</Link>
               <Link to="/RiskDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">All Assessments</Link>
             </div>
+            <div className="flex gap-4">
+              <Link to="/PrivacyPolicy" className="text-slate-400 text-xs hover:text-blue-400 transition-colors">Privacy Policy</Link>
+              <Link to="/TermsOfUse" className="text-slate-400 text-xs hover:text-blue-400 transition-colors">Terms of Use</Link>
+            </div>
             <p className="text-slate-300 text-xs">© 2026 AI Risk Navigator for Healthcare</p>
           </div>
         </div>
