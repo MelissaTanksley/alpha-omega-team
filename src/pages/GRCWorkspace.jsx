@@ -44,6 +44,7 @@ Perform the following steps in order:
 
 STEP 1 — RISK ANALYSIS (ISO 27005)
 - Identify risks, threats, and vulnerabilities
+- INCLUDE: Which asset is affected (e.g. AI Model, ePHI, EHR System, APIs, Third-Party Vendors)
 - Include likelihood and impact (clinical, operational, legal)
 
 STEP 2 — COMPLIANCE MAPPING
@@ -51,6 +52,7 @@ Map each risk to:
 - HIPAA (Administrative, Technical, Physical Safeguards)
 - HITECH
 - NIST CSF 2.0 functions/categories
+IMPORTANT: For each mapping, indicate which asset it protects
 
 STEP 3 — CONTROL DESIGN
 Recommend controls:
@@ -58,37 +60,41 @@ Recommend controls:
 - Technical
 - Physical
 Include AI-specific protections (human oversight, monitoring, validation)
+IMPORTANT: Link each control to the affected asset
 
 STEP 4 — AUDIT CHECK
 Validate:
+- Every risk has an affected_asset specified
 - Every risk has mappings
 - Every mapping has controls
 - Residual risk is included
-- Flag any gaps
+- Flag any gaps (especially asset-to-control mappings missing)
 
 STRICT RULES:
 - Treat AI systems as high-risk
 - Focus on healthcare (ePHI protection)
 - No free-form text — output valid JSON only
 - Use the exact structured output format below
+- Every risk MUST include affected_asset field
 
 OUTPUT FORMAT (return ONLY this JSON array, no prose, no markdown):
 [
   {
     "risk": "",
+    "affected_asset": "AI Model | ePHI | EHR System | APIs | Third-Party Vendors | (other asset name)",
     "impact": {
       "clinical": "",
       "operational": "",
       "legal": ""
     },
     "likelihood": "",
-    "hipaa_mapping": [],
-    "hitech_mapping": [],
-    "nist_csf_mapping": [],
+    "hipaa_mapping": ["HIPAA control mapped to this asset"],
+    "hitech_mapping": ["HITECH mapping"],
+    "nist_csf_mapping": ["NIST CSF function/category affecting this asset"],
     "controls": {
-      "administrative": [],
-      "technical": [],
-      "physical": []
+      "administrative": ["control description → [asset_affected]"],
+      "technical": ["control description → [asset_affected]"],
+      "physical": ["control description → [asset_affected]"]
     },
     "ai_safeguards": [],
     "residual_risk": "",
@@ -395,6 +401,15 @@ function RiskCard({ item, index }) {
     critical: 'text-red-600',
   }[item.residual_risk?.toLowerCase()] || 'text-slate-500';
 
+  const assetColor = {
+    'AI Model': 'bg-blue-100 text-blue-800',
+    'ePHI': 'bg-red-100 text-red-800',
+    'EHR System': 'bg-emerald-100 text-emerald-800',
+    'APIs': 'bg-purple-100 text-purple-800',
+    'Third-Party Vendors': 'bg-amber-100 text-amber-800',
+  };
+  const assetBg = Object.entries(assetColor).find(([key]) => item.affected_asset?.includes(key))?.[1] || 'bg-slate-100 text-slate-800';
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <button
@@ -406,9 +421,10 @@ function RiskCard({ item, index }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-slate-800 text-sm">{item.risk}</p>
-          <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            {item.affected_asset && <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${assetBg}`}>📍 {item.affected_asset}</span>}
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${likelihoodColor}`}>
-              Likelihood: {item.likelihood}
+              {item.likelihood}
             </span>
             <span className={`text-xs font-medium ${residualColor}`}>
               Residual: {item.residual_risk}

@@ -170,7 +170,10 @@ function exportToPDF(formData, results) {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(71, 85, 105);
-      const lines = doc.splitTextToSize(`• ${gap}`, pageW - 28);
+      const gapText = typeof gap === 'string' ? gap : gap.gap;
+      const framework = typeof gap === 'object' && gap.control_framework ? ` (${gap.control_framework})` : '';
+      const asset = typeof gap === 'object' && gap.affected_asset ? ` → ${gap.affected_asset}` : '';
+      const lines = doc.splitTextToSize(`• ${gapText}${asset}${framework}`, pageW - 28);
       doc.text(lines, 14, y);
       y += lines.length * 5 + 2;
     });
@@ -189,7 +192,9 @@ function exportToPDF(formData, results) {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(71, 85, 105);
-      const lines = doc.splitTextToSize(`${i + 1}. ${rec}`, pageW - 28);
+      const recText = typeof rec === 'string' ? rec : rec.recommendation;
+      const asset = typeof rec === 'object' && rec.affected_asset ? ` [${rec.affected_asset}]` : '';
+      const lines = doc.splitTextToSize(`${i + 1}. ${recText}${asset}`, pageW - 28);
       doc.text(lines, 14, y);
       y += lines.length * 5 + 2;
     });
@@ -272,7 +277,17 @@ IMPORTANT: Reference the key assets (${effectiveAssets.join(', ')}) specifically
 - Threat scenarios (e.g. "Unauthorized access to the EHR System could...")
 - Compliance gaps (e.g. "The API Integrations lack...")
 
-Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, up to 5 actionable recommendations, up to 4 governance gaps, and a FAIR-informed financial exposure estimate (e.g. "Estimated breach cost: $1.2M–$3.5M based on ePHI exposure and regulatory penalty risk"). Be specific and realistic for healthcare.`;
+Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, and FAIR-informed financial exposure estimate.
+
+For recommendations: Return objects with { recommendation: "text", affected_asset: "asset name from the provided list" }. Each recommendation MUST specify which key asset it applies to.
+
+For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/FDA" } to show which asset is impacted and which framework addresses it.
+
+Example:
+- { "gap": "ePHI lacks encryption at rest", "affected_asset": "Patient Data (ePHI)", "control_framework": "HIPAA" }
+- { "recommendation": "Implement role-based access control for the AI Model", "affected_asset": "AI Model & Training Data" }
+
+Be specific, asset-aware, and realistic for healthcare.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -286,8 +301,27 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             overall_risk_score: { type: 'number' },
             risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
             summary: { type: 'string' },
-            recommendations: { type: 'array', items: { type: 'string' } },
-            governance_gaps: { type: 'array', items: { type: 'string' } },
+            recommendations: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  recommendation: { type: 'string' },
+                  affected_asset: { type: 'string' }
+                }
+              }
+            },
+            governance_gaps: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  gap: { type: 'string' },
+                  affected_asset: { type: 'string' },
+                  control_framework: { type: 'string' }
+                }
+              }
+            },
             financial_exposure: { type: 'string' }
           }
         }
@@ -382,13 +416,20 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Actionable Recommendations</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {results.recommendations.map((r, i) => (
-                <div key={i} className="flex gap-3 text-sm">
-                  <span className="w-5 h-5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold mt-0.5">{i + 1}</span>
-                  <span className="text-slate-700">{r}</span>
-                </div>
-              ))}
+            <CardContent className="space-y-3">
+              {results.recommendations.map((r, i) => {
+                const recText = typeof r === 'string' ? r : r.recommendation;
+                const asset = typeof r === 'object' && r.affected_asset ? r.affected_asset : null;
+                return (
+                  <div key={i} className="flex gap-3 text-sm">
+                    <span className="w-5 h-5 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold mt-0.5">{i + 1}</span>
+                    <div className="flex-1">
+                      <div className="text-slate-700">{recText}</div>
+                      {asset && <div className="text-xs text-blue-600 mt-1">📍 {asset}</div>}
+                    </div>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         )}
@@ -401,13 +442,24 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
                 <AlertTriangle className="h-4 w-4" /> Governance Gaps Identified
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {results.governance_gaps.map((g, i) => (
-                <div key={i} className="flex gap-2 text-sm text-slate-700">
-                  <span className="text-orange-500 mt-0.5">⚠</span>
-                  <span>{g}</span>
-                </div>
-              ))}
+            <CardContent className="space-y-3">
+              {results.governance_gaps.map((g, i) => {
+                const gapText = typeof g === 'string' ? g : g.gap;
+                const asset = typeof g === 'object' && g.affected_asset ? g.affected_asset : null;
+                const framework = typeof g === 'object' && g.control_framework ? g.control_framework : null;
+                return (
+                  <div key={i} className="flex gap-2 text-sm bg-orange-50 border border-orange-100 rounded-lg p-3">
+                    <span className="text-orange-500 flex-shrink-0 mt-0.5">⚠</span>
+                    <div className="flex-1">
+                      <div className="text-slate-800 font-medium">{gapText}</div>
+                      <div className="flex items-center gap-3 mt-1.5 text-xs">
+                        {asset && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Asset:</strong> {asset}</span>}
+                        {framework && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Framework:</strong> {framework}</span>}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         )}
