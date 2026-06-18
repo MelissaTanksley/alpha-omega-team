@@ -54,92 +54,140 @@ function SectionLabel({ number, title }) {
   );
 }
 
+function Field({ label, children }) {
+  return (
+    <div className="flex gap-0 min-w-0">
+      <span className="w-44 flex-shrink-0 text-xs font-bold text-slate-400 uppercase tracking-widest pt-0.5">{label}</span>
+      <div className="flex-1 min-w-0 text-sm text-slate-800 leading-snug">{children}</div>
+    </div>
+  );
+}
+
 function RiskRow({ item, index }) {
   const [open, setOpen] = useState(false);
   const lc = getLikelihood(item.likelihood);
 
+  // Best single control to show as primary
+  const primaryControl = item.controls?.administrative?.[0] || item.controls?.technical?.[0] || '—';
+  const hipaa = (item.hipaa_mapping || []).slice(0, 2).join(', ') || '—';
+  const nist  = (item.nist_csf_mapping || []).slice(0, 2).join(', ') || '—';
+
   return (
-    <div className="border border-slate-200 rounded-lg overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors text-left"
-      >
-        <span className="w-6 h-6 rounded-full bg-slate-100 text-xs font-bold text-slate-500 flex items-center justify-center flex-shrink-0">
+    <div className="border border-slate-200 rounded-xl overflow-hidden">
+      {/* ── Card Header ── */}
+      <div className="flex items-center gap-3 px-5 py-3 bg-slate-50 border-b border-slate-200">
+        <span className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
           {index + 1}
         </span>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-800 leading-snug">{item.risk}</p>
-          <div className="flex flex-wrap items-center gap-2 mt-1.5">
-            {item.affected_asset && (
-              <span className={`text-xs px-2 py-0.5 rounded font-medium ${assetBadge(item.affected_asset)}`}>
-                {item.affected_asset}
-              </span>
-            )}
-            <span className={`text-xs px-2 py-0.5 rounded font-semibold ${lc.badge}`}>
-              {lc.label}
+        <div className="flex-1 flex flex-wrap items-center gap-2">
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-md ${lc.badge}`}>{lc.label}</span>
+          {item.affected_asset && (
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-md ${assetBadge(item.affected_asset)}`}>
+              {item.affected_asset}
             </span>
-            {item.residual_risk && (
-              <span className="text-xs text-slate-400">Residual risk: <span className="font-medium text-slate-600 capitalize">{item.residual_risk}</span></span>
-            )}
-          </div>
+          )}
+          {item.residual_risk && (
+            <span className="text-xs text-slate-400 ml-auto">Residual: <span className="font-semibold text-slate-600 capitalize">{item.residual_risk}</span></span>
+          )}
         </div>
-        {open
-          ? <ChevronDown className="h-4 w-4 text-slate-400 flex-shrink-0" />
-          : <ChevronRight className="h-4 w-4 text-slate-400 flex-shrink-0" />}
-      </button>
+        <button onClick={() => setOpen(!open)} className="text-slate-400 hover:text-slate-600 flex-shrink-0">
+          {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </button>
+      </div>
 
+      {/* ── Structured Fields (always visible) ── */}
+      <div className="px-5 py-4 space-y-3">
+        <Field label="Asset">
+          {item.affected_asset || '—'}
+        </Field>
+        <div className="h-px bg-slate-100" />
+        <Field label="Threat">
+          {item.threat || item.risk}
+        </Field>
+        <div className="h-px bg-slate-100" />
+        <Field label="Risk">
+          {item.risk}
+        </Field>
+        <div className="h-px bg-slate-100" />
+        <Field label="Control">
+          {primaryControl}
+        </Field>
+        <div className="h-px bg-slate-100" />
+        <Field label="Compliance">
+          <div className="space-y-1">
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-semibold text-blue-600 w-16 flex-shrink-0">HIPAA</span>
+              <span className="text-xs text-slate-600">{hipaa}</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-semibold text-indigo-600 w-16 flex-shrink-0">NIST CSF</span>
+              <span className="text-xs text-slate-600">{nist}</span>
+            </div>
+          </div>
+        </Field>
+      </div>
+
+      {/* ── Expanded Details ── */}
       {open && (
         <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-4 space-y-4">
           {/* Impact */}
-          <div className="grid grid-cols-3 gap-3">
-            {['clinical', 'operational', 'legal'].map(k => (
-              <div key={k} className="bg-white border border-slate-200 rounded-lg p-3">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1 capitalize">{k} Impact</p>
-                <p className="text-xs text-slate-700 leading-snug">{item.impact?.[k] || '—'}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Compliance */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {[
-              { label: 'HIPAA', key: 'hipaa_mapping', cls: 'border-l-blue-500' },
-              { label: 'HITECH', key: 'hitech_mapping', cls: 'border-l-purple-500' },
-              { label: 'NIST CSF 2.0', key: 'nist_csf_mapping', cls: 'border-l-indigo-500' },
-            ].map(({ label, key, cls }) => (
-              <div key={key} className={`bg-white border border-slate-200 border-l-4 ${cls} rounded-lg p-3`}>
-                <p className="text-xs font-bold text-slate-600 mb-2">{label}</p>
-                <ul className="space-y-1">
-                  {(item[key] || []).map((m, i) => (
-                    <li key={i} className="text-xs text-slate-600 leading-snug">• {m}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {[
-              { label: 'Administrative', key: 'administrative', dot: 'bg-emerald-500' },
-              { label: 'Technical', key: 'technical', dot: 'bg-cyan-500' },
-              { label: 'Physical', key: 'physical', dot: 'bg-slate-400' },
-            ].map(({ label, key, dot }) => (
-              <div key={key} className="bg-white border border-slate-200 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dot}`} />
-                  <p className="text-xs font-bold text-slate-600">{label} Controls</p>
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Impact</p>
+            <div className="grid grid-cols-3 gap-3">
+              {['clinical', 'operational', 'legal'].map(k => (
+                <div key={k} className="bg-white border border-slate-200 rounded-lg p-3">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1 capitalize">{k}</p>
+                  <p className="text-xs text-slate-700 leading-snug">{item.impact?.[k] || '—'}</p>
                 </div>
-                <ul className="space-y-1">
-                  {(item.controls?.[key] || []).map((c, i) => (
-                    <li key={i} className="text-xs text-slate-600 leading-snug">• {c}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* AI Safeguards */}
+          {/* All Compliance */}
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Full Compliance Mapping</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { label: 'HIPAA', key: 'hipaa_mapping', cls: 'border-l-blue-500' },
+                { label: 'HITECH', key: 'hitech_mapping', cls: 'border-l-purple-500' },
+                { label: 'NIST CSF 2.0', key: 'nist_csf_mapping', cls: 'border-l-indigo-500' },
+              ].map(({ label, key, cls }) => (
+                <div key={key} className={`bg-white border border-slate-200 border-l-4 ${cls} rounded-lg p-3`}>
+                  <p className="text-xs font-bold text-slate-600 mb-2">{label}</p>
+                  <ul className="space-y-1">
+                    {(item[key] || []).map((m, i) => (
+                      <li key={i} className="text-xs text-slate-600 leading-snug">• {m}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* All Controls */}
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">All Controls</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { label: 'Administrative', key: 'administrative', dot: 'bg-emerald-500' },
+                { label: 'Technical', key: 'technical', dot: 'bg-cyan-500' },
+                { label: 'Physical', key: 'physical', dot: 'bg-slate-400' },
+              ].map(({ label, key, dot }) => (
+                <div key={key} className="bg-white border border-slate-200 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dot}`} />
+                    <p className="text-xs font-bold text-slate-600">{label}</p>
+                  </div>
+                  <ul className="space-y-1">
+                    {(item.controls?.[key] || []).map((c, i) => (
+                      <li key={i} className="text-xs text-slate-600 leading-snug">• {c}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {item.ai_safeguards?.length > 0 && (
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
               <p className="text-xs font-bold text-blue-700 mb-2">AI-Specific Safeguards</p>
