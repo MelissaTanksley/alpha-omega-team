@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail } from 'lucide-react';
@@ -42,9 +43,13 @@ export default function Home() {
   const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [demoEmail, setDemoEmail] = useState('');
 
-  const handleDemoRequest = (e) => {
+  const handleDemoRequest = async (e) => {
     e.preventDefault();
-    if (demoEmail.trim()) setDemoSubmitted(true);
+    if (!demoEmail.trim()) return;
+    try {
+      await base44.functions.invoke('sendDemoRequest', { email: demoEmail });
+    } catch (_) {}
+    setDemoSubmitted(true);
   };
 
   return (
