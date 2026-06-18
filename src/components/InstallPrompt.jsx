@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Download, CheckCircle, Share, MoreVertical, PlusSquare } from 'lucide-react';
+import { Download, CheckCircle, Share, MoreVertical } from 'lucide-react';
 
 // Detect the running environment once
 function detectDevice() {
@@ -66,24 +66,15 @@ export default function InstallPrompt() {
 
   if (hidden) return null;
 
-  const deviceLabel = device.isTablet ? 'tablet' : (device.platform === 'desktop' ? 'computer' : 'phone');
-
-  // Adaptive instruction steps
-  const iosSteps = [
-    <span key="1">Tap the <strong>Share</strong> button <Share className="inline h-3.5 w-3.5 mb-0.5" /> {device.isTablet ? 'in the top toolbar' : 'at the bottom'} of Safari</span>,
-    <span key="2">Choose <strong>"Add to Home Screen"</strong></span>,
-    <span key="3">Tap <strong>"Add"</strong> to confirm</span>,
-  ];
-  const androidSteps = [
-    <span key="1">Tap the <strong>menu</strong> <MoreVertical className="inline h-3.5 w-3.5 mb-0.5" /> in Chrome</span>,
-    <span key="2">Choose <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong></span>,
-    <span key="3">Tap <strong>"Install"</strong> to confirm</span>,
-  ];
-  const desktopSteps = [
-    <span key="1">Click the <strong>install icon</strong> <PlusSquare className="inline h-3.5 w-3.5 mb-0.5" /> in the address bar</span>,
-    <span key="2">Click <strong>"Install"</strong> in the dialog that appears</span>,
-  ];
-  const steps = device.platform === 'ios' ? iosSteps : device.platform === 'android' ? androidSteps : desktopSteps;
+  const steps = device.platform === 'ios'
+    ? [
+        <span key="1">Tap the <strong>Share</strong> button <Share className="inline h-3.5 w-3.5 mb-0.5" /> in Safari</span>,
+        <span key="2">Tap <strong>"Add to Home Screen"</strong></span>,
+      ]
+    : [
+        <span key="1">Open the <strong>Chrome menu</strong> <MoreVertical className="inline h-3.5 w-3.5 mb-0.5" /> (three dots)</span>,
+        <span key="2">Tap <strong>"Add to Home Screen"</strong></span>,
+      ];
 
   return (
     <>
