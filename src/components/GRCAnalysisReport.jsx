@@ -365,6 +365,14 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
         )}
       </div>
 
+      {/* ══ DISCLAIMER BANNER ══════════════════════════════════════════════ */}
+      <div className="bg-amber-50 border-l-4 border-amber-400 px-6 py-3 flex items-start gap-3">
+        <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+        <p className="text-xs text-amber-800 leading-relaxed">
+          <span className="font-bold">Disclaimer:</span> Outputs are for risk analysis purposes only and should not be used as a substitute for professional medical, legal, or compliance advice.
+        </p>
+      </div>
+
       {/* ══ REPORT BODY ════════════════════════════════════════════════════ */}
       <div className="px-8 py-10 space-y-12">
 
