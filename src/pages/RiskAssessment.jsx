@@ -229,6 +229,14 @@ export default function RiskAssessment() {
     fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: ''
   });
 
+  // Check for demo mode on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === '1') {
+      runDemoMode();
+    }
+  }, []);
+
   const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
   const toggleArray = (field, value) => {
@@ -238,6 +246,96 @@ export default function RiskAssessment() {
         ? prev[field].filter(v => v !== value)
         : [...prev[field], value]
     }));
+  };
+
+  const DEMO_FORM_DATA = {
+    system_name: 'AI Clinical Charting Assistant',
+    system_type: 'nlp_documentation',
+    vendor: 'MedScribe AI',
+    deployment_context: 'clinical',
+    key_assets: ['clinical_ai', 'ai_model', 'ephi', 'ehr', 'api'],
+    custom_asset: '',
+    data_sources: ['EHR / EMR', 'Lab Results', 'Patient-Reported Outcomes'],
+    population_diversity: 'partially_considered',
+    bias_testing: 'in_progress',
+    data_documented: 'partial',
+    security_controls: ['Role-Based Access Control', 'Audit Logging', 'Multi-Factor Authentication (MFA)'],
+    encryption: 'yes_both',
+    hipaa_baa: 'yes',
+    pen_testing: 'yes_older',
+    fda_status: 'exempt',
+    hipaa_compliance: 'partial',
+    governance_policy: 'yes_informal',
+    clinical_validation: 'in_progress',
+  };
+
+  const runDemoMode = async () => {
+    setFormData(DEMO_FORM_DATA);
+    setLoading(true);
+    const demoAssets = ['Clinical AI Systems', 'AI Model & Training Data', 'Patient Data (ePHI)', 'EHR / Core Systems', 'APIs and Integrations'];
+    try {
+      const prompt = `You are a senior healthcare AI risk analyst. Analyze the following AI system and return a structured risk assessment with scores from 0–100 where higher = more risk.
+
+AI System: AI Clinical Charting Assistant (nlp_documentation)
+Vendor: MedScribe AI
+Deployment: Clinical (Direct Patient Care)
+
+Key Assets Involved: Clinical AI Systems, AI Model & Training Data, Patient Data (ePHI), EHR / Core Systems, APIs and Integrations
+
+Bias & Data:
+- Data sources: EHR / EMR, Lab Results, Patient-Reported Outcomes
+- Population diversity: Partially Considered
+- Bias testing: In Progress
+- Training data documented: Partially Documented
+
+Security:
+- Controls: Role-Based Access Control, Audit Logging, Multi-Factor Authentication (MFA)
+- Data encryption: Yes — Both At Rest & In Transit
+- HIPAA BAA: Yes — In Place
+- Penetration testing: Yes — Over 12 Months Ago
+
+Compliance:
+- FDA oversight: Exempt
+- HIPAA compliance: Partially Compliant
+- Governance policy: Yes — Informal / In Development
+- Clinical validation: In Progress
+
+IMPORTANT: Reference the key assets (Clinical AI Systems, AI Model & Training Data, Patient Data (ePHI), EHR / Core Systems, APIs and Integrations) specifically in risk descriptions, threat scenarios, and compliance gaps.
+
+Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, and FAIR-informed financial exposure estimate.
+
+For recommendations: Return objects with { recommendation: "text", affected_asset: "asset name from the provided list" }. Each recommendation MUST specify which key asset it applies to.
+
+For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/FDA" }.
+
+Be specific, asset-aware, and realistic for healthcare.`;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            bias_score: { type: 'number' },
+            cybersecurity_score: { type: 'number' },
+            compliance_score: { type: 'number' },
+            clinical_impact_score: { type: 'number' },
+            overall_risk_score: { type: 'number' },
+            risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+            summary: { type: 'string' },
+            recommendations: { type: 'array', items: { type: 'object', properties: { recommendation: { type: 'string' }, affected_asset: { type: 'string' } } } },
+            governance_gaps: { type: 'array', items: { type: 'object', properties: { gap: { type: 'string' }, affected_asset: { type: 'string' }, control_framework: { type: 'string' } } } },
+            financial_exposure: { type: 'string' }
+          }
+        }
+      });
+
+      const saved = await base44.entities.AIRiskAssessment.create({ ...DEMO_FORM_DATA, key_assets: demoAssets, ...response });
+      setResults({ ...response, id: saved.id });
+    } catch (err) {
+      console.error(err);
+      alert('Demo analysis failed. Please try again.');
+    }
+    setLoading(false);
   };
 
   const getEffectiveAssets = () => {
@@ -347,6 +445,18 @@ Be specific, asset-aware, and realistic for healthcare.`;
     { label: 'Regulatory Compliance', score: results.compliance_score },
     { label: 'Clinical Impact', score: results.clinical_impact_score },
   ] : [];
+
+  if (loading && !results) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+        <div className="text-center">
+          <p className="text-slate-700 font-semibold text-lg">Running Demo Analysis…</p>
+          <p className="text-slate-400 text-sm mt-1">Analyzing AI Clinical Charting Assistant against HIPAA, NIST CSF 2.0, and ISO 27005</p>
+        </div>
+      </div>
+    );
+  }
 
   if (results) {
     const risk = getRiskColor(results.overall_risk_score);

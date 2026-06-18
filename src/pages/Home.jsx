@@ -86,6 +86,12 @@ export default function Home() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
+                <Link to="/RiskAssessment?demo=1">
+                  <Button size="lg" className="bg-teal-500 hover:bg-teal-400 text-white px-8 h-12 text-base font-semibold">
+                    <Zap className="mr-2 h-5 w-5" />
+                    Try Demo
+                  </Button>
+                </Link>
                 <a href="#request-demo">
                   <Button size="lg" variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300 px-8 h-12 text-base">
                     Request Demo
