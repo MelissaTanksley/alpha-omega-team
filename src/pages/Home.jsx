@@ -156,10 +156,10 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
-              { icon: BarChart3, color: 'text-blue-400', bg: 'bg-blue-600/20', title: 'AI Risk Scoring', sub: 'ISO 27005', desc: 'Quantified risk scores across bias, cybersecurity, compliance, and clinical impact dimensions — producing a single unified 0–100 risk score per system.' },
-              { icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-600/20', title: 'Compliance Mapping', sub: 'HIPAA · NIST CSF 2.0', desc: 'Auto-maps every identified risk to HIPAA safeguards and NIST CSF 2.0 functions, highlighting regulatory gaps and producing audit-ready documentation.' },
-              { icon: Activity, color: 'text-orange-400', bg: 'bg-orange-600/20', title: 'Internal & External Risk Identification', sub: 'Risk Measurement & Monitoring', desc: 'Analyzes both internal vectors (access control, insider misuse, model drift) and external threats (ransomware, MITRE ATT&CK, vendor risks) in a single workflow.' },
-              { icon: Target, color: 'text-violet-400', bg: 'bg-violet-600/20', title: 'Structured Governance Outputs', sub: 'Reporting & Handoff', desc: 'Generates downloadable reports, recommendations, and governance gap summaries suitable for board presentations, audits, and integration into existing GRC programs.' },
+              { icon: BarChart3, color: 'text-blue-400', bg: 'bg-blue-600/20', title: 'AI Risk Scoring', sub: 'ISO 27005', desc: 'Quantified risk scores across bias, cybersecurity, compliance, and clinical impact dimensions — producing a single unified 0–100 risk score per system.', footnote: 'Based on ISO/IEC 27005 likelihood and impact modeling' },
+              { icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-600/20', title: 'Compliance Mapping', sub: 'HIPAA · NIST CSF 2.0', desc: 'Auto-maps every identified risk to HIPAA safeguards and NIST CSF 2.0 functions, highlighting regulatory gaps and producing audit-ready documentation.', footnote: 'Aligned with HIPAA safeguards and NIST CSF 2.0 functions' },
+              { icon: Activity, color: 'text-orange-400', bg: 'bg-orange-600/20', title: 'Internal & External Risk Identification', sub: 'Risk Measurement & Monitoring', desc: 'Analyzes both internal vectors (access control, insider misuse, model drift) and external threats (ransomware, MITRE ATT&CK, vendor risks) in a single workflow.', footnote: 'Informed by STRIDE and MITRE ATT&CK threat models' },
+              { icon: Target, color: 'text-violet-400', bg: 'bg-violet-600/20', title: 'Structured Governance Outputs', sub: 'Reporting & Handoff', desc: 'Generates downloadable reports, recommendations, and governance gap summaries suitable for board presentations, audits, and integration into existing GRC programs.', footnote: 'Informed by FAIR-aligned risk prioritization methods' },
             ].map((item, i) => (
               <div key={i} className="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex items-start gap-4">
                 <div className={`w-11 h-11 ${item.bg} rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5`}>
@@ -169,6 +169,7 @@ export default function Home() {
                   <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${item.color}`}>{item.sub}</p>
                   <h3 className="text-white font-bold text-base mb-2">{item.title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                  <p className={`text-xs mt-3 font-medium ${item.color} opacity-80`}>↳ {item.footnote}</p>
                 </div>
               </div>
             ))}
