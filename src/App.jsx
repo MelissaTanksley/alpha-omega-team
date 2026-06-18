@@ -8,6 +8,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GRCReport from './pages/GRCReport';
+import ExecutiveReportView from './pages/ExecutiveReportView';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -62,6 +63,11 @@ const AuthenticatedApp = () => {
       <Route path="/GRCReport" element={
         <LayoutWrapper currentPageName="GRCReport">
           <GRCReport />
+        </LayoutWrapper>
+      } />
+      <Route path="/ExecutiveReportView" element={
+        <LayoutWrapper currentPageName="ExecutiveReportView">
+          <ExecutiveReportView />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
