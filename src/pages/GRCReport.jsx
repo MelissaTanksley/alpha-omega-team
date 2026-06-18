@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File } from 'lucide-react';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 
 export default function GRCReport() {
@@ -94,6 +94,16 @@ export default function GRCReport() {
             <p className="text-slate-600">Comprehensive Governance, Risk & Compliance Assessment</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => {
+              const briefContent = `EXECUTIVE BRIEF\n\n${assessment.system_name}\n\nRisk Level: ${riskLevel.toUpperCase()}\nScore: ${assessment.overall_risk_score || 0}/100\n\nTop Risks:\n1. AI-generated errors impacting clinical decision-making\n2. Unauthorized access to ePHI\n3. External threats from vendor dependencies\n\nRecommended Actions:\n- Implement human-in-the-loop validation\n- Strengthen access controls and encryption\n- Deploy monitoring for AI outputs\n\nGenerated: ${new Date().toLocaleDateString()}`;
+              const element = document.createElement('a');
+              element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(briefContent));
+              element.setAttribute('download', `${assessment.system_name}-Executive-Brief.txt`);
+              element.click();
+            }} className="gap-2">
+              <File className="h-4 w-4" />
+              Download Executive Brief
+            </Button>
             <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-2">
               <Printer className="h-4 w-4" />
               Print
