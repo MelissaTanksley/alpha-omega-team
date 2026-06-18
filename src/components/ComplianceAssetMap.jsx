@@ -63,12 +63,12 @@ export default function ComplianceAssetMap({
     <Card className={`border-2 ${colors.border} ${colors.bg}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-base flex items-center gap-2">
-              <HipaaIcon className="h-5 w-5" />
-              {asset}
-            </CardTitle>
-            <p className="text-xs text-slate-600 mt-1">Asset → Compliance Traceability</p>
+           <div>
+             <CardTitle className="text-base flex items-center gap-2">
+               <HipaaIcon className="h-5 w-5" />
+               {asset}
+             </CardTitle>
+             <p className="text-xs text-slate-600 mt-1">Map protected assets to HIPAA safeguard types and<br/>NIST CSF functions with detailed justifications.</p>
           </div>
           <Badge className={colors.badge}>{hipaaType}</Badge>
         </div>
