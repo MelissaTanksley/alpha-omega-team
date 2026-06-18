@@ -13,6 +13,7 @@ import RiskMappingCard from '@/components/RiskMappingCard';
 import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
+import RecentAssessments from '@/components/RecentAssessments';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -221,6 +222,7 @@ export default function RiskAssessment() {
   const [emailInput, setEmailInput] = useState('');
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [recentAssessments, setRecentAssessments] = useState([]);
   const [formData, setFormData] = useState({
     system_name: '', system_type: '', vendor: '', deployment_context: '',
     key_assets: [], custom_asset: '',
@@ -229,13 +231,22 @@ export default function RiskAssessment() {
     fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: ''
   });
 
-  // Check for demo mode on mount
   useEffect(() => {
+    loadRecentAssessments();
     const params = new URLSearchParams(window.location.search);
     if (params.get('demo') === '1') {
       runDemoMode();
     }
   }, []);
+
+  const loadRecentAssessments = async () => {
+    try {
+      const data = await base44.entities.AIRiskAssessment.list('-updated_date', 5);
+      setRecentAssessments(data);
+    } catch (error) {
+      console.error('Failed to load recent assessments:', error);
+    }
+  };
 
   const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
@@ -432,6 +443,7 @@ Be specific, asset-aware, and realistic for healthcare.`;
 
       const saved = await base44.entities.AIRiskAssessment.create({ ...formData, key_assets: getEffectiveAssets(), ...response });
       setResults({ ...response, id: saved.id });
+      loadRecentAssessments();
     } catch (err) {
       console.error(err);
       alert('Analysis failed. Please try again.');
@@ -911,10 +923,10 @@ Be specific, asset-aware, and realistic for healthcare.`;
           <Button onClick={() => window.location.href = '/GRCReport'} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
             <FileText className="h-4 w-4 mr-2" /> Export GRC Report
           </Button>
-          <Button onClick={() => navigate('/RiskDashboard')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
-            <TrendingUp className="h-4 w-4 mr-2" /> View in Dashboard
+          <Button onClick={() => navigate('/RiskRegister')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
+            <TrendingUp className="h-4 w-4 mr-2" /> View Risk Register
           </Button>
-          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setEmailInput(''); setEmailSent(false);           setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', key_assets: [], custom_asset: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
+          <Button variant="outline" onClick={() => { setResults(null); setStep(1); setEmailInput(''); setEmailSent(false); setFormData({ system_name: '', system_type: '', vendor: '', deployment_context: '', key_assets: [], custom_asset: '', data_sources: [], population_diversity: '', bias_testing: '', data_documented: '', security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '', fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '' }); }}>
             New Assessment
           </Button>
         </div>
@@ -923,355 +935,360 @@ Be specific, asset-aware, and realistic for healthcare.`;
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">AI System Risk Assessment</h1>
-        <p className="text-slate-500 text-sm">Complete all four sections to generate your AI risk score and recommendations.</p>
-      </div>
+    <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
+      <div>
+        <div className="mb-10">
+          <h1 className="text-2xl font-bold text-slate-900 mb-1">New Assessment</h1>
+          <p className="text-slate-500 text-sm">Complete all five sections to generate your AI risk score and recommendations.</p>
+        </div>
 
-      {/* Step Indicator */}
-      <div className="flex items-center mb-10">
-        {steps.map((s, i) => (
-          <React.Fragment key={s.id}>
-            <div className="flex flex-col items-center">
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-colors ${
-                step > s.id ? 'bg-blue-600 text-white' : step === s.id ? 'bg-blue-600 text-white ring-4 ring-blue-100' : 'bg-slate-200 text-slate-400'
-              }`}>
-                {step > s.id ? <CheckCircle className="h-4 w-4" /> : s.id}
+        {/* Step Indicator */}
+        <div className="flex items-center mb-10">
+          {steps.map((s, i) => (
+            <React.Fragment key={s.id}>
+              <div className="flex flex-col items-center">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-colors ${
+                  step > s.id ? 'bg-blue-600 text-white' : step === s.id ? 'bg-blue-600 text-white ring-4 ring-blue-100' : 'bg-slate-200 text-slate-400'
+                }`}>
+                  {step > s.id ? <CheckCircle className="h-4 w-4" /> : s.id}
+                </div>
+                <span className={`text-xs mt-1.5 font-medium hidden sm:block ${step >= s.id ? 'text-blue-600' : 'text-slate-400'}`}>{s.title}</span>
               </div>
-              <span className={`text-xs mt-1.5 font-medium hidden sm:block ${step >= s.id ? 'text-blue-600' : 'text-slate-400'}`}>{s.title}</span>
-            </div>
-            {i < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-blue-600' : 'bg-slate-200'}`} />
+              {i < steps.length - 1 && (
+                <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-blue-600' : 'bg-slate-200'}`} />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">{
+              step === 1 ? 'AI System Information' :
+              step === 2 ? 'Key Assets Involved' :
+              step === 3 ? 'Bias & Data Factors' :
+              step === 4 ? 'Security Controls' :
+              'Compliance & Governance'
+            }</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+
+            {/* Step 1 */}
+            {step === 1 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">AI System Name <span className="text-red-500">*</span></Label>
+                  <Input value={formData.system_name} onChange={e => update('system_name', e.target.value)} placeholder="e.g. RadiologyAI Chest X-Ray Analyzer" />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">System Type</Label>
+                  <Select value={formData.system_type} onValueChange={v => update('system_type', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="diagnostic_imaging">Diagnostic Imaging</SelectItem>
+                      <SelectItem value="diagnostic_labs">Diagnostic Labs</SelectItem>
+                      <SelectItem value="clinical_decision_support">Clinical Decision Support</SelectItem>
+                      <SelectItem value="administrative">Administrative / Operational</SelectItem>
+                      <SelectItem value="predictive_analytics">Predictive Analytics</SelectItem>
+                      <SelectItem value="nlp_documentation">NLP / Documentation</SelectItem>
+                      <SelectItem value="medication_management">Medication Management</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Vendor / Developer</Label>
+                  <Input value={formData.vendor} onChange={e => update('vendor', e.target.value)} placeholder="e.g. Acme Health Technologies" />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Deployment Context</Label>
+                  <Select value={formData.deployment_context} onValueChange={v => update('deployment_context', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select context..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="clinical">Clinical (Direct Patient Care)</SelectItem>
+                      <SelectItem value="administrative">Administrative / Back Office</SelectItem>
+                      <SelectItem value="research">Research / Analytics</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
             )}
-          </React.Fragment>
-        ))}
-      </div>
 
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">{
-            step === 1 ? 'AI System Information' :
-            step === 2 ? 'Key Assets Involved' :
-            step === 3 ? 'Bias & Data Factors' :
-            step === 4 ? 'Security Controls' :
-            'Compliance & Governance'
-          }</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
-
-          {/* Step 1 */}
-          {step === 1 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">AI System Name <span className="text-red-500">*</span></Label>
-                <Input value={formData.system_name} onChange={e => update('system_name', e.target.value)} placeholder="e.g. RadiologyAI Chest X-Ray Analyzer" />
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">System Type</Label>
-                <Select value={formData.system_type} onValueChange={v => update('system_type', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="diagnostic_imaging">Diagnostic Imaging</SelectItem>
-                    <SelectItem value="diagnostic_labs">Diagnostic Labs</SelectItem>
-                    <SelectItem value="clinical_decision_support">Clinical Decision Support</SelectItem>
-                    <SelectItem value="administrative">Administrative / Operational</SelectItem>
-                    <SelectItem value="predictive_analytics">Predictive Analytics</SelectItem>
-                    <SelectItem value="nlp_documentation">NLP / Documentation</SelectItem>
-                    <SelectItem value="medication_management">Medication Management</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Vendor / Developer</Label>
-                <Input value={formData.vendor} onChange={e => update('vendor', e.target.value)} placeholder="e.g. Acme Health Technologies" />
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Deployment Context</Label>
-                <Select value={formData.deployment_context} onValueChange={v => update('deployment_context', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select context..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="clinical">Clinical (Direct Patient Care)</SelectItem>
-                    <SelectItem value="administrative">Administrative / Back Office</SelectItem>
-                    <SelectItem value="research">Research / Analytics</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          )}
-
-          {/* Step 2 — Key Assets */}
-          {step === 2 && (
-            <>
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-                <p className="text-xs text-blue-700 font-medium">Select <strong>3–5 key assets</strong> involved in this AI system. These will be referenced throughout the risk analysis, threat scenarios, and compliance mapping.</p>
-                <p className="text-xs text-blue-500 mt-1">If none are selected, assets will be inferred automatically from your system type.</p>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <Label className="text-sm font-medium text-slate-700">Key Assets Involved</Label>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                    formData.key_assets.length === 0 ? 'bg-slate-100 text-slate-400' :
-                    formData.key_assets.length < 3 ? 'bg-amber-100 text-amber-600' :
-                    'bg-emerald-100 text-emerald-600'
-                  }`}>
-                    {formData.key_assets.length} / 5 selected
-                  </span>
+            {/* Step 2 — Key Assets */}
+            {step === 2 && (
+              <>
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                  <p className="text-xs text-blue-700 font-medium">Select <strong>3–5 key assets</strong> involved in this AI system. These will be referenced throughout the risk analysis, threat scenarios, and compliance mapping.</p>
+                  <p className="text-xs text-blue-500 mt-1">If none are selected, assets will be inferred automatically from your system type.</p>
                 </div>
-                <div className="space-y-2">
-                  {assetOptions.map(asset => {
-                    const checked = formData.key_assets.includes(asset.id);
-                    const atLimit = formData.key_assets.length >= 5 && !checked;
-                    return (
-                      <button
-                        key={asset.id}
-                        type="button"
-                        onClick={() => !atLimit && toggleArray('key_assets', asset.id)}
-                        disabled={atLimit}
-                        className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
-                          checked ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50'
-                        } ${atLimit ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                      >
-                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
-                          {checked && <CheckCircle className="h-3 w-3 text-white" />}
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-slate-800">{asset.label}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{asset.desc}</div>
-                        </div>
-                      </button>
-                    );
-                  })}
+
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-sm font-medium text-slate-700">Key Assets Involved</Label>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      formData.key_assets.length === 0 ? 'bg-slate-100 text-slate-400' :
+                      formData.key_assets.length < 3 ? 'bg-amber-100 text-amber-600' :
+                      'bg-emerald-100 text-emerald-600'
+                    }`}>
+                      {formData.key_assets.length} / 5 selected
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {assetOptions.map(asset => {
+                      const checked = formData.key_assets.includes(asset.id);
+                      const atLimit = formData.key_assets.length >= 5 && !checked;
+                      return (
+                        <button
+                          key={asset.id}
+                          type="button"
+                          onClick={() => !atLimit && toggleArray('key_assets', asset.id)}
+                          disabled={atLimit}
+                          className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
+                            checked ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50'
+                          } ${atLimit ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                        >
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
+                            {checked && <CheckCircle className="h-3 w-3 text-white" />}
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-slate-800">{asset.label}</div>
+                            <div className="text-xs text-slate-400 mt-0.5">{asset.desc}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">
-                  Other Asset <span className="text-slate-400 font-normal">(optional)</span>
-                </Label>
-                <input
-                  type="text"
-                  value={formData.custom_asset}
-                  onChange={e => update('custom_asset', e.target.value)}
-                  placeholder="e.g. PACS imaging archive, lab instrument interface..."
-                  disabled={formData.key_assets.length >= 5}
-                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-slate-400 disabled:opacity-40"
-                />
-              </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">
+                    Other Asset <span className="text-slate-400 font-normal">(optional)</span>
+                  </Label>
+                  <input
+                    type="text"
+                    value={formData.custom_asset}
+                    onChange={e => update('custom_asset', e.target.value)}
+                    placeholder="e.g. PACS imaging archive, lab instrument interface..."
+                    disabled={formData.key_assets.length >= 5}
+                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-slate-400 disabled:opacity-40"
+                  />
+                </div>
 
-              {formData.key_assets.length === 0 && (
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                  <p className="text-xs text-slate-500 mb-2 font-medium">Auto-inferred assets for this system type:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(inferredAssets[formData.system_type] || ['ai_model', 'ephi', 'api']).map(id => (
-                      <span key={id} className="text-xs bg-white text-slate-600 border border-slate-300 rounded-full px-2.5 py-0.5">
-                        {assetOptions.find(a => a.id === id)?.label}
-                      </span>
+                {formData.key_assets.length === 0 && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                    <p className="text-xs text-slate-500 mb-2 font-medium">Auto-inferred assets for this system type:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(inferredAssets[formData.system_type] || ['ai_model', 'ephi', 'api']).map(id => (
+                        <span key={id} className="text-xs bg-white text-slate-600 border border-slate-300 rounded-full px-2.5 py-0.5">
+                          {assetOptions.find(a => a.id === id)?.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Step 3 — Bias & Data */}
+            {step === 3 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-3 block">Data Sources Used</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {dataSourceOptions.map(opt => (
+                      <Checkbox key={opt} label={opt} checked={formData.data_sources.includes(opt)} onChange={() => toggleArray('data_sources', opt)} />
                     ))}
                   </div>
                 </div>
-              )}
-            </>
-          )}
-
-          {/* Step 3 — Bias & Data */}
-          {step === 3 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-3 block">Data Sources Used</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {dataSourceOptions.map(opt => (
-                    <Checkbox key={opt} label={opt} checked={formData.data_sources.includes(opt)} onChange={() => toggleArray('data_sources', opt)} />
-                  ))}
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Population Diversity Considered</Label>
+                  <Select value={formData.population_diversity} onValueChange={v => update('population_diversity', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fully_considered">Fully Considered</SelectItem>
+                      <SelectItem value="partially_considered">Partially Considered</SelectItem>
+                      <SelectItem value="not_considered">Not Considered</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Population Diversity Considered</Label>
-                <Select value={formData.population_diversity} onValueChange={v => update('population_diversity', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fully_considered">Fully Considered</SelectItem>
-                    <SelectItem value="partially_considered">Partially Considered</SelectItem>
-                    <SelectItem value="not_considered">Not Considered</SelectItem>
-                    <SelectItem value="unknown">Unknown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Bias Testing Performed</Label>
-                <Select value={formData.bias_testing} onValueChange={v => update('bias_testing', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes — Completed</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="planned">Planned</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Training Data Documentation</Label>
-                <Select value={formData.data_documented} onValueChange={v => update('data_documented', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fully_documented">Fully Documented</SelectItem>
-                    <SelectItem value="partial">Partially Documented</SelectItem>
-                    <SelectItem value="no">Not Documented</SelectItem>
-                    <SelectItem value="unknown">Unknown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          )}
-
-          {/* Step 4 — Security */}
-          {step === 4 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-3 block">Security Controls In Place</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {securityControlOptions.map(opt => (
-                    <Checkbox key={opt} label={opt} checked={formData.security_controls.includes(opt)} onChange={() => toggleArray('security_controls', opt)} />
-                  ))}
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Bias Testing Performed</Label>
+                  <Select value={formData.bias_testing} onValueChange={v => update('bias_testing', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes — Completed</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="planned">Planned</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Data Encryption At Rest & In Transit</Label>
-                <Select value={formData.encryption} onValueChange={v => update('encryption', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes_both">Yes — Both At Rest & In Transit</SelectItem>
-                    <SelectItem value="yes_transit">In Transit Only</SelectItem>
-                    <SelectItem value="yes_rest">At Rest Only</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="unknown">Unknown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">HIPAA Business Associate Agreement (BAA)</Label>
-                <Select value={formData.hipaa_baa} onValueChange={v => update('hipaa_baa', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes — In Place</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="not_applicable">Not Applicable</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Penetration Testing Status</Label>
-                <Select value={formData.pen_testing} onValueChange={v => update('pen_testing', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes_recent">Yes — Within Past 12 Months</SelectItem>
-                    <SelectItem value="yes_older">Yes — Over 12 Months Ago</SelectItem>
-                    <SelectItem value="planned">Planned</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          )}
-
-          {/* Step 5 — Compliance */}
-          {step === 5 && (
-            <>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">FDA Oversight Status</Label>
-                <Select value={formData.fda_status} onValueChange={v => update('fda_status', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="510k_cleared">510(k) Cleared</SelectItem>
-                    <SelectItem value="de_novo">De Novo Authorized</SelectItem>
-                    <SelectItem value="pma">PMA Approved</SelectItem>
-                    <SelectItem value="exempt">Exempt</SelectItem>
-                    <SelectItem value="not_applicable">Not Applicable</SelectItem>
-                    <SelectItem value="unknown">Unknown / Under Review</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">HIPAA Compliance Status</Label>
-                <Select value={formData.hipaa_compliance} onValueChange={v => update('hipaa_compliance', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fully_compliant">Fully Compliant</SelectItem>
-                    <SelectItem value="partial">Partially Compliant</SelectItem>
-                    <SelectItem value="not_compliant">Not Compliant</SelectItem>
-                    <SelectItem value="unknown">Unknown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Internal AI Governance Policy</Label>
-                <Select value={formData.governance_policy} onValueChange={v => update('governance_policy', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes_formal">Yes — Formal Policy Exists</SelectItem>
-                    <SelectItem value="yes_informal">Yes — Informal / In Development</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Clinical Validation Studies</Label>
-                <Select value={formData.clinical_validation} onValueChange={v => update('clinical_validation', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes_published">Yes — Published Studies</SelectItem>
-                    <SelectItem value="yes_internal">Yes — Internal Only</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          )}
-
-        </CardContent>
-      </Card>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6">
-        <Button
-          variant="outline"
-          onClick={() => setStep(s => s - 1)}
-          disabled={step === 1}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </Button>
-        {step < 5 ? (
-          <Button
-            onClick={() => setStep(s => s + 1)}
-            disabled={step === 1 && !formData.system_name.trim()}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-          >
-            Continue <ArrowRight className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 min-w-[160px]"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Analyzing...
-              </>
-            ) : (
-              <>
-                Generate Risk Score <ArrowRight className="h-4 w-4" />
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Training Data Documentation</Label>
+                  <Select value={formData.data_documented} onValueChange={v => update('data_documented', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fully_documented">Fully Documented</SelectItem>
+                      <SelectItem value="partial">Partially Documented</SelectItem>
+                      <SelectItem value="no">Not Documented</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </>
             )}
+
+            {/* Step 4 — Security */}
+            {step === 4 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-3 block">Security Controls In Place</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {securityControlOptions.map(opt => (
+                      <Checkbox key={opt} label={opt} checked={formData.security_controls.includes(opt)} onChange={() => toggleArray('security_controls', opt)} />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Data Encryption At Rest & In Transit</Label>
+                  <Select value={formData.encryption} onValueChange={v => update('encryption', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes_both">Yes — Both At Rest & In Transit</SelectItem>
+                      <SelectItem value="yes_transit">In Transit Only</SelectItem>
+                      <SelectItem value="yes_rest">At Rest Only</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">HIPAA Business Associate Agreement (BAA)</Label>
+                  <Select value={formData.hipaa_baa} onValueChange={v => update('hipaa_baa', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes — In Place</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="not_applicable">Not Applicable</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Penetration Testing Status</Label>
+                  <Select value={formData.pen_testing} onValueChange={v => update('pen_testing', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes_recent">Yes — Within Past 12 Months</SelectItem>
+                      <SelectItem value="yes_older">Yes — Over 12 Months Ago</SelectItem>
+                      <SelectItem value="planned">Planned</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+            {/* Step 5 — Compliance */}
+            {step === 5 && (
+              <>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">FDA Oversight Status</Label>
+                  <Select value={formData.fda_status} onValueChange={v => update('fda_status', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="510k_cleared">510(k) Cleared</SelectItem>
+                      <SelectItem value="de_novo">De Novo Authorized</SelectItem>
+                      <SelectItem value="pma">PMA Approved</SelectItem>
+                      <SelectItem value="exempt">Exempt</SelectItem>
+                      <SelectItem value="not_applicable">Not Applicable</SelectItem>
+                      <SelectItem value="unknown">Unknown / Under Review</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">HIPAA Compliance Status</Label>
+                  <Select value={formData.hipaa_compliance} onValueChange={v => update('hipaa_compliance', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fully_compliant">Fully Compliant</SelectItem>
+                      <SelectItem value="partial">Partially Compliant</SelectItem>
+                      <SelectItem value="not_compliant">Not Compliant</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Internal AI Governance Policy</Label>
+                  <Select value={formData.governance_policy} onValueChange={v => update('governance_policy', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes_formal">Yes — Formal Policy Exists</SelectItem>
+                      <SelectItem value="yes_informal">Yes — Informal / In Development</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Clinical Validation Studies</Label>
+                  <Select value={formData.clinical_validation} onValueChange={v => update('clinical_validation', v)}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes_published">Yes — Published Studies</SelectItem>
+                      <SelectItem value="yes_internal">Yes — Internal Only</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+          </CardContent>
+        </Card>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setStep(s => s - 1)}
+            disabled={step === 1}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
           </Button>
-        )}
+          {step < 5 ? (
+            <Button
+              onClick={() => setStep(s => s + 1)}
+              disabled={step === 1 && !formData.system_name.trim()}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+            >
+              Continue <ArrowRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 min-w-[160px]"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Analyzing...
+                </>
+              ) : (
+                <>
+                  Generate Risk Score <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* RECENT ASSESSMENTS SECTION */}
+      <RecentAssessments assessments={recentAssessments} />
     </div>
   );
 }
