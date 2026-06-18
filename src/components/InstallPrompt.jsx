@@ -28,7 +28,7 @@ function isStandalone() {
 }
 
 export default function InstallPrompt() {
-  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installPrompt, setInstallPrompt] = useState(() => window.__pwaInstallPrompt || null);
   const [installed, setInstalled] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [device, setDevice] = useState({ platform: 'desktop', isTablet: false });
@@ -36,11 +36,11 @@ export default function InstallPrompt() {
 
   useEffect(() => {
     setDevice(detectDevice());
-    // Already running as an installed app — nothing to show
     if (isStandalone()) setHidden(true);
 
-    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
-    const installedHandler = () => { setInstalled(true); setInstallPrompt(null); };
+    // Pick up a prompt that arrives after mount
+    const handler = (e) => { e.preventDefault(); window.__pwaInstallPrompt = e; setInstallPrompt(e); };
+    const installedHandler = () => { setInstalled(true); setInstallPrompt(null); window.__pwaInstallPrompt = null; };
     window.addEventListener('beforeinstallprompt', handler);
     window.addEventListener('appinstalled', installedHandler);
     return () => {
@@ -50,15 +50,17 @@ export default function InstallPrompt() {
   }, []);
 
   const handleInstall = async () => {
-    // 1. Native install prompt is the preferred path on every device that supports it
-    if (installPrompt) {
-      installPrompt.prompt();
-      const { outcome } = await installPrompt.userChoice;
+    // Always prefer the native browser install prompt
+    const prompt = installPrompt || window.__pwaInstallPrompt;
+    if (prompt) {
+      prompt.prompt();
+      const { outcome } = await prompt.userChoice;
       if (outcome === 'accepted') setInstalled(true);
       setInstallPrompt(null);
+      window.__pwaInstallPrompt = null;
       return;
     }
-    // 2. Fallback: only show manual instructions when no native prompt is available
+    // Only fall back to manual instructions if no native prompt exists
     setShowModal(true);
   };
 
@@ -94,8 +96,8 @@ export default function InstallPrompt() {
                 <Download className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">Add to your {deviceLabel}</h3>
-                <p className="text-xs text-slate-500">Install in {steps.length} quick steps</p>
+                <h3 className="font-bold text-slate-900">Manual installation required</h3>
+                <p className="text-xs text-slate-500">This device requires manual installation</p>
               </div>
             </div>
             <ol className="space-y-3 text-sm text-slate-700 mb-5">
