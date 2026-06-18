@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
-import RiskMappingCard from '@/components/RiskMappingCard';
-import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import GRCReportGenerator from '@/components/GRCReportGenerator';
+import GRCAnalysisReport from '@/components/GRCAnalysisReport';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -879,50 +878,12 @@ export default function GRCWorkspace() {
           {/* Results */}
           {results && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-emerald-500" />
-                  <p className="font-semibold text-slate-800">{results.length} Risk{results.length !== 1 ? 's' : ''} Identified</p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setShowRaw(!showRaw)} className="text-xs text-slate-500 hover:text-slate-700 underline">
-                    {showRaw ? 'Hide' : 'Show'} raw JSON
-                  </button>
-                  <button onClick={handleCopy} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                    <Copy className="h-3 w-3" /> {copied ? 'Copied!' : 'Copy JSON'}
-                  </button>
-                </div>
-              </div>
-
-              {showRaw && (
-                <pre className="bg-slate-900 text-green-300 text-xs p-4 rounded-xl overflow-auto max-h-72 font-mono border border-slate-700">
-                  {rawJson}
-                </pre>
-              )}
-
-              {/* NIST CSF 2.0 Lifecycle Summary */}
-              <div className="bg-slate-100 rounded-xl p-4 mb-4">
-                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Aligned to NIST CSF 2.0 Lifecycle</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                  {[
-                    { name: 'Govern', icon: '⚙️', color: 'bg-slate-200' },
-                    { name: 'Identify', icon: '🔍', color: 'bg-blue-200' },
-                    { name: 'Protect', icon: '🛡️', color: 'bg-emerald-200' },
-                    { name: 'Detect', icon: '⚠️', color: 'bg-orange-200' },
-                    { name: 'Respond', icon: '🚨', color: 'bg-red-200' },
-                    { name: 'Recover', icon: '↩️', color: 'bg-purple-200' },
-                  ].map(fn => (
-                    <div key={fn.name} className={`${fn.color} rounded-lg p-2 text-center text-xs font-semibold text-slate-700`}>
-                      <div className="text-lg">{fn.icon}</div>
-                      <div>{fn.name}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {results.map((item, i) => <RiskCard key={i} item={item} index={i} />)}
-              </div>
+              <GRCAnalysisReport
+                results={results}
+                rawJson={rawJson}
+                onCopy={handleCopy}
+                copied={copied}
+              />
 
               {/* Report Generator */}
               <GRCReportGenerator results={results} systemDescription={input} />
