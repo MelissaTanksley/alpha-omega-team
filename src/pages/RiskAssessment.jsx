@@ -19,22 +19,23 @@ const steps = [
 ];
 
 const assetOptions = [
-  { id: 'ai_model', label: 'AI Model / Algorithm' },
-  { id: 'ephi', label: 'Patient Data (ePHI)' },
-  { id: 'ehr', label: 'EHR / EMR System' },
-  { id: 'api', label: 'API Integrations' },
-  { id: 'vendor', label: 'External Vendors / Third Parties' },
+  { id: 'clinical_ai', label: 'Clinical AI Systems', desc: 'Deployed AI tools used in clinical workflows' },
+  { id: 'ai_model', label: 'AI Model & Training Data', desc: 'Algorithms, weights, and datasets used to train or run the AI' },
+  { id: 'ephi', label: 'Patient Data (ePHI)', desc: 'Electronic protected health information processed by the system' },
+  { id: 'ehr', label: 'EHR / Core Systems', desc: 'Electronic health record platforms and core clinical infrastructure' },
+  { id: 'api', label: 'APIs and Integrations', desc: 'Data exchange interfaces and third-party service connections' },
+  { id: 'vendor', label: 'Third-Party Vendors', desc: 'External suppliers, cloud providers, or managed service partners' },
 ];
 
 const inferredAssets = {
-  diagnostic_imaging: ['ai_model', 'ephi', 'ehr'],
-  diagnostic_labs: ['ai_model', 'ephi', 'ehr'],
-  clinical_decision_support: ['ai_model', 'ephi', 'ehr', 'api'],
+  diagnostic_imaging: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  diagnostic_labs: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  clinical_decision_support: ['clinical_ai', 'ai_model', 'ephi', 'api'],
   administrative: ['api', 'ehr', 'vendor'],
-  predictive_analytics: ['ai_model', 'ephi', 'api'],
-  nlp_documentation: ['ai_model', 'ephi', 'ehr'],
-  medication_management: ['ai_model', 'ephi', 'ehr', 'vendor'],
-  other: ['ai_model', 'ephi'],
+  predictive_analytics: ['ai_model', 'ephi', 'api', 'vendor'],
+  nlp_documentation: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  medication_management: ['clinical_ai', 'ai_model', 'ephi', 'vendor'],
+  other: ['ai_model', 'ephi', 'api'],
 };
 
 const dataSourceOptions = ['EHR / EMR', 'Claims Data', 'Medical Imaging', 'Genomic Data', 'Wearable Devices', 'External Datasets', 'Lab Results', 'Patient-Reported Outcomes'];
@@ -558,48 +559,73 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
           {/* Step 2 — Key Assets */}
           {step === 2 && (
             <>
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-1">
-                <p className="text-xs text-blue-700 font-medium">Select up to 5 key assets involved in this AI system. If you skip this, assets will be inferred automatically from the system type.</p>
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                <p className="text-xs text-blue-700 font-medium">Select <strong>3–5 key assets</strong> involved in this AI system. These will be referenced throughout the risk analysis, threat scenarios, and compliance mapping.</p>
+                <p className="text-xs text-blue-500 mt-1">If none are selected, assets will be inferred automatically from your system type.</p>
               </div>
+
               <div>
-                <Label className="text-sm font-medium text-slate-700 mb-3 block">Key Assets Involved</Label>
-                <div className="space-y-2.5">
+                <div className="flex items-center justify-between mb-3">
+                  <Label className="text-sm font-medium text-slate-700">Key Assets Involved</Label>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    formData.key_assets.length === 0 ? 'bg-slate-100 text-slate-400' :
+                    formData.key_assets.length < 3 ? 'bg-amber-100 text-amber-600' :
+                    'bg-emerald-100 text-emerald-600'
+                  }`}>
+                    {formData.key_assets.length} / 5 selected
+                  </span>
+                </div>
+                <div className="space-y-2">
                   {assetOptions.map(asset => {
                     const checked = formData.key_assets.includes(asset.id);
                     const atLimit = formData.key_assets.length >= 5 && !checked;
                     return (
-                      <label key={asset.id} className={`flex items-center gap-3 cursor-pointer group p-3 rounded-lg border transition-colors ${checked ? 'border-blue-300 bg-blue-50' : 'border-slate-200 hover:border-blue-200 bg-white'} ${atLimit ? 'opacity-40 cursor-not-allowed' : ''}`}>
-                        <div
-                          onClick={() => !atLimit && toggleArray('key_assets', asset.id)}
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}
-                        >
+                      <button
+                        key={asset.id}
+                        type="button"
+                        onClick={() => !atLimit && toggleArray('key_assets', asset.id)}
+                        disabled={atLimit}
+                        className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
+                          checked ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50'
+                        } ${atLimit ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                      >
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
                           {checked && <CheckCircle className="h-3 w-3 text-white" />}
                         </div>
-                        <span className="text-sm text-slate-700 font-medium">{asset.label}</span>
-                      </label>
+                        <div>
+                          <div className="text-sm font-medium text-slate-800">{asset.label}</div>
+                          <div className="text-xs text-slate-400 mt-0.5">{asset.desc}</div>
+                        </div>
+                      </button>
                     );
                   })}
                 </div>
               </div>
+
               <div>
-                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Other Asset <span className="text-slate-400 font-normal">(optional)</span></Label>
+                <Label className="text-sm font-medium text-slate-700 mb-1.5 block">
+                  Other Asset <span className="text-slate-400 font-normal">(optional)</span>
+                </Label>
                 <input
                   type="text"
                   value={formData.custom_asset}
                   onChange={e => update('custom_asset', e.target.value)}
-                  placeholder="e.g. PACS system, imaging archive..."
+                  placeholder="e.g. PACS imaging archive, lab instrument interface..."
                   disabled={formData.key_assets.length >= 5}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-slate-400 disabled:opacity-40"
                 />
               </div>
+
               {formData.key_assets.length === 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  <span className="text-xs text-slate-500">Will auto-infer:</span>
-                  {(inferredAssets[formData.system_type] || ['ai_model', 'ephi']).map(id => (
-                    <span key={id} className="text-xs bg-slate-100 text-slate-600 border border-slate-200 rounded-full px-2 py-0.5">
-                      {assetOptions.find(a => a.id === id)?.label}
-                    </span>
-                  ))}
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-2 font-medium">Auto-inferred assets for this system type:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(inferredAssets[formData.system_type] || ['ai_model', 'ephi', 'api']).map(id => (
+                      <span key={id} className="text-xs bg-white text-slate-600 border border-slate-300 rounded-full px-2.5 py-0.5">
+                        {assetOptions.find(a => a.id === id)?.label}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </>
