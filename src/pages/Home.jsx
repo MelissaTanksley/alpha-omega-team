@@ -125,7 +125,7 @@ export default function Home() {
                 <span className="block text-blue-400">for Healthcare</span>
               </h1>
               <p className="text-lg text-slate-300 mb-8 max-w-xl leading-relaxed">
-                Identify, measure, and manage AI risks using <span className="text-white font-semibold">HIPAA</span>, <span className="text-white font-semibold">NIST CSF 2.0</span>, and <span className="text-white font-semibold">ISO 27005</span>
+                Identify, measure, and manage AI risks using<br/><span className="text-white font-semibold">HIPAA</span>, <span className="text-white font-semibold">NIST CSF 2.0</span>, and <span className="text-white font-semibold">ISO 27005</span>
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/RiskAssessment">
