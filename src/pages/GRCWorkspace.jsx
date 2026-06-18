@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Shield, Play, Copy, RotateCcw, CheckCircle, AlertTriangle, ChevronDown, ChevronRight, Target, Zap, Loader2, Flame, Activity, TrendingUp, TrendingDown } from 'lucide-react';
 import RiskMappingCard from '@/components/RiskMappingCard';
+import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 
 const EXAMPLE_INPUT = `System: AI clinical charting assistant in a hospital
 
@@ -445,6 +446,16 @@ function RiskCard({ item, index }) {
             control={item.recommended_control || (item.controls?.administrative?.[0] || 'Review and implement controls')}
             riskLevel={item.likelihood?.toLowerCase() || 'medium'}
             compact={false}
+          />
+
+          {/* Asset → Compliance Mapping */}
+          <ComplianceAssetMap
+            asset={item.affected_asset || 'Healthcare AI System'}
+            hipaaType={item.controls?.technical?.length > 0 ? 'Technical' : item.controls?.administrative?.length > 0 ? 'Administrative' : 'Physical'}
+            hipaaDescription={item.controls?.technical?.[0] || item.controls?.administrative?.[0] || 'Implement compliance controls'}
+            nistFunctions={['Identify', 'Protect', 'Detect']}
+            justification={`This ${item.affected_asset || 'asset'} is subject to HIPAA security requirements and NIST CSF controls. Identified risks map to specific safeguard types and framework functions to ensure comprehensive coverage.`}
+            compact={true}
           />
 
           {/* Impact */}

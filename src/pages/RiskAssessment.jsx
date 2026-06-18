@@ -10,6 +10,7 @@ import { CheckCircle, ArrowRight, ArrowLeft, Shield, Loader2, AlertTriangle, Tre
 import jsPDF from 'jspdf';
 import { base44 } from '@/api/base44Client';
 import RiskMappingCard from '@/components/RiskMappingCard';
+import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -436,6 +437,32 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 ))}
               </div>
             </div>
+
+            {/* Asset → Compliance Mapping */}
+            {getEffectiveAssets().length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Asset → Compliance Traceability</p>
+                <ComplianceAssetMap
+                  asset={getEffectiveAssets()[0] || 'AI Model'}
+                  hipaaType="Technical"
+                  hipaaDescription="Encryption at rest/transit, access controls, audit logs"
+                  nistFunctions={['Protect', 'Detect', 'Respond']}
+                  justification={`${getEffectiveAssets()[0] || 'This asset'} processes and stores ePHI. Technical HIPAA safeguards require encrypted data transmission, authenticated access, and comprehensive audit trails. NIST CSF Protect ensures availability; Detect enables breach detection; Respond orchestrates containment.`}
+                  compact={true}
+                />
+                {getEffectiveAssets()[1] && (
+                  <ComplianceAssetMap
+                    asset={getEffectiveAssets()[1]}
+                    hipaaType="Administrative"
+                    hipaaDescription="Workforce security, authorization, workforce training"
+                    nistFunctions={['Govern', 'Identify']}
+                    justification={`${getEffectiveAssets()[1]} involves staff interaction. Administrative safeguards mandate role-based access policies and workforce training. NIST Govern ensures organizational context; Identify maintains asset inventory.`}
+                    compact={true}
+                  />
+                )}
+              </div>
+            )}
+
             <div className="bg-blue-50 rounded-lg p-3">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Risk Profile</p>
               <p className="text-sm text-slate-700">
