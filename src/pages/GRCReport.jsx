@@ -24,6 +24,8 @@ export default function GRCReport() {
     threats: true,
     lifecycle: true,
     rmf: true,
+    rmf_controls: true,
+    iso42001: true,
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -457,17 +459,26 @@ export default function GRCReport() {
               )}
 
               {showGdpr && (
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h4 className="text-sm font-bold text-green-900">GDPR — Data Protection Principles</h4>
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg space-y-3">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-green-900">GDPR — Article Mapping</h4>
                     <Badge className="bg-green-100 text-green-700 text-xs">Selected</Badge>
                   </div>
-                  <ul className="space-y-1">
-                    <li className="text-sm text-green-800">• <strong>Data Minimization</strong> — Collect only what is necessary for the clinical purpose</li>
-                    <li className="text-sm text-green-800">• <strong>Integrity & Confidentiality</strong> — Protect data against unauthorized processing and loss</li>
-                    <li className="text-sm text-green-800">• <strong>Data Protection by Design</strong> — Embed privacy controls at the system architecture level</li>
-                    <li className="text-sm text-green-800">• <strong>Accountability</strong> — Document processing activities and demonstrate compliance</li>
-                  </ul>
+                  {[
+                    { article: 'Article 5', title: 'Principles of Processing', risk: 'AI systems processing ePHI may violate lawfulness, accuracy, or data minimization principles if not properly governed.', control: 'Enforce data minimization, define lawful basis, and validate AI outputs for accuracy.' },
+                    { article: 'Article 25', title: 'Data Protection by Design & by Default', risk: 'AI systems not architected with privacy controls expose personal data by default.', control: 'Embed access controls, pseudonymization, and least-privilege principles at design time.' },
+                    { article: 'Article 32', title: 'Security of Processing', risk: 'Insufficient encryption, access logging, or integrity controls create risk of unauthorized disclosure.', control: 'Implement encryption at rest/in transit, MFA, audit logging, and regular security testing.' },
+                    { article: 'Article 35', title: 'Data Protection Impact Assessment (DPIA)', risk: 'High-risk AI processing of health data requires a formal DPIA before deployment.', control: 'Conduct a DPIA, document findings, consult the DPO, and mitigate identified risks prior to go-live.' },
+                  ].map((item, i) => (
+                    <div key={i} className="bg-white border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-xs font-bold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">{item.article}</span>
+                        <span className="text-sm font-semibold text-green-900">{item.title}</span>
+                      </div>
+                      <p className="text-xs text-slate-600 mb-1"><span className="font-semibold text-slate-700">Risk:</span> {item.risk}</p>
+                      <p className="text-xs text-slate-600"><span className="font-semibold text-slate-700">Control:</span> {item.control}</p>
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -681,6 +692,88 @@ export default function GRCReport() {
             )}
           </Card>
         )}
+
+        {/* NIST RMF SP 800-53 CONTROL FAMILIES */}
+        {fw.nist_rmf && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('rmf_controls')}>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-xl">🗂️</span> NIST SP 800-53 Control Families
+                </CardTitle>
+                {expandedSections.rmf_controls ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </div>
+            </CardHeader>
+            {expandedSections.rmf_controls && (
+              <CardContent className="space-y-3">
+                <p className="text-xs text-slate-500 mb-2">The following NIST SP 800-53 control families are directly applicable to identified risks in {assessment.system_name}.</p>
+                {[
+                  { family: 'AC', name: 'Access Control', color: 'bg-blue-50 border-blue-200', badge: 'bg-blue-100 text-blue-800', risk: 'Unauthorized personnel may access ePHI or AI model parameters, increasing the risk of data disclosure and model manipulation.', controls: ['Enforce least-privilege access and role-based permissions (AC-2, AC-3)', 'Require multi-factor authentication for all system access (AC-17)', 'Implement session management and automatic logoff (AC-11, AC-12)'] },
+                  { family: 'SI', name: 'System & Information Integrity', color: 'bg-emerald-50 border-emerald-200', badge: 'bg-emerald-100 text-emerald-800', risk: 'AI-generated outputs may contain errors or be corrupted, leading to incorrect clinical decisions and patient harm.', controls: ['Deploy output validation and human-in-the-loop review for AI decisions (SI-3, SI-10)', 'Monitor for model drift and behavioral anomalies in production (SI-4)', 'Maintain integrity of training data and model artifacts (SI-7)'] },
+                  { family: 'RA', name: 'Risk Assessment', color: 'bg-amber-50 border-amber-200', badge: 'bg-amber-100 text-amber-800', risk: 'Without ongoing risk assessment, newly emerging threats to AI systems may go undetected.', controls: ['Conduct regular AI-specific risk assessments including bias and adversarial risk (RA-3)', 'Maintain a documented vulnerability disclosure process (RA-5)', 'Assess supply chain and vendor risks associated with AI components (RA-9)'] },
+                  { family: 'SC', name: 'System & Communications Protection', color: 'bg-violet-50 border-violet-200', badge: 'bg-violet-100 text-violet-800', risk: 'Data transmitted between clinical systems and the AI model may be intercepted or manipulated in transit.', controls: ['Encrypt all data in transit using TLS 1.2 or higher (SC-8)', 'Segment AI system network from general clinical networks (SC-7)', 'Protect cryptographic keys and certificates used by AI infrastructure (SC-12)'] },
+                  { family: 'CA', name: 'Assessment, Authorization & Monitoring', color: 'bg-orange-50 border-orange-200', badge: 'bg-orange-100 text-orange-800', risk: 'Without continuous monitoring, security degradation and control failures in the AI system may persist undetected.', controls: ['Implement continuous monitoring of security controls and system performance (CA-7)', 'Conduct periodic control assessments and document findings (CA-2)', 'Maintain an up-to-date System Security Plan (SSP) and authorization package (CA-5, CA-6)'] },
+                ].map((item, i) => (
+                  <div key={i} className={`border rounded-lg p-4 ${item.color}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${item.badge}`}>{item.family}</span>
+                      <h4 className="text-sm font-bold text-slate-800">{item.name}</h4>
+                    </div>
+                    <p className="text-xs text-slate-600 mb-2"><span className="font-semibold">Risk:</span> {item.risk}</p>
+                    <ul className="space-y-1">
+                      {item.controls.map((c, ci) => (
+                        <li key={ci} className="text-xs text-slate-700 flex gap-2">
+                          <span className="font-bold text-slate-400 flex-shrink-0">•</span>
+                          <span>{c}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </CardContent>
+            )}
+          </Card>
+        )}
+
+        {/* ISO/IEC 42001 ALIGNMENT */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('iso42001')}>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">🤖</span> ISO/IEC 42001 Alignment
+                <Badge className="bg-emerald-100 text-emerald-700 text-xs ml-1">AI Management System</Badge>
+              </CardTitle>
+              {expandedSections.iso42001 ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </div>
+          </CardHeader>
+          {expandedSections.iso42001 && (
+            <CardContent className="space-y-3">
+              <p className="text-xs text-slate-500 mb-2">ISO/IEC 42001 is the international standard for AI Management Systems (AIMS). The following domains align with the identified risks and governance needs of {assessment.system_name}.</p>
+              {[
+                { domain: 'AI Governance', icon: '🏛️', color: 'bg-indigo-50 border-indigo-200', badge: 'bg-indigo-100 text-indigo-800', description: 'Establish clear accountability and oversight structures for AI deployment.', items: ['Define AI governance policy, objectives, and accountability assignments', 'Establish an AI oversight committee with clinical, legal, and technical representation', 'Document organizational roles and responsibilities for AI risk management'] },
+                { domain: 'Risk Management', icon: '⚖️', color: 'bg-amber-50 border-amber-200', badge: 'bg-amber-100 text-amber-800', description: 'Identify and treat AI-specific risks including bias, safety, and reliability.', items: ['Conduct AI impact assessments covering bias, safety, and clinical efficacy', 'Establish risk treatment plans with documented owners and timelines', 'Evaluate third-party AI components and vendor risk throughout the supply chain'] },
+                { domain: 'Transparency & Explainability', icon: '🔍', color: 'bg-sky-50 border-sky-200', badge: 'bg-sky-100 text-sky-800', description: 'Ensure AI decisions can be understood, audited, and communicated to stakeholders.', items: ['Document AI system intended use, limitations, and decision-making logic', 'Provide clinicians with sufficient context to interpret and validate AI outputs', 'Disclose AI use to patients and maintain records of AI-assisted decisions'] },
+                { domain: 'Monitoring & Continuous Improvement', icon: '📈', color: 'bg-emerald-50 border-emerald-200', badge: 'bg-emerald-100 text-emerald-800', description: 'Sustain AI system performance and compliance through ongoing evaluation.', items: ['Monitor AI system performance, accuracy, and fairness metrics in production', 'Detect and respond to model drift, degradation, or unexpected behavior', 'Conduct periodic internal audits and management reviews of the AIMS', 'Update risk treatments and controls as the AI system and threat landscape evolve'] },
+              ].map((item, i) => (
+                <div key={i} className={`border rounded-lg p-4 ${item.color}`}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-base">{item.icon}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${item.badge}`}>{item.domain}</span>
+                  </div>
+                  <p className="text-xs text-slate-600 italic mb-2">{item.description}</p>
+                  <ul className="space-y-1">
+                    {item.items.map((c, ci) => (
+                      <li key={ci} className="text-xs text-slate-700 flex gap-2">
+                        <span className="font-bold text-slate-400 flex-shrink-0">•</span>
+                        <span>{c}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </CardContent>
+          )}
+        </Card>
 
         {/* RISK REGISTER */}
         <Card>
