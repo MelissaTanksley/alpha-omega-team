@@ -84,6 +84,15 @@ export default function RiskRegister() {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await base44.entities.ManualRisk.update(id, { status: newStatus });
+      setManualRisks(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
+  };
+
   const startEdit = (risk) => {
     setEditingId(risk.id);
     setFormData({
@@ -386,13 +395,20 @@ export default function RiskRegister() {
                               </div>
                             </div>
                             <div className="text-xs">
-                              <span className={`inline-block px-2 py-1 rounded font-bold ${
-                                risk.status === 'closed' ? 'bg-emerald-100 text-emerald-700' :
-                                risk.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                                'bg-amber-100 text-amber-700'
-                              }`}>
-                                {risk.status?.toUpperCase()}
-                              </span>
+                              <Select value={risk.status} onValueChange={v => handleStatusChange(risk.id, v)}>
+                                <SelectTrigger className={`w-40 h-7 text-xs font-bold ${
+                                  risk.status === 'closed' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' :
+                                  risk.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                                  'bg-amber-100 text-amber-700 border-amber-300'
+                                }`}>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="open">Open</SelectItem>
+                                  <SelectItem value="in_progress">In Progress</SelectItem>
+                                  <SelectItem value="closed">Closed</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
                           <div className="flex gap-1 flex-shrink-0">
