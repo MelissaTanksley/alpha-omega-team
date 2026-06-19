@@ -824,6 +824,9 @@ export default function GRCReport() {
               <p className="text-xs text-slate-700">
                 <strong>Note:</strong> This assessment reflects the current state of the AI system. Regular reassessment is recommended after implementing recommended controls to measure residual risk reduction.
               </p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                This assessment reflects a structured AI governance approach incorporating risk identification, accountability, and alignment with applicable regulatory frameworks.
+              </p>
             </div>
           </CardContent>
         </Card>
