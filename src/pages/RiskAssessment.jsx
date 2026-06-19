@@ -223,6 +223,13 @@ export default function RiskAssessment() {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [recentAssessments, setRecentAssessments] = useState([]);
+  const [selectedFrameworks, setSelectedFrameworks] = useState({
+    hipaa: true,
+    nist_csf: true,
+    iso_27005: true,
+    gdpr: false,
+    nist_rmf: true,
+  });
   const [formData, setFormData] = useState({
     system_name: '', system_type: '', vendor: '', deployment_context: '',
     key_assets: [], custom_asset: '',
@@ -444,7 +451,7 @@ Be specific, asset-aware, and realistic for healthcare.`;
       });
 
       const saved = await base44.entities.AIRiskAssessment.create({ ...formData, key_assets: getEffectiveAssets(), ...response });
-      setResults({ ...response, id: saved.id });
+      setResults({ ...response, id: saved.id, selectedFrameworks });
       loadRecentAssessments();
     } catch (err) {
       console.error(err);
@@ -499,11 +506,11 @@ Be specific, asset-aware, and realistic for healthcare.`;
           <div className="border-t border-slate-200 pt-3">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Compliance Frameworks Assessed</p>
             <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-1 rounded-full font-medium">HIPAA</span>
-              <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full font-medium">NIST CSF 2.0</span>
-              <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>
-              <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>
-              <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>
+              {results.selectedFrameworks?.hipaa && <span className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-1 rounded-full font-medium">HIPAA</span>}
+              {results.selectedFrameworks?.nist_csf && <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full font-medium">NIST CSF 2.0</span>}
+              {results.selectedFrameworks?.iso_27005 && <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>}
+              {results.selectedFrameworks?.gdpr && <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>}
+              {results.selectedFrameworks?.nist_rmf && <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>}
             </div>
           </div>
         </div>
@@ -934,7 +941,11 @@ Be specific, asset-aware, and realistic for healthcare.`;
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3">
-           <Button onClick={() => window.location.href = '/GRCReport?demo=1'} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
+           <Button onClick={() => {
+               const fw = results.selectedFrameworks || {};
+               const params = new URLSearchParams({ id: results.id || '', ...(fw.gdpr ? { gdpr: '1' } : {}), ...(fw.nist_rmf === false ? { no_rmf: '1' } : {}), ...(fw.hipaa === false ? { no_hipaa: '1' } : {}), ...(fw.nist_csf === false ? { no_csf: '1' } : {}), ...(fw.iso_27005 === false ? { no_iso: '1' } : {}) });
+               window.location.href = `/GRCReport?${params.toString()}`;
+             }} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
              <FileText className="h-4 w-4 mr-2" /> Export GRC Report
            </Button>
           <Button onClick={() => navigate('/RiskRegister')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
@@ -1256,6 +1267,43 @@ Be specific, asset-aware, and realistic for healthcare.`;
                       <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Framework Selection */}
+                <div className="border-t border-slate-100 pt-5">
+                  <Label className="text-sm font-semibold text-slate-800 mb-1 block">Select Compliance Frameworks</Label>
+                  <p className="text-xs text-slate-500 mb-4">Choose which frameworks to include in your report output. Core risk analysis runs regardless of selection.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                      { key: 'hipaa', label: 'HIPAA', desc: 'Health Insurance Portability & Accountability Act', checkedCard: 'border-indigo-300 bg-indigo-50', checkedBox: 'bg-indigo-600 border-indigo-600' },
+                      { key: 'nist_csf', label: 'NIST CSF 2.0', desc: 'Cybersecurity Framework — Govern, Identify, Protect, Detect, Respond, Recover', checkedCard: 'border-blue-300 bg-blue-50', checkedBox: 'bg-blue-600 border-blue-600' },
+                      { key: 'iso_27005', label: 'ISO/IEC 27005', desc: 'Information Security Risk Management standard', checkedCard: 'border-slate-400 bg-slate-100', checkedBox: 'bg-slate-600 border-slate-600' },
+                      { key: 'gdpr', label: 'GDPR', desc: 'EU General Data Protection Regulation — applies when personal data is processed', checkedCard: 'border-green-300 bg-green-50', checkedBox: 'bg-green-600 border-green-600' },
+                      { key: 'nist_rmf', label: 'NIST RMF', desc: 'Risk Management Framework — Categorize, Select, Implement, Assess, Authorize, Monitor', checkedCard: 'border-purple-300 bg-purple-50', checkedBox: 'bg-purple-600 border-purple-600' },
+                    ].map(({ key, label, desc, checkedCard, checkedBox }) => {
+                      const checked = selectedFrameworks[key];
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setSelectedFrameworks(prev => ({ ...prev, [key]: !prev[key] }))}
+                          className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
+                            checked ? checkedCard : 'border-slate-200 bg-white hover:border-slate-300'
+                          }`}
+                        >
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
+                            checked ? checkedBox : 'border-slate-300'
+                          }`}>
+                            {checked && <CheckCircle className="h-3 w-3 text-white" />}
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-slate-800">{label}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">{desc}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </>
             )}
