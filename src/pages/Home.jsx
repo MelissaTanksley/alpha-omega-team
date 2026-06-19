@@ -268,9 +268,9 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <Badge className="mb-4 bg-white/20 text-white border border-white/30 text-xs px-3 py-1 rounded-full">Available Now</Badge>
-            <h2 className="text-3xl font-bold text-white mb-4">A Completed, Working Tool — Ready for Handoff or Integration</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">A Functional AI Risk Assessment Platform</h2>
             <p className="text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              This is a fully functional AI risk assessment platform.<br />Ready for handoff, white-labeling, or integration into an existing GRC program. All assessment modules, compliance mapping, and reporting features are operational.
+              This is a working, healthcare-focused AI risk and compliance platform designed to demonstrate structured risk analysis, compliance mapping, and reporting capabilities aligned with HIPAA, NIST CSF 2.0, and ISO/IEC 27005.<br /><br />The platform showcases a complete workflow, including assessment, risk analysis, executive reporting, and risk register integration.
             </p>
           </div>
 
@@ -284,7 +284,7 @@ export default function Home() {
             ) : (
               <>
                 <h3 className="text-white font-bold text-lg mb-1 text-center">Request a Demo</h3>
-                <p className="text-blue-100 text-sm text-center mb-5">See the full assessment workflow, compliance outputs, and reporting capabilities.</p>
+                <p className="text-blue-100 text-sm text-center mb-5">Explore the assessment workflow, compliance outputs, and reporting features.</p>
                 <form onSubmit={handleDemoRequest} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
