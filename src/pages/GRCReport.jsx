@@ -23,6 +23,7 @@ export default function GRCReport() {
     controls: true,
     threats: true,
     lifecycle: true,
+    rmf: true,
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -137,6 +138,16 @@ export default function GRCReport() {
   const isDemo = selectedAssessment.id === 'demo-001';
 
   const assessment = selectedAssessment;
+
+  // Detect if personal/identifiable data is involved → show GDPR
+  const involvesPersonalData = (() => {
+    const assets = assessment.key_assets || [];
+    const keywords = ['ephi', 'patient', 'personal', 'ehr', 'health', 'identifiable', 'phi', 'record'];
+    const assetStr = assets.join(' ').toLowerCase();
+    const sourceStr = (assessment.data_sources || []).join(' ').toLowerCase();
+    return keywords.some(k => assetStr.includes(k) || sourceStr.includes(k)) ||
+      assessment.deployment_context === 'clinical' || assessment.deployment_context === 'hybrid';
+  })();
   const riskLevel = assessment.risk_level || 'medium';
   const riskColor = getRiskColor(riskLevel);
 
@@ -275,9 +286,16 @@ export default function GRCReport() {
 
               {/* Compliance Alignment */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-slate-700 leading-relaxed">
-                  Addressing these areas will significantly reduce exposure and support alignment with <strong>HIPAA safeguards</strong> and <strong>NIST CSF 2.0</strong> requirements, establishing a defensible control environment for clinical AI deployment.
+                <p className="text-sm text-slate-700 leading-relaxed mb-2">
+                  Addressing these areas will significantly reduce exposure and support alignment with applicable compliance frameworks:
                 </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge className="bg-indigo-100 text-indigo-700">HIPAA</Badge>
+                  <Badge className="bg-blue-100 text-blue-700">NIST CSF 2.0</Badge>
+                  <Badge className="bg-slate-100 text-slate-700">ISO/IEC 27005</Badge>
+                  {involvesPersonalData && <Badge className="bg-green-100 text-green-700">GDPR</Badge>}
+                  <Badge className="bg-purple-100 text-purple-700">NIST RMF</Badge>
+                </div>
               </div>
             </CardContent>
           )}
@@ -382,6 +400,15 @@ export default function GRCReport() {
           </CardHeader>
           {expandedSections.compliance && (
             <CardContent className="space-y-4">
+              {/* Framework summary badges */}
+              <div className="flex flex-wrap gap-2 pb-2 border-b border-slate-100">
+                <Badge className="bg-indigo-100 text-indigo-700">HIPAA</Badge>
+                <Badge className="bg-blue-100 text-blue-700">NIST CSF 2.0</Badge>
+                <Badge className="bg-slate-100 text-slate-700">ISO/IEC 27005</Badge>
+                {involvesPersonalData && <Badge className="bg-green-100 text-green-700">GDPR</Badge>}
+                <Badge className="bg-purple-100 text-purple-700">NIST RMF</Badge>
+              </div>
+
               <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-lg">
                 <h4 className="text-sm font-bold text-indigo-900 mb-2">HIPAA Security Rule</h4>
                 <ul className="space-y-1">
@@ -394,11 +421,36 @@ export default function GRCReport() {
               <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
                 <h4 className="text-sm font-bold text-blue-900 mb-2">NIST CSF 2.0 Functions</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['Identify', 'Protect', 'Detect'].map((fn, i) => (
+                  {['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'].map((fn, i) => (
                     <Badge key={i} className="bg-blue-100 text-blue-700">{fn}</Badge>
                   ))}
                 </div>
               </div>
+
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg">
+                <h4 className="text-sm font-bold text-slate-900 mb-2">ISO/IEC 27005 — Risk Management</h4>
+                <ul className="space-y-1">
+                  <li className="text-sm text-slate-700">• Context establishment and risk identification</li>
+                  <li className="text-sm text-slate-700">• Risk analysis and evaluation against acceptance criteria</li>
+                  <li className="text-sm text-slate-700">• Risk treatment selection and residual risk monitoring</li>
+                </ul>
+              </div>
+
+              {involvesPersonalData && (
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="text-sm font-bold text-green-900">GDPR — Data Protection Principles</h4>
+                    <Badge className="bg-green-100 text-green-700 text-xs">Applicable</Badge>
+                  </div>
+                  <p className="text-xs text-green-700 mb-2">Personal/identifiable data detected — GDPR principles apply.</p>
+                  <ul className="space-y-1">
+                    <li className="text-sm text-green-800">• <strong>Data Minimization</strong> — Collect only what is necessary for the clinical purpose</li>
+                    <li className="text-sm text-green-800">• <strong>Integrity & Confidentiality</strong> — Protect data against unauthorized processing and loss</li>
+                    <li className="text-sm text-green-800">• <strong>Data Protection by Design</strong> — Embed privacy controls at the system architecture level</li>
+                    <li className="text-sm text-green-800">• <strong>Accountability</strong> — Document processing activities and demonstrate compliance</li>
+                  </ul>
+                </div>
+              )}
 
               <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
                 <h4 className="text-sm font-bold text-red-900 mb-2">Identified Gaps</h4>
@@ -406,6 +458,7 @@ export default function GRCReport() {
                   <li className="text-sm text-red-800">• No systematic validation of AI-generated outputs</li>
                   <li className="text-sm text-red-800">• Limited monitoring of model behavior and drift</li>
                   <li className="text-sm text-red-800">• Insufficient audit logging for AI decisions</li>
+                  {involvesPersonalData && <li className="text-sm text-red-800">• Data processing activities not fully documented per GDPR Article 30</li>}
                 </ul>
               </div>
             </CardContent>
@@ -566,6 +619,77 @@ export default function GRCReport() {
                   <div key={i} className="bg-slate-50 border border-slate-200 p-4 rounded-lg">
                     <h4 className="text-sm font-bold text-slate-900 mb-2">{fn.title}</h4>
                     <p className="text-xs text-slate-700 leading-relaxed">{fn.description}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* NIST RMF ALIGNMENT */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('rmf')}>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">🔐</span> NIST RMF Alignment
+              </CardTitle>
+              {expandedSections.rmf ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </div>
+          </CardHeader>
+          {expandedSections.rmf && (
+            <CardContent>
+              <p className="text-xs text-slate-500 mb-4">The NIST Risk Management Framework (RMF) provides a structured lifecycle for managing security and privacy risk. The following stages apply to {assessment.system_name}.</p>
+              <div className="grid md:grid-cols-2 gap-3">
+                {[
+                  {
+                    step: '1',
+                    title: 'Categorize',
+                    color: 'bg-slate-100 border-slate-300 text-slate-700',
+                    badge: 'bg-slate-200 text-slate-800',
+                    description: `Classify ${assessment.system_name} based on the potential impact of a security breach. Given clinical deployment and ePHI involvement, this system likely falls under HIGH impact categorization per FIPS 199.`
+                  },
+                  {
+                    step: '2',
+                    title: 'Select',
+                    color: 'bg-blue-50 border-blue-200 text-blue-700',
+                    badge: 'bg-blue-100 text-blue-800',
+                    description: 'Select and tailor security controls from NIST SP 800-53 appropriate for the system\'s impact level. Priority controls include AC (Access Control), AU (Audit), SI (System Integrity), and SC (System Communications).'
+                  },
+                  {
+                    step: '3',
+                    title: 'Implement',
+                    color: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                    badge: 'bg-emerald-100 text-emerald-800',
+                    description: 'Deploy selected controls including encryption, access management, audit logging, and AI-specific human-in-the-loop validation. Document implementation details for authorization review.'
+                  },
+                  {
+                    step: '4',
+                    title: 'Assess',
+                    color: 'bg-amber-50 border-amber-200 text-amber-700',
+                    badge: 'bg-amber-100 text-amber-800',
+                    description: 'Evaluate control effectiveness through testing, review, and independent assessment. Identify deficiencies in current controls and prioritize remediation before authorization.'
+                  },
+                  {
+                    step: '5',
+                    title: 'Authorize',
+                    color: 'bg-purple-50 border-purple-200 text-purple-700',
+                    badge: 'bg-purple-100 text-purple-800',
+                    description: 'Senior official reviews the system security plan, assessment results, and residual risks to issue an Authorization to Operate (ATO) or deny authorization pending remediation.'
+                  },
+                  {
+                    step: '6',
+                    title: 'Monitor',
+                    color: 'bg-orange-50 border-orange-200 text-orange-700',
+                    badge: 'bg-orange-100 text-orange-800',
+                    description: 'Continuously monitor security controls, system changes, and the threat environment. Report security status to authorizing official and update the authorization when significant changes occur.'
+                  }
+                ].map((stage) => (
+                  <div key={stage.step} className={`border rounded-lg p-3 ${stage.color}`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${stage.badge}`}>Step {stage.step}</span>
+                      <h4 className="text-sm font-bold">{stage.title}</h4>
+                    </div>
+                    <p className="text-xs leading-relaxed opacity-90">{stage.description}</p>
                   </div>
                 ))}
               </div>

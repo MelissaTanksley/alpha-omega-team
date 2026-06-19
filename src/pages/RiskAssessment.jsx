@@ -317,7 +317,7 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
 
 For recommendations: Return objects with { recommendation: "text", affected_asset: "asset name from the provided list" }. Each recommendation MUST specify which key asset it applies to.
 
-For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/FDA" }.
+For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/GDPR/NIST RMF/FDA" }. Where personal or identifiable data is involved, include GDPR-specific gaps (data minimization, accountability, data protection by design). Always include at least one NIST RMF gap referencing the appropriate RMF stage (Categorize/Select/Implement/Assess/Authorize/Monitor).
 
 Be specific, asset-aware, and realistic for healthcare.`;
 
@@ -395,10 +395,12 @@ Return scores for each dimension, overall risk, risk level, a 2-3 sentence summa
 
 For recommendations: Return objects with { recommendation: "text", affected_asset: "asset name from the provided list" }. Each recommendation MUST specify which key asset it applies to.
 
-For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/FDA" } to show which asset is impacted and which framework addresses it.
+For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/GDPR/NIST RMF/FDA" }. Where personal or identifiable data is involved, include GDPR-specific gaps (data minimization, accountability, data protection by design). Always include at least one NIST RMF gap referencing the appropriate RMF stage (Categorize/Select/Implement/Assess/Authorize/Monitor).
 
 Example:
 - { "gap": "ePHI lacks encryption at rest", "affected_asset": "Patient Data (ePHI)", "control_framework": "HIPAA" }
+- { "gap": "Data processing activities not documented per GDPR Article 30", "affected_asset": "Patient Data (ePHI)", "control_framework": "GDPR" }
+- { "gap": "System has not completed NIST RMF Assess step — controls not independently evaluated", "affected_asset": "AI Model & Training Data", "control_framework": "NIST RMF" }
 - { "recommendation": "Implement role-based access control for the AI Model", "affected_asset": "AI Model & Training Data" }
 
 Be specific, asset-aware, and realistic for healthcare.`;
@@ -464,7 +466,7 @@ Be specific, asset-aware, and realistic for healthcare.`;
         <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
         <div className="text-center">
           <p className="text-slate-700 font-semibold text-lg">Running Demo Analysis…</p>
-          <p className="text-slate-400 text-sm mt-1">Analyzing AI Clinical Charting Assistant against HIPAA, NIST CSF 2.0, and ISO 27005</p>
+          <p className="text-slate-400 text-sm mt-1">Analyzing AI Clinical Charting Assistant against HIPAA, NIST CSF 2.0, ISO 27005, GDPR, and NIST RMF</p>
         </div>
       </div>
     );
@@ -482,15 +484,27 @@ Be specific, asset-aware, and realistic for healthcare.`;
           <p className="text-slate-500 text-sm">{formData.system_name}</p>
         </div>
 
-        {/* NIST CSF 2.0 Lifecycle Header */}
-        <div className="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Assessment Aligned to NIST CSF 2.0</p>
-          <div className="flex flex-wrap gap-2">
-            {['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'].map((fn) => (
-              <span key={fn} className="text-xs bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">
-                {fn}
-              </span>
-            ))}
+        {/* Framework Alignment Header */}
+        <div className="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">NIST CSF 2.0 Functions</p>
+            <div className="flex flex-wrap gap-2">
+              {['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'].map((fn) => (
+                <span key={fn} className="text-xs bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">
+                  {fn}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-slate-200 pt-3">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Compliance Frameworks Assessed</p>
+            <div className="flex flex-wrap gap-2">
+              <span className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-1 rounded-full font-medium">HIPAA</span>
+              <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full font-medium">NIST CSF 2.0</span>
+              <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>
+              <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>
+              <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>
+            </div>
           </div>
         </div>
 
