@@ -16,6 +16,7 @@ export default function RiskRegister() {
   const [manualRisks, setManualRisks] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [manualRiskFilter, setManualRiskFilter] = useState('all');
@@ -30,6 +31,15 @@ export default function RiskRegister() {
 
   const loadData = async () => {
     try {
+      const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+
+      // Only load data for authenticated users
+      if (!isAuth) {
+        setIsLoading(false);
+        return;
+      }
+
       const assessmentData = await base44.entities.AIRiskAssessment.list('-updated_date', 50);
       setAssessments(assessmentData);
       
@@ -139,6 +149,84 @@ export default function RiskRegister() {
     );
   }
 
+  // Show empty state for signed-out users
+  if (!isAuthenticated && !isDemoMode()) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-slate-900 mb-2">Risk Register</h1>
+              <p className="text-slate-600">Define and track risks across your healthcare AI systems</p>
+            </div>
+          </div>
+
+          {/* Sign-in Prompt */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-blue-900 mb-2">Sign in to create and manage your Risk Register</p>
+                  <p className="text-sm text-blue-800 mb-4">Once signed in, you can create manual risks, track auto-generated risks from assessments, and manage your complete risk picture.</p>
+                  <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                    Sign In to Get Started
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Empty Table Structure */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-slate-700">Risk Register Structure</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-200 bg-slate-50">
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Risk Description</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Affected Asset</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Likelihood</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Impact</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Risk Level</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Recommended Control</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Owner</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Due Date</th>
+                      <th className="text-left px-4 py-3 font-semibold text-slate-700">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...Array(5)].map((_, i) => (
+                      <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                        <td className="px-4 py-3 text-slate-400">—</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-slate-500 mt-4 text-center">Sign in to populate this table with your risks</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show demo state if demo mode is active
+  const isDemoActive = isDemoMode();
+
   const allRisks = [...generatedRisks, ...manualRisks];
   const totalCritical = allRisks.filter(r => r.risk_level?.toLowerCase() === 'critical').length;
   const totalHigh = allRisks.filter(r => r.risk_level?.toLowerCase() === 'high').length;
@@ -146,12 +234,20 @@ export default function RiskRegister() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {isDemoActive && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+            <p className="text-sm text-amber-800"><span className="font-semibold">Demo Mode: Example Risk Register Structure</span> — This is sample data. <button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="underline font-semibold hover:text-amber-900">Sign in</button> to manage your own risks.</p>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold text-slate-900 mb-2">Risk Register</h1>
-            <p className="text-slate-600">Auto-generated + manually managed risks</p>
+            <p className="text-slate-600">Define and track risks across your healthcare AI systems</p>
           </div>
           <div className="flex gap-2">
             <Button
