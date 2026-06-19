@@ -30,6 +30,16 @@ const FRAMEWORKS = {
           { title: 'Electronic Health Records', items: ['EHR access logs maintained','Patient access requests supported','Audit trails preserved'] },
           { title: 'Enforcement', items: ['Annual compliance review completed','Documentation retained','Corrective actions tracked'] },
         ]
+      },
+      {
+        name: 'GDPR',
+        sections: [
+          { title: 'Data Protection & Governance', items: ['Data Protection Officer (DPO) designated','Records of processing activities maintained (Article 30)','Lawful basis for processing identified for all data activities','Data Protection Impact Assessments (DPIA) conducted for high-risk processing','Privacy by design and by default principles applied'] },
+          { title: 'Security & Integrity', items: ['Technical measures implemented to ensure data security','Encryption applied to personal data at rest and in transit','Access controls restrict personal data to authorized personnel','Pseudonymization used where applicable','Data breach detection and response procedures established'] },
+          { title: 'Accuracy & Accountability', items: ['Processes in place to keep personal data accurate and up to date','Data minimization principle applied — only necessary data collected','Retention schedules defined and enforced','Data processing activities documented and auditable','Staff training on GDPR obligations completed'] },
+          { title: 'User Rights', items: ['Right of access requests handled within 30 days','Right to rectification process established','Right to erasure (right to be forgotten) process implemented','Right to data portability supported','Right to object to automated decision-making addressed'] },
+          { title: 'Monitoring & Review', items: ['GDPR compliance reviewed annually','Third-party processors assessed for GDPR compliance','Data transfer mechanisms in place for cross-border transfers','Supervisory authority contact information documented','Incident reporting process meets 72-hour notification requirement'] },
+        ]
       }
     ]
   },
@@ -71,6 +81,17 @@ const FRAMEWORKS = {
         sections: [
           { title: 'Information Security Management System (ISMS)', items: ['ISMS scope defined','Information security policy approved','Leadership commitment documented','Internal audits conducted','Management reviews performed'] },
           { title: 'Annex A Controls', items: ['Access controls implemented','Cryptography policies defined','Supplier security managed','Secure development lifecycle adopted','Logging and monitoring enabled'] },
+        ]
+      },
+      {
+        name: 'NIST RMF',
+        sections: [
+          { title: 'Categorize', items: ['Identify system assets, data types, and operational environment','Determine impact level of AI system (low, moderate, or high) per FIPS 199','Document system description and mission/business functions','Classify ePHI and sensitive data processed by the system','Register system in organizational inventory'] },
+          { title: 'Select', items: ['Select appropriate security and privacy controls based on impact level','Tailor controls from NIST SP 800-53 to system context','Align controls with organizational policies and regulatory requirements','Document control selection rationale in System Security Plan (SSP)','Identify and document common controls inherited from the organization'] },
+          { title: 'Implement', items: ['Deploy technical controls (encryption, access controls, audit logging)','Implement administrative controls (policies, procedures, training)','Integrate controls into AI system workflows and CI/CD pipelines','Document how each control is implemented in the SSP','Ensure human-in-the-loop validation is in place for AI outputs'] },
+          { title: 'Assess', items: ['Evaluate effectiveness of implemented controls against objectives','Conduct penetration testing and vulnerability assessments','Validate AI system outputs and model behavior under stress','Document assessment findings and identify control deficiencies','Prepare Security Assessment Report (SAR)'] },
+          { title: 'Authorize', items: ['Review residual risk and determine if system operation is acceptable','Prepare Plan of Action & Milestones (POA&M) for identified gaps','Senior official reviews SSP, SAR, and POA&M','Authorization to Operate (ATO) issued or denied','Formal approval decision documented with rationale'] },
+          { title: 'Monitor', items: ['Continuously monitor system performance and risk posture','Detect anomalies, model drift, and emerging threats','Track and remediate POA&M items on schedule','Report security status to authorizing official regularly','Update SSP and controls when significant system changes occur','Conduct periodic reassessments to validate control effectiveness'] },
         ]
       }
     ]
