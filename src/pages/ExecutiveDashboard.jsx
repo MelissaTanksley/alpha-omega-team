@@ -125,25 +125,19 @@ export default function ExecutiveDashboard() {
     );
   }
 
-  if (!isAuthenticated) {
-    // Show demo mode if enabled, otherwise show sign-in prompt
-    if (isDemoMode()) {
-      setAssessments([DEMO_ASSESSMENT]);
-      // Continue to render dashboard with demo data below
-    } else {
-      return (
-        <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Shield className="h-10 w-10 text-slate-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">Sign in to view your AI Risk Dashboard</h2>
-          <p className="text-slate-500 mb-8 max-w-md mx-auto">Access your portfolio risk assessments, governance analytics, and compliance insights.</p>
-          <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
-            <Lock className="h-4 w-4 mr-2" /> Sign In
-          </Button>
+  if (!isAuthenticated && !isDemoMode()) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Shield className="h-10 w-10 text-slate-400" />
         </div>
-      );
-    }
+        <h2 className="text-2xl font-bold text-slate-900 mb-3">Sign in to view your AI Risk Dashboard</h2>
+        <p className="text-slate-500 mb-8 max-w-md mx-auto">Access your portfolio risk assessments, governance analytics, and compliance insights.</p>
+        <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Lock className="h-4 w-4 mr-2" /> Sign In
+        </Button>
+      </div>
+    );
   }
 
   const total = assessments.length;
@@ -218,7 +212,7 @@ export default function ExecutiveDashboard() {
     );
   }
 
-  const isDemo = isDemoMode() && !isAuthenticated;
+  const isDemo = isDemoMode();
 
   return (
     <div className="bg-slate-50 min-h-screen">

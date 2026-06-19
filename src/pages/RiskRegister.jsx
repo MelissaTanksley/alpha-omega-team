@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Plus, Edit2, Trash2, Check, X, Loader2 } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Check, X, Loader2, AlertCircle } from 'lucide-react';
+import { isDemoMode } from '@/utils/demoData';
 import RiskRegisterTable from '@/components/RiskRegisterTable';
 import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 

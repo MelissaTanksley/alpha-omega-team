@@ -3,7 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File, AlertCircle } from 'lucide-react';
+import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File, AlertCircle, Plus, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import moment from 'moment';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import RiskRegisterTable from '@/components/RiskRegisterTable';
 import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
@@ -92,31 +94,39 @@ export default function GRCReport() {
 
   if (!selectedAssessment) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-slate-900 mb-8">GRC Report</h1>
-        <div className="text-center py-16">
-          <FileText className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">No Assessment Selected</h2>
-          <p className="text-slate-600 mb-8">Run a new AI risk assessment to generate a report.</p>
-          <Button onClick={() => window.location.href = '/RiskAssessment'} className="bg-blue-600 hover:bg-blue-700 gap-2">
-            <span>🚀</span> Run Full Analysis
-          </Button>
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <FileText className="h-16 w-16 text-slate-300 mx-auto mb-6" />
+        <h2 className="text-2xl font-bold text-slate-900 mb-3">No Assessment Selected</h2>
+        <p className="text-slate-600 mb-10 max-w-md mx-auto">Run an AI risk analysis or view a demo report.</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link to="/RiskAssessment">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white h-11 px-6 text-base font-semibold gap-2">
+              <Plus className="h-5 w-5" />
+              Run Full Analysis
+            </Button>
+          </Link>
+          <button
+            onClick={() => setSelectedAssessment(DEMO_ASSESSMENT)}
+            className="px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 text-base h-11"
+          >
+            <Zap className="h-5 w-5" /> View Demo Report
+          </button>
           {assessments.length > 0 && (
-            <div className="mt-8 text-left max-w-2xl mx-auto">
-              <p className="text-sm font-semibold text-slate-700 mb-3">Or select from previous assessments:</p>
-              <select
-                onChange={(e) => setSelectedAssessment(assessments.find(a => a.id === e.target.value))}
-                defaultValue=""
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">-- Choose an assessment --</option>
-                {assessments.map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.system_name} ({a.system_type}) - {a.risk_level?.toUpperCase() || 'Unknown'}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              onChange={(e) => {
+                const selected = assessments.find(a => a.id === e.target.value);
+                if (selected) setSelectedAssessment(selected);
+              }}
+              defaultValue=""
+              className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Previous Assessment</option>
+              {assessments.map(a => (
+                <option key={a.id} value={a.id}>
+                  {a.system_name} ({moment(a.created_date).format('MMM DD')})
+                </option>
+              ))}
+            </select>
           )}
         </div>
       </div>
