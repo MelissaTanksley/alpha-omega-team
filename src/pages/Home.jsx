@@ -92,15 +92,16 @@ export default function Home() {
                     Try Demo
                   </Button>
                 </Link>
-                <a href="#request-demo">
-                  <Button size="lg" variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300 px-8 h-12 text-base">
-                    Request Demo
-                  </Button>
-                </a>
               </div>
               <p className="text-sm text-slate-400 mt-4">
                 <span className="font-semibold text-slate-300">Privacy Note:</span> Designed with data privacy in mind. Analysis is<br/>session-based and not used to train models or shared between users.
               </p>
+              <div className="mt-5 pt-5 border-t border-slate-700/60">
+                <p className="text-xs text-slate-500 mb-2">Interested in a deeper walkthrough?</p>
+                <a href="#request-demo" className="text-sm text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors">
+                  Request a guided demo →
+                </a>
+              </div>
             </div>
 
             {/* Mock risk score card */}
