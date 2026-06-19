@@ -17,6 +17,7 @@ export default function RiskRegister() {
   const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [manualRiskFilter, setManualRiskFilter] = useState('all');
   const [formData, setFormData] = useState({
     risk_description: '', affected_asset: '', likelihood: 'medium', impact: 'medium',
     risk_level: 'medium', recommended_control: '', owner: '', due_date: '', status: 'open'
@@ -125,6 +126,10 @@ export default function RiskRegister() {
     return 'critical';
   };
 
+  const filteredManualRisks = manualRiskFilter === 'all' 
+    ? manualRisks 
+    : manualRisks.filter(r => r.risk_level?.toLowerCase() === manualRiskFilter);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -212,15 +217,43 @@ export default function RiskRegister() {
 
         {/* Manual Risks */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">✋</span> Manual Risk Register
-            </CardTitle>
-            {!isAddingNew && editingId === null && (
-              <Button onClick={() => setIsAddingNew(true)} className="gap-2 bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4" /> Add New Risk
-              </Button>
-            )}
+          <CardHeader className="pb-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">✋</span> Manual Risk Register
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {manualRisks.length > 0 && (
+                  <div className="flex gap-1 flex-wrap">
+                    {['all', 'critical', 'high', 'medium', 'low'].map(level => {
+                      const count = level === 'all' ? manualRisks.length : manualRisks.filter(r => r.risk_level?.toLowerCase() === level).length;
+                      return (
+                        <button
+                          key={level}
+                          onClick={() => setManualRiskFilter(level)}
+                          className={`text-xs font-semibold px-2.5 py-1 rounded transition-colors ${
+                            manualRiskFilter === level
+                              ? level === 'critical' ? 'bg-red-600 text-white' :
+                                level === 'high' ? 'bg-orange-600 text-white' :
+                                level === 'medium' ? 'bg-amber-600 text-white' :
+                                level === 'low' ? 'bg-emerald-600 text-white' :
+                                'bg-slate-800 text-white'
+                              : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                          }`}
+                        >
+                          {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)} {count > 0 && `(${count})`}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {!isAddingNew && editingId === null && (
+                  <Button onClick={() => setIsAddingNew(true)} className="gap-2 bg-blue-600 hover:bg-blue-700 flex-shrink-0">
+                    <Plus className="h-4 w-4" /> Add New Risk
+                  </Button>
+                )}
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Add New Risk Form */}
@@ -240,7 +273,10 @@ export default function RiskRegister() {
                   className="text-sm"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Select value={formData.likelihood} onValueChange={v => setFormData({ ...formData, likelihood: v })}>
+                  <Select value={formData.likelihood} onValueChange={v => {
+                    const newRisk = calcRiskLevel(v, formData.impact);
+                    setFormData({ ...formData, likelihood: v, risk_level: newRisk });
+                  }}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">Likelihood: Low</SelectItem>
@@ -249,7 +285,10 @@ export default function RiskRegister() {
                       <SelectItem value="critical">Likelihood: Critical</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Select value={formData.impact} onValueChange={v => setFormData({ ...formData, impact: v })}>
+                  <Select value={formData.impact} onValueChange={v => {
+                    const newRisk = calcRiskLevel(formData.likelihood, v);
+                    setFormData({ ...formData, impact: v, risk_level: newRisk });
+                  }}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">Impact: Low</SelectItem>
@@ -296,16 +335,20 @@ export default function RiskRegister() {
             )}
 
             {/* Manual Risks Table */}
-            {manualRisks.length === 0 && !isAddingNew ? (
+            {filteredManualRisks.length === 0 && !isAddingNew ? (
               <div className="text-center py-8">
-                <p className="text-slate-500 text-sm mb-4">No manual risks yet. Create one to get started.</p>
-                <Button onClick={() => setIsAddingNew(true)} className="gap-2 bg-blue-600 hover:bg-blue-700">
-                  <Plus className="h-4 w-4" /> Add New Risk
-                </Button>
+                <p className="text-slate-500 text-sm mb-4">
+                  {manualRisks.length === 0 ? 'No manual risks yet. Create one to get started.' : 'No risks found in this category.'}
+                </p>
+                {manualRisks.length === 0 && (
+                  <Button onClick={() => setIsAddingNew(true)} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                    <Plus className="h-4 w-4" /> Add New Risk
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-2">
-                {manualRisks.map(risk => (
+                {filteredManualRisks.map(risk => (
                   <div key={risk.id}>
                     {editingId === risk.id ? (
                       <div className="border-2 border-blue-200 bg-blue-50 rounded-lg p-3 space-y-2">
@@ -322,25 +365,31 @@ export default function RiskRegister() {
                           className="text-sm"
                         />
                         <div className="grid grid-cols-2 gap-2">
-                          <Select value={formData.likelihood} onValueChange={v => setFormData({ ...formData, likelihood: v })}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="low">Low</SelectItem>
-                              <SelectItem value="medium">Medium</SelectItem>
-                              <SelectItem value="high">High</SelectItem>
-                              <SelectItem value="critical">Critical</SelectItem>
-                            </SelectContent>
+                          <Select value={formData.likelihood} onValueChange={v => {
+                          const newRisk = calcRiskLevel(v, formData.impact);
+                          setFormData({ ...formData, likelihood: v, risk_level: newRisk });
+                          }}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="critical">Critical</SelectItem>
+                          </SelectContent>
                           </Select>
-                          <Select value={formData.impact} onValueChange={v => setFormData({ ...formData, impact: v })}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="low">Low</SelectItem>
-                              <SelectItem value="medium">Medium</SelectItem>
-                              <SelectItem value="high">High</SelectItem>
-                              <SelectItem value="critical">Critical</SelectItem>
-                            </SelectContent>
+                          <Select value={formData.impact} onValueChange={v => {
+                          const newRisk = calcRiskLevel(formData.likelihood, v);
+                          setFormData({ ...formData, impact: v, risk_level: newRisk });
+                          }}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="critical">Critical</SelectItem>
+                          </SelectContent>
                           </Select>
-                        </div>
+                          </div>
                         <Input
                           placeholder="Recommended Control"
                           value={formData.recommended_control}
