@@ -30,13 +30,20 @@ export default function GRCReport() {
 
   const loadAssessments = async () => {
     try {
-      const data = await base44.entities.AIRiskAssessment.list('-updated_date', 10);
-      setAssessments(data);
-      if (data.length > 0) {
-        setSelectedAssessment(data[0]);
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        setAssessments([]);
+        setSelectedAssessment(null);
+      } else {
+        const data = await base44.entities.AIRiskAssessment.list('-updated_date', 10);
+        setAssessments(data);
+        // Do not auto-select - let user choose or run new assessment
+        setSelectedAssessment(null);
       }
     } catch (error) {
       console.error('Failed to load assessments:', error);
+      setAssessments([]);
+      setSelectedAssessment(null);
     } finally {
       setIsLoading(false);
     }
@@ -75,14 +82,32 @@ export default function GRCReport() {
 
   if (!selectedAssessment) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center py-12">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-slate-900 mb-8">GRC Report</h1>
+        <div className="text-center py-16">
           <FileText className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">No Assessments Yet</h2>
-          <p className="text-slate-600 mb-6">Create an AI system risk assessment to generate a GRC report.</p>
-          <Button onClick={() => window.location.href = '/RiskAssessment'} className="bg-blue-600 hover:bg-blue-700">
-            Start Assessment
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">No Assessment Selected</h2>
+          <p className="text-slate-600 mb-8">Run a new AI risk assessment to generate a report.</p>
+          <Button onClick={() => window.location.href = '/RiskAssessment'} className="bg-blue-600 hover:bg-blue-700 gap-2">
+            <span>🚀</span> Run Full Analysis
           </Button>
+          {assessments.length > 0 && (
+            <div className="mt-8 text-left max-w-2xl mx-auto">
+              <p className="text-sm font-semibold text-slate-700 mb-3">Or select from previous assessments:</p>
+              <select
+                onChange={(e) => setSelectedAssessment(assessments.find(a => a.id === e.target.value))}
+                defaultValue=""
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">-- Choose an assessment --</option>
+                {assessments.map(a => (
+                  <option key={a.id} value={a.id}>
+                    {a.system_name} ({a.system_type}) - {a.risk_level?.toUpperCase() || 'Unknown'}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -124,10 +149,10 @@ export default function GRCReport() {
         </div>
 
         {/* Assessment Selector */}
-        {assessments.length > 1 && (
+        {assessments.length > 0 && (
           <Card>
             <CardContent className="pt-6">
-              <label className="text-sm font-semibold text-slate-700 block mb-2">Select Assessment</label>
+              <label className="text-sm font-semibold text-slate-700 block mb-2">Switch Assessment</label>
               <select
                 value={selectedAssessment.id}
                 onChange={(e) => setSelectedAssessment(assessments.find(a => a.id === e.target.value))}
