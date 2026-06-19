@@ -67,29 +67,63 @@ export default function ExecutiveDashboard() {
   useEffect(() => { document.title = 'Executive Dashboard | AI Risk Navigator'; }, []);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    base44.entities.AIRiskAssessment.list('-created_date', 100)
-      .then(setAssessments)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const checkAuthAndLoad = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        setIsAuthenticated(isAuth);
+        
+        if (!isAuth) {
+          setAssessments([]);
+          setLoading(false);
+          return;
+        }
 
-    const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
-      if (event.type === 'create') {
-        setAssessments(prev => [event.data, ...prev]);
-      } else if (event.type === 'update') {
-        setAssessments(prev => prev.map(a => a.id === event.data.id ? event.data : a));
-      } else if (event.type === 'delete') {
-        setAssessments(prev => prev.filter(a => a.id !== event.entity_id));
+        const data = await base44.entities.AIRiskAssessment.list('-created_date', 100);
+        setAssessments(data);
+
+        const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
+          if (event.type === 'create') {
+            setAssessments(prev => [event.data, ...prev]);
+          } else if (event.type === 'update') {
+            setAssessments(prev => prev.map(a => a.id === event.data.id ? event.data : a));
+          } else if (event.type === 'delete') {
+            setAssessments(prev => prev.filter(a => a.id !== event.entity_id));
+          }
+        });
+        return unsubscribe;
+      } catch (error) {
+        console.error('Failed to load dashboard:', error);
+        setAssessments([]);
+      } finally {
+        setLoading(false);
       }
-    });
-    return unsubscribe;
+    };
+
+    checkAuthAndLoad();
   }, []);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Shield className="h-10 w-10 text-slate-400" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900 mb-3">Sign in to view your AI Risk Dashboard</h2>
+        <p className="text-slate-500 mb-8 max-w-md mx-auto">Access your portfolio risk assessments, governance analytics, and compliance insights.</p>
+        <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Lock className="h-4 w-4 mr-2" /> Sign In
+        </Button>
       </div>
     );
   }
