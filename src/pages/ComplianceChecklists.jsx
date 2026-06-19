@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { CheckSquare, Square, ChevronDown, ChevronUp, Shield, Lock, Brain, CheckCircle, MessageSquare, MessageSquarePlus } from 'lucide-react';
+import { Shield, Lock, Brain, CheckCircle } from 'lucide-react';
+import FrameworkChecklist from '@/components/FrameworkChecklist';
 
 const FRAMEWORKS = {
   privacy: {
@@ -161,98 +162,7 @@ function getCategoryStats(catKey, checked) {
   return { done, total: keys.length, pct: keys.length ? Math.round((done / keys.length) * 100) : 0 };
 }
 
-function FrameworkChecklist({ framework, checked, onToggle, notes, onNoteChange }) {
-  const [openSections, setOpenSections] = useState({});
-  const [openNotes, setOpenNotes] = useState({});
-  const toggleSection = (key) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
-  const toggleNote = (key) => setOpenNotes(prev => ({ ...prev, [key]: !prev[key] }));
 
-  let itemIndex = 0;
-  const allKeys = framework.sections.flatMap((sec, si) => {
-    const base = framework.sections.slice(0, si).reduce((a, s) => a + s.items.length, 0);
-    return sec.items.map((_, i) => `${framework.name}-${base + i}`);
-  });
-  const checkedCount = allKeys.filter(k => checked[k]).length;
-  const pct = Math.round((checkedCount / allKeys.length) * 100);
-
-  return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-slate-800 text-base">{framework.name}</h3>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">{checkedCount}/{allKeys.length}</span>
-          <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-            <div className="h-full bg-emerald-500 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
-          </div>
-          <span className="text-xs font-semibold text-emerald-600 w-8 text-right">{pct}%</span>
-        </div>
-      </div>
-
-      {framework.sections.map((section) => {
-        const sectionKey = `${framework.name}-${section.title}`;
-        const isOpen = openSections[sectionKey] !== false;
-        const startIndex = itemIndex;
-        itemIndex += section.items.length;
-
-        return (
-          <div key={section.title} className="mb-2 border border-slate-100 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleSection(sectionKey)}
-              className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-50 hover:bg-slate-100 transition-colors text-left"
-            >
-              <span className="text-sm font-medium text-slate-700">{section.title}</span>
-              {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-slate-400" /> : <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
-            </button>
-            {isOpen && (
-              <div className="px-4 py-2 space-y-1.5">
-                {section.items.map((item, i) => {
-                  const key = `${framework.name}-${startIndex + i}`;
-                  const hasNote = notes[key] && notes[key].trim().length > 0;
-                  const noteOpen = openNotes[key];
-                  return (
-                    <div key={key} className="py-1">
-                      <div className="flex items-start gap-2.5 group">
-                        <button onClick={() => onToggle(key)} className="mt-0.5 flex-shrink-0 text-slate-400 hover:text-blue-600 transition-colors">
-                          {checked[key]
-                            ? <CheckSquare className="h-4 w-4 text-emerald-500" />
-                            : <Square className="h-4 w-4" />}
-                        </button>
-                        <span className={`text-sm flex-1 transition-colors ${checked[key] ? 'line-through text-slate-400' : 'text-slate-700 group-hover:text-slate-900'}`}>
-                          {item}
-                        </span>
-                        <button
-                          onClick={() => toggleNote(key)}
-                          title={noteOpen ? 'Hide note' : (hasNote ? 'View/edit note' : 'Add note')}
-                          className={`flex-shrink-0 transition-colors ${hasNote ? 'text-amber-500 hover:text-amber-600' : 'text-slate-300 hover:text-slate-500 opacity-0 group-hover:opacity-100'}`}
-                        >
-                          {hasNote
-                            ? <MessageSquare className="h-3.5 w-3.5" />
-                            : <MessageSquarePlus className="h-3.5 w-3.5" />}
-                        </button>
-                      </div>
-                      {noteOpen && (
-                        <div className="mt-1.5 ml-7">
-                          <textarea
-                            autoFocus
-                            value={notes[key] || ''}
-                            onChange={e => onNoteChange(key, e.target.value)}
-                            placeholder="Add internal note or justification…"
-                            rows={2}
-                            className="w-full text-xs text-slate-700 placeholder-slate-400 border border-amber-200 bg-amber-50 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-amber-300"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) {
   const cat = FRAMEWORKS[categoryKey];
