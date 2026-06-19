@@ -3,10 +3,11 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File } from 'lucide-react';
+import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File, AlertCircle } from 'lucide-react';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import RiskRegisterTable from '@/components/RiskRegisterTable';
 import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
+import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
 export default function GRCReport() {
   useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
@@ -30,6 +31,15 @@ export default function GRCReport() {
 
   const loadAssessments = async () => {
     try {
+      // Check for demo parameter in URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') === '1') {
+        setAssessments([DEMO_ASSESSMENT]);
+        setSelectedAssessment(DEMO_ASSESSMENT);
+        setIsLoading(false);
+        return;
+      }
+
       const isAuth = await base44.auth.isAuthenticated();
       if (!isAuth) {
         setAssessments([]);
@@ -113,12 +123,23 @@ export default function GRCReport() {
     );
   }
 
+  // Check if this is a demo assessment
+  const isDemo = selectedAssessment.id === 'demo-001';
+
   const assessment = selectedAssessment;
   const riskLevel = assessment.risk_level || 'medium';
   const riskColor = getRiskColor(riskLevel);
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {isDemo && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+            <p className="text-sm text-amber-800"><span className="font-semibold">Example AI Risk Report (Demo)</span> — This is sample data to demonstrate the platform. Sign in to run your own assessments.</p>
+          </div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         {/* Header with Report Controls */}
         <div className="flex items-start justify-between gap-4">

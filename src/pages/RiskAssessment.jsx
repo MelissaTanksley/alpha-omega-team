@@ -920,9 +920,9 @@ Be specific, asset-aware, and realistic for healthcare.`;
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button onClick={() => window.location.href = '/GRCReport'} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
-            <FileText className="h-4 w-4 mr-2" /> Export GRC Report
-          </Button>
+           <Button onClick={() => window.location.href = '/GRCReport?demo=1'} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
+             <FileText className="h-4 w-4 mr-2" /> Export GRC Report
+           </Button>
           <Button onClick={() => navigate('/RiskRegister')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
             <TrendingUp className="h-4 w-4 mr-2" /> View Risk Register
           </Button>

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Shield, AlertTriangle, TrendingUp, TrendingDown, Minus,
-  Plus, Activity, Lock, Brain, FileCheck, ArrowRight, Calendar
+  Plus, Activity, Lock, Brain, FileCheck, ArrowRight, Calendar, AlertCircle
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { base44 } from '@/api/base44Client';
 import moment from 'moment';
+import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
 const RISK_COLORS = { low: '#10b981', medium: '#f59e0b', high: '#f97316', critical: '#ef4444' };
 
@@ -72,9 +73,20 @@ export default function ExecutiveDashboard() {
   useEffect(() => {
     const checkAuthAndLoad = async () => {
       try {
+        // Check for demo parameter in URL
+        const params = new URLSearchParams(window.location.search);
+        const isDemo = params.get('demo') === '1';
+        
         const isAuth = await base44.auth.isAuthenticated();
         setIsAuthenticated(isAuth);
         
+        if (isDemo) {
+          // Show demo data
+          setAssessments([DEMO_ASSESSMENT]);
+          setLoading(false);
+          return;
+        }
+
         if (!isAuth) {
           setAssessments([]);
           setLoading(false);
@@ -114,18 +126,24 @@ export default function ExecutiveDashboard() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Shield className="h-10 w-10 text-slate-400" />
+    // Show demo mode if enabled, otherwise show sign-in prompt
+    if (isDemoMode()) {
+      setAssessments([DEMO_ASSESSMENT]);
+      // Continue to render dashboard with demo data below
+    } else {
+      return (
+        <div className="max-w-5xl mx-auto px-4 py-20 text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Shield className="h-10 w-10 text-slate-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">Sign in to view your AI Risk Dashboard</h2>
+          <p className="text-slate-500 mb-8 max-w-md mx-auto">Access your portfolio risk assessments, governance analytics, and compliance insights.</p>
+          <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Lock className="h-4 w-4 mr-2" /> Sign In
+          </Button>
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">Sign in to view your AI Risk Dashboard</h2>
-        <p className="text-slate-500 mb-8 max-w-md mx-auto">Access your portfolio risk assessments, governance analytics, and compliance insights.</p>
-        <Button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Lock className="h-4 w-4 mr-2" /> Sign In
-        </Button>
-      </div>
-    );
+      );
+    }
   }
 
   const total = assessments.length;
@@ -200,8 +218,18 @@ export default function ExecutiveDashboard() {
     );
   }
 
+  const isDemo = isDemoMode() && !isAuthenticated;
+
   return (
     <div className="bg-slate-50 min-h-screen">
+      {isDemo && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+            <p className="text-sm text-amber-800"><span className="font-semibold">Demo Mode: Example AI Risk Dashboard</span> — This is sample data. <Link to="/RiskAssessment" className="underline font-semibold hover:text-amber-900">Try the assessment</Link> or <button onClick={() => base44.auth.redirectToLogin(window.location.pathname)} className="underline font-semibold hover:text-amber-900">sign in</button> to analyze your own systems.</p>
+          </div>
+        </div>
+      )}
       {/* Page Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
