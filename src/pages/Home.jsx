@@ -76,8 +76,11 @@ export default function Home() {
                 AI Risk Navigator
                 <span className="block text-blue-400">for Healthcare</span>
               </h1>
-              <p className="text-lg text-slate-300 mb-8 max-w-xl leading-relaxed">
-                Identify, measure, and manage AI risks using leading healthcare and,<br/>cybersecurity frameworks, including governance standards such as,<br/><span className="text-white font-semibold">HIPAA</span>, <span className="text-white font-semibold">NIST CSF 2.0</span>, <span className="text-white font-semibold">NIST RMF</span>, <span className="text-white font-semibold">ISO 27005</span>, <span className="text-white font-semibold">ISO/IEC 42001</span>, and <span className="text-white font-semibold">GDPR</span>
+              <p className="text-xl md:text-2xl text-slate-200 font-medium leading-snug mb-3 max-w-xl">
+                Identify, measure, and manage AI risks using leading healthcare and cybersecurity frameworks
+              </p>
+              <p className="text-sm text-slate-400 mb-8 tracking-wide">
+                HIPAA&nbsp;&nbsp;•&nbsp;&nbsp;GDPR&nbsp;&nbsp;•&nbsp;&nbsp;NIST CSF 2.0&nbsp;&nbsp;•&nbsp;&nbsp;NIST RMF&nbsp;&nbsp;•&nbsp;&nbsp;ISO 27005&nbsp;&nbsp;•&nbsp;&nbsp;ISO/IEC 42001
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/RiskAssessment">
