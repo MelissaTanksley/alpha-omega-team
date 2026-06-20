@@ -28,6 +28,7 @@ export default function GRCReport() {
     rmf_controls: true,
     iso42001: true,
     hicp: true,
+    threatmodel: true,
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -627,6 +628,83 @@ export default function GRCReport() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
+        {/* THREAT MODELING */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('threatmodel')}>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">🎯</span> Threat Modeling Approach
+                <Badge className="bg-slate-100 text-slate-600 text-xs ml-1">Supporting Technical Analysis</Badge>
+              </CardTitle>
+              {expandedSections.threatmodel ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </div>
+          </CardHeader>
+          {expandedSections.threatmodel && (
+            <CardContent className="space-y-5">
+              <p className="text-xs text-slate-500 leading-relaxed">
+                This platform incorporates structured threat modeling techniques, including <strong className="text-slate-700">STRIDE</strong> and <strong className="text-slate-700">MITRE ATT&CK</strong>, to identify and categorize potential risks affecting AI systems. STRIDE supports identification of system-level threats (e.g., spoofing, tampering), while MITRE ATT&CK provides insight into adversary tactics and techniques. These methods are used as supporting technical analysis tools — not compliance frameworks.
+              </p>
+
+              {/* STRIDE */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-bold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-full">STRIDE</span>
+                  <p className="text-xs text-slate-500">System-level threat categorization applied to {assessment.system_name}</p>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {[
+                    { letter: 'S', label: 'Spoofing', color: 'bg-indigo-50 border-indigo-200 text-indigo-800', desc: 'Attackers impersonate authorized users or systems to access the AI model or ePHI.', mitigation: 'MFA, strong authentication, certificate-based identity' },
+                    { letter: 'T', label: 'Tampering', color: 'bg-red-50 border-red-200 text-red-800', desc: 'Unauthorized modification of training data, model weights, or AI outputs.', mitigation: 'Data integrity checks, audit logging, immutable model artifacts' },
+                    { letter: 'R', label: 'Repudiation', color: 'bg-orange-50 border-orange-200 text-orange-800', desc: 'AI-generated decisions cannot be attributed or audited after the fact.', mitigation: 'Comprehensive audit trails, non-repudiation logging' },
+                    { letter: 'I', label: 'Information Disclosure', color: 'bg-amber-50 border-amber-200 text-amber-800', desc: 'ePHI or proprietary model data exposed through insecure APIs or outputs.', mitigation: 'Encryption, DLP controls, output sanitization' },
+                    { letter: 'D', label: 'Denial of Service', color: 'bg-rose-50 border-rose-200 text-rose-800', desc: 'AI system overwhelmed or disabled, disrupting clinical workflows.', mitigation: 'Rate limiting, redundancy, incident response planning' },
+                    { letter: 'E', label: 'Elevation of Privilege', color: 'bg-purple-50 border-purple-200 text-purple-800', desc: 'Attacker gains elevated access to AI system or clinical data stores.', mitigation: 'Least privilege, RBAC, privileged access management (PAM)' },
+                  ].map((item) => (
+                    <div key={item.letter} className={`border rounded-lg p-3 ${item.color}`}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="w-6 h-6 rounded-full bg-white/70 flex items-center justify-center text-xs font-black flex-shrink-0">{item.letter}</span>
+                        <span className="text-sm font-bold">{item.label}</span>
+                      </div>
+                      <p className="text-xs opacity-80 mb-1.5 leading-relaxed">{item.desc}</p>
+                      <p className="text-xs font-semibold opacity-70">↳ {item.mitigation}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* MITRE ATT&CK */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-full">MITRE ATT&CK</span>
+                  <p className="text-xs text-slate-500">Adversary tactics relevant to healthcare AI environments</p>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { tactic: 'Initial Access', id: 'TA0001', desc: 'Phishing emails targeting clinical staff to gain entry into the AI system environment.', technique: 'Spearphishing Attachment (T1566.001)' },
+                    { tactic: 'Credential Access', id: 'TA0006', desc: 'Credential dumping or brute-force against accounts with access to ePHI or model infrastructure.', technique: 'Brute Force (T1110), OS Credential Dumping (T1003)' },
+                    { tactic: 'Exfiltration', id: 'TA0010', desc: 'Sensitive patient data or AI model artifacts exfiltrated via API or network channels.', technique: 'Exfiltration Over C2 Channel (T1041)' },
+                    { tactic: 'Impact', id: 'TA0040', desc: 'Ransomware encrypts AI system data, disrupting clinical operations and patient care.', technique: 'Data Encrypted for Impact (T1486)' },
+                  ].map((item) => (
+                    <div key={item.tactic} className="flex gap-3 items-start bg-slate-50 border border-slate-200 rounded-lg p-3">
+                      <div className="flex-shrink-0 text-right">
+                        <span className="text-xs font-bold bg-slate-800 text-white px-1.5 py-0.5 rounded">{item.id}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-sm font-bold text-slate-800">{item.tactic}</span>
+                          <span className="text-xs text-slate-400 font-mono">{item.technique}</span>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-400 italic mt-2">MITRE ATT&CK® is a registered trademark of The MITRE Corporation. Technique references are for informational threat analysis purposes only.</p>
               </div>
             </CardContent>
           )}
