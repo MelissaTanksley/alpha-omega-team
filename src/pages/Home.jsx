@@ -97,7 +97,7 @@ export default function Home() {
                 <span className="font-semibold text-slate-300">Privacy Note:</span> Designed with data privacy in mind. Analysis is<br/>session-based and not used to train models or shared between users.
               </p>
               <p className="text-xs text-slate-500 mt-3 leading-relaxed">
-                This platform is informed by AI governance principles emphasizing risk identification, accountability, and regulatory alignment.
+                This platform is informed by AI governance principles<br/>emphasizing risk identification, accountability, and regulatory alignment.
               </p>
               <div className="mt-5 pt-5 border-t border-slate-700/60">
                 <p className="text-xs text-slate-500 mb-2">Interested in a deeper walkthrough?</p>
