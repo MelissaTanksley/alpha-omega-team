@@ -77,7 +77,7 @@ export default function Home() {
                 <span className="block text-blue-400">for Healthcare</span>
               </h1>
               <p className="text-lg text-slate-300 mb-8 max-w-xl leading-relaxed">
-                Identify, measure, and manage AI risks using leading healthcare,<br/>cybersecurity, and AI governance frameworks, including <span className="text-white font-semibold">HIPAA</span>, <span className="text-white font-semibold">ISO 27005</span>, <span className="text-white font-semibold">GDPR</span>,<br/><span className="text-white font-semibold">NIST CSF 2.0</span>, <span className="text-white font-semibold">NIST RMF</span>, and <span className="text-white font-semibold">ISO/IEC 42001</span>
+                Identify, measure, and manage AI risks using leading healthcare,<br/>cybersecurity, and AI governance frameworks, including <span className="text-white font-semibold">HIPAA</span>, <span className="text-white font-semibold">ISO 27005</span>, <span className="text-white font-semibold">GDPR</span>, <span className="text-white font-semibold">NIST CSF 2.0</span>, <span className="text-white font-semibold">NIST RMF</span>, and <span className="text-white font-semibold">ISO/IEC 42001</span>
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/RiskAssessment">
