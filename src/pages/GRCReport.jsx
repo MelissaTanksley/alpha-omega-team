@@ -815,6 +815,28 @@ export default function GRCReport() {
           )}
         </Card>
 
+        {/* SCORING METHODOLOGY */}
+        <Card className="border-slate-200 bg-slate-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-xl">📊</span> Scoring Methodology
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-slate-700 leading-relaxed">
+              Risk scores are generated using a structured model that combines qualitative assessment aligned with <strong>ISO/IEC 27005</strong> and quantitative scoring (0–100 scale) based on likelihood and impact.
+            </p>
+            <p className="text-sm text-slate-700 leading-relaxed">
+              Domain-specific scores (e.g., bias, cybersecurity, patient safety) reflect identified threats, asset sensitivity, and control gaps, producing an overall risk profile aligned with <strong>NIST CSF</strong> and healthcare compliance considerations.
+            </p>
+            <div className="bg-white border border-slate-200 rounded-lg p-3 mt-4">
+              <p className="text-xs text-slate-600">
+                <strong>Score Interpretation:</strong> 0–25 (Low Risk) · 26–50 (Medium Risk) · 51–75 (High Risk) · 76–100 (Critical Risk)
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* CONCLUSION */}
         <Card className={`border-2 ${riskColor}`}>
           <CardHeader>
