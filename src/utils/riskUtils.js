@@ -9,32 +9,40 @@ export const parseAssessmentToRiskRegister = (assessment) => {
   const riskLevel = assessment.risk_level || 'medium';
 
   // Map governance gaps as identified risks
-  const gapRisks = (assessment.governance_gaps || []).map((gap, idx) => ({
-    id: `gap-${idx}`,
-    description: gap,
-    asset: systemName,
-    likelihood: 'Medium',
-    impact: 'High',
-    riskLevel: riskLevel,
-    control: 'Implement corrective action',
-    owner: 'TBD',
-    dueDate: '',
-    status: 'Open'
-  }));
+  const gapRisks = (assessment.governance_gaps || []).map((gap, idx) => {
+    const gapText = typeof gap === 'string' ? gap : (gap?.gap || '');
+    const gapAsset = (typeof gap === 'object' && gap?.affected_asset) ? gap.affected_asset : systemName;
+    return {
+      id: `gap-${idx}`,
+      description: gapText,
+      asset: gapAsset,
+      likelihood: 'Medium',
+      impact: 'High',
+      riskLevel: riskLevel,
+      control: 'Implement corrective action',
+      owner: 'TBD',
+      dueDate: '',
+      status: 'Open'
+    };
+  });
 
   // Map recommendations as action items
-  const recommendationRisks = (assessment.recommendations || []).map((rec, idx) => ({
-    id: `rec-${idx}`,
-    description: rec,
-    asset: systemName,
-    likelihood: 'Medium',
-    impact: 'Medium',
-    riskLevel: riskLevel,
-    control: rec,
-    owner: 'TBD',
-    dueDate: '',
-    status: 'Open'
-  }));
+  const recommendationRisks = (assessment.recommendations || []).map((rec, idx) => {
+    const recText = typeof rec === 'string' ? rec : (rec?.recommendation || '');
+    const recAsset = (typeof rec === 'object' && rec?.affected_asset) ? rec.affected_asset : systemName;
+    return {
+      id: `rec-${idx}`,
+      description: recText,
+      asset: recAsset,
+      likelihood: 'Medium',
+      impact: 'Medium',
+      riskLevel: riskLevel,
+      control: recText,
+      owner: 'TBD',
+      dueDate: '',
+      status: 'Open'
+    };
+  });
 
   return [...gapRisks, ...recommendationRisks];
 };
