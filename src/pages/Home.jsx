@@ -103,7 +103,7 @@ export default function Home() {
             {/* Mock risk score card */}
             <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
               <div className="border-b border-slate-700 px-7 py-4">
-                <p className="text-slate-400 text-xs mb-2.5">Uses a hybrid risk modeling approach:</p>
+                <p className="text-slate-300 text-xs mb-2.5">Uses a hybrid risk modeling approach:</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="text-xs bg-blue-600/20 text-blue-300 border border-blue-500/30 rounded-full px-3 py-1">Qualitative scoring (ISO 27005)</span>
                   <span className="text-xs bg-violet-600/20 text-violet-300 border border-violet-500/30 rounded-full px-3 py-1">Numeric risk scoring (0–100)</span>
@@ -139,7 +139,7 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-5 pt-5 border-t border-slate-700 text-xs text-slate-500">
+                <div className="mt-5 pt-5 border-t border-slate-700 text-xs text-slate-400">
                   ⚠ 3 governance gaps identified · 5 recommendations generated
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-red-50 text-red-700 border border-red-200 text-xs px-3 py-1 rounded-full">The Problem</Badge>
             <h2 className="text-3xl font-bold text-slate-900 mb-4">AI Systems in Healthcare Introduce Risks Not Covered by Traditional Cybersecurity Tools</h2>
-            <p className="text-slate-500 max-w-2xl mx-auto">Standard security frameworks were designed for IT infrastructure — not for AI systems making clinical recommendations and processing protected health information.</p>
+            <p className="text-slate-600 max-w-2xl mx-auto">Standard security frameworks were designed for IT infrastructure — not for AI systems making clinical recommendations and processing protected health information.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -167,7 +167,7 @@ export default function Home() {
                   <item.icon className={`h-6 w-6 ${item.color}`} />
                 </div>
                 <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -180,7 +180,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">The Solution</Badge>
             <h2 className="text-3xl font-bold text-white mb-4">A Structured, Framework-Aligned AI Risk Platform</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">This tool provides everything needed to assess, document,<br />and act on AI risks in healthcare environments.</p>
+            <p className="text-slate-300 max-w-2xl mx-auto">This tool provides everything needed to assess, document,<br />and act on AI risks in healthcare environments.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
@@ -196,7 +196,7 @@ export default function Home() {
                 <div>
                   <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${item.color}`}>{item.sub}</p>
                   <h3 className="text-white font-bold text-base mb-2">{item.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                  <p className="text-slate-300 text-sm leading-relaxed">{item.desc}</p>
                   <p className={`text-xs mt-3 font-medium ${item.color} opacity-80`}>↳ {item.footnote}</p>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function Home() {
             <div className="text-center mb-12">
               <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">Example Workflow</Badge>
               <h2 className="text-3xl font-bold text-slate-900 mb-4">See NIST CSF 2.0 in Action</h2>
-              <p className="text-slate-500 max-w-2xl mx-auto">A complete risk from identification through recovery, mapped to all six NIST functions.</p>
+              <p className="text-slate-600 max-w-2xl mx-auto">A complete risk from identification through recovery, mapped to all six NIST functions.</p>
             </div>
             <NISTExampleCard />
           </div>
@@ -231,7 +231,7 @@ export default function Home() {
             <div className="text-center mb-12">
               <Badge className="mb-4 bg-purple-50 text-purple-700 border border-purple-200 text-xs px-3 py-1 rounded-full">Real-World Example</Badge>
               <h2 className="text-3xl font-bold text-slate-900 mb-4">Asset → Compliance Traceability</h2>
-              <p className="text-slate-500 max-w-2xl mx-auto">Map protected assets to HIPAA safeguard types and NIST CSF functions with detailed justifications.</p>
+              <p className="text-slate-600 max-w-2xl mx-auto">Map protected assets to HIPAA safeguard types and NIST CSF functions with detailed justifications.</p>
             </div>
             <AssetComplianceExample />
           </div>
@@ -244,7 +244,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-slate-200 text-slate-700 border border-slate-300 text-xs px-3 py-1 rounded-full">Who This Is For</Badge>
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Built for Healthcare AI Risk Stakeholders</h2>
-            <p className="text-slate-500 max-w-xl mx-auto">Whether you're delivering assessments to clients, managing internal AI governance, or building compliance programs — this tool is ready to use.</p>
+            <p className="text-slate-600 max-w-xl mx-auto">Whether you're delivering assessments to clients, managing internal AI governance, or building compliance programs — this tool is ready to use.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {useCases.map((item, i) => (
@@ -253,7 +253,7 @@ export default function Home() {
                   <item.icon className={`h-6 w-6 ${item.color}`} />
                 </div>
                 <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
