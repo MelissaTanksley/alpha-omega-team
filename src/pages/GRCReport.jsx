@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File, AlertCircle, Plus, Zap } from 'lucide-react';
+import { Download, FileText, Share2, Printer, ChevronDown, ChevronUp, File, AlertCircle, Plus, Zap, LayoutList, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
@@ -33,6 +33,7 @@ export default function GRCReport() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [demoError, setDemoError] = useState(false);
+  const [viewMode, setViewMode] = useState('executive'); // 'executive' | 'full'
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -207,7 +208,32 @@ export default function GRCReport() {
             <h1 className="text-4xl font-bold text-slate-900 mb-2">GRC Report</h1>
             <p className="text-slate-600">Comprehensive Governance, Risk & Compliance Assessment</p>
           </div>
-          <div className="flex gap-2 print:hidden">
+          <div className="flex flex-wrap gap-2 print:hidden">
+            {/* View mode toggle */}
+            <div className="flex items-center bg-slate-100 rounded-lg p-1 gap-1">
+              <button
+                onClick={() => setViewMode('executive')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewMode === 'executive'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <LayoutList className="h-3.5 w-3.5" />
+                Executive
+              </button>
+              <button
+                onClick={() => setViewMode('full')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewMode === 'full'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                Full Report
+              </button>
+            </div>
             <Button variant="outline" size="sm" onClick={() => {
               const briefContent = `EXECUTIVE BRIEF\n\n${assessment.system_name}\n\nRisk Level: ${riskLevel.toUpperCase()}\nScore: ${assessment.overall_risk_score || 0}/100\n\nTop Risks:\n1. AI-generated errors impacting clinical decision-making\n2. Unauthorized access to ePHI\n3. External threats from vendor dependencies\n\nRecommended Actions:\n- Implement human-in-the-loop validation\n- Strengthen access controls and encryption\n- Deploy monitoring for AI outputs\n\nGenerated: ${new Date().toLocaleDateString()}`;
               const element = document.createElement('a');
@@ -338,6 +364,24 @@ export default function GRCReport() {
             </CardContent>
           )}
         </Card>
+
+        {/* Executive View info banner */}
+        {viewMode === 'executive' && (
+          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+            <p className="text-sm text-blue-800">
+              <span className="font-semibold">Executive View</span> — Showing key findings only.
+            </p>
+            <button
+              onClick={() => setViewMode('full')}
+              className="text-sm font-semibold text-blue-700 hover:text-blue-900 underline underline-offset-2"
+            >
+              View Full Report →
+            </button>
+          </div>
+        )}
+
+        {/* FULL REPORT ONLY SECTIONS */}
+        {viewMode === 'full' && (<>
 
         {/* SYSTEM OVERVIEW */}
         <Card>
@@ -948,6 +992,9 @@ export default function GRCReport() {
           )}
         </Card>
 
+        {/* END FULL REPORT ONLY */}
+        </>)}
+
         {/* RISK REGISTER */}
         <Card>
           <CardHeader>
@@ -960,14 +1007,29 @@ export default function GRCReport() {
           </CardHeader>
           {expandedSections.register && (
             <CardContent>
-              <p className="text-sm text-slate-600 mb-4">
-                The following risks have been automatically identified from this assessment. This register serves as an audit-ready record aligned with healthcare GRC practices.
-              </p>
-              <RiskRegisterTable risks={getRisks()} compact={true} />
+              {viewMode === 'executive' ? (
+                <>
+                  <p className="text-sm text-slate-600 mb-4">Top risks identified from this assessment.</p>
+                  <RiskRegisterTable risks={getRisks().slice(0, 5)} compact={true} />
+                  {getRisks().length > 5 && (
+                    <button onClick={() => setViewMode('full')} className="mt-3 text-sm text-blue-600 hover:underline font-medium">
+                      + {getRisks().length - 5} more risks in Full Report →
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-slate-600 mb-4">
+                    The following risks have been automatically identified from this assessment. This register serves as an audit-ready record aligned with healthcare GRC practices.
+                  </p>
+                  <RiskRegisterTable risks={getRisks()} compact={true} />
+                </>
+              )}
             </CardContent>
           )}
         </Card>
 
+        {viewMode === 'full' && (<>
         {/* SCORING METHODOLOGY */}
         <Card className="border-slate-200 bg-slate-50">
           <CardHeader>
@@ -1025,6 +1087,8 @@ export default function GRCReport() {
             </div>
           </CardContent>
         </Card>
+
+        </>)}
 
         {/* Report Metadata */}
         <Card className="bg-slate-100">
