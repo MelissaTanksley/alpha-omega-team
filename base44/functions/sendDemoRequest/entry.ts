@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     // Notify admin
     await base44.asServiceRole.integrations.Core.SendEmail({
       from_name: 'AI Risk Navigator',
-      to: 'missy.tanksley@gmail.com',
+      to: 'melissa.tanksley@gmail.com',
       subject: `New Demo Request from ${email}`,
       body: `A new demo request was submitted.\n\nRequester email: ${email}\n\nReply directly to: ${email}`
     });

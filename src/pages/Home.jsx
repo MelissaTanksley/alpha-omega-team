@@ -278,7 +278,7 @@ export default function Home() {
             {demoSubmitted ? (
               <div className="text-center py-4">
                 <CheckCircle className="h-10 w-10 text-white mx-auto mb-3" />
-                <p className="text-white font-semibold text-lg">Request received!</p>
+                <p className="text-white font-semibold text-lg">Thank you — your demo request has been submitted.</p>
                 <p className="text-blue-100 text-sm mt-1">We'll be in touch at <span className="font-medium">{demoEmail}</span>.</p>
               </div>
             ) : (
