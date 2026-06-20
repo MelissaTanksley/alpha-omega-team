@@ -27,6 +27,7 @@ export default function GRCReport() {
     rmf: true,
     rmf_controls: true,
     iso42001: true,
+    hicp: true,
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -791,6 +792,80 @@ export default function GRCReport() {
                   </ul>
                 </div>
               ))}
+            </CardContent>
+          )}
+        </Card>
+
+        {/* HHS HICP HEALTHCARE GUIDANCE */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleSection('hicp')}>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">🏥</span> Healthcare Security Practices (HICP)
+                <Badge className="bg-teal-100 text-teal-700 text-xs ml-1">HHS Supporting Guidance</Badge>
+              </CardTitle>
+              {expandedSections.hicp ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </div>
+          </CardHeader>
+          {expandedSections.hicp && (
+            <CardContent className="space-y-3">
+              <p className="text-xs text-slate-500 mb-2">
+                The HHS Health Industry Cybersecurity Practices (HICP) publication provides threat-based, real-world cybersecurity guidance specifically designed for healthcare organizations. HICP complements formal governance frameworks by aligning controls to the most prevalent healthcare threat scenarios.
+              </p>
+              {[
+                {
+                  threat: 'Phishing & Social Engineering',
+                  color: 'bg-amber-50 border-amber-200',
+                  badge: 'bg-amber-100 text-amber-800',
+                  description: 'Healthcare staff with access to AI systems and ePHI are prime targets for credential phishing and social engineering.',
+                  controls: [
+                    'Deploy phishing-resistant MFA for all users accessing the AI system',
+                    'Conduct regular security awareness training with phishing simulations',
+                    'Implement email filtering and anti-spoofing controls (SPF, DKIM, DMARC)',
+                  ]
+                },
+                {
+                  threat: 'Ransomware',
+                  color: 'bg-red-50 border-red-200',
+                  badge: 'bg-red-100 text-red-800',
+                  description: 'AI infrastructure, model repositories, and clinical data stores are high-value targets for ransomware attacks that can disrupt patient care.',
+                  controls: [
+                    'Maintain offline, tested backups of AI models, training data, and ePHI',
+                    'Segment the AI system network from general clinical and administrative networks',
+                    'Develop and rehearse a ransomware-specific incident response playbook',
+                  ]
+                },
+                {
+                  threat: 'Data Loss & ePHI Exposure',
+                  color: 'bg-orange-50 border-orange-200',
+                  badge: 'bg-orange-100 text-orange-800',
+                  description: 'AI systems that process or generate outputs containing ePHI risk unauthorized data exposure through misconfigured access, insecure APIs, or inadequate logging.',
+                  controls: [
+                    'Enforce data loss prevention (DLP) controls on AI system outputs and exports',
+                    'Encrypt ePHI at rest and in transit across all AI system components',
+                    'Implement comprehensive audit logging for access to ePHI processed by AI',
+                  ]
+                },
+              ].map((item, i) => (
+                <div key={i} className={`border rounded-lg p-4 ${item.color}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${item.badge}`}>HICP Threat</span>
+                    <h4 className="text-sm font-bold text-slate-800">{item.threat}</h4>
+                  </div>
+                  <p className="text-xs text-slate-600 italic mb-2">{item.description}</p>
+                  <ul className="space-y-1">
+                    {item.controls.map((c, ci) => (
+                      <li key={ci} className="text-xs text-slate-700 flex gap-2">
+                        <span className="font-bold text-slate-400 flex-shrink-0">•</span>
+                        <span>{c}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <p className="text-xs text-slate-400 italic pt-1">
+                HICP is published by the U.S. Department of Health and Human Services (HHS) as voluntary, threat-based guidance. It is not a regulatory requirement but is recognized as a safe harbor consideration under HIPAA enforcement.
+              </p>
             </CardContent>
           )}
         </Card>

@@ -690,6 +690,32 @@ Be specific, asset-aware, and realistic for healthcare.`;
           </CardContent>
         </Card>
 
+        {/* HHS HICP Healthcare Guidance */}
+        <Card className="mb-6 border-l-4 border-l-teal-600">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 bg-teal-600 text-white text-xs font-bold rounded-full">+</span>
+              Healthcare Security Practices (HICP)
+              <span className="text-xs font-normal text-teal-600 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">HHS Supporting Guidance</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-slate-500 mb-3">The HHS Health Industry Cybersecurity Practices (HICP) publication provides threat-based, real-world guidance for healthcare organizations. The following HICP threat categories are relevant to this assessment.</p>
+            <div className="space-y-2 text-xs">
+              {[
+                { threat: 'Phishing Attacks', desc: 'Staff with access to the AI system and ePHI are targets for credential phishing. Implement phishing-resistant MFA and security awareness training.' },
+                { threat: 'Ransomware', desc: 'AI infrastructure and clinical data stores are high-value ransomware targets. Maintain offline backups, network segmentation, and incident response playbooks.' },
+                { threat: 'Data Loss & Exposure', desc: 'AI systems processing ePHI risk unauthorized data exposure. Enforce data loss prevention (DLP), encryption at rest/transit, and access logging.' },
+              ].map((item, i) => (
+                <div key={i} className="bg-teal-50 border border-teal-100 rounded-lg p-3">
+                  <p className="font-semibold text-teal-800 mb-1">▸ {item.threat}</p>
+                  <p className="text-slate-600">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Recommendations */}
         {results.recommendations?.length > 0 && (
           <Card className="mb-6">
