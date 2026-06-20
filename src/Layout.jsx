@@ -148,7 +148,7 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-slate-300 text-xs">© 2026 AI Risk Navigator for Healthcare</p>
           </div>
           <div className="pt-4">
-            <p className="text-slate-400 text-xs text-center">Risk scoring is based on structured GRC methodologies aligned with ISO 27005, NIST CSF, and healthcare compliance standards.</p>
+            <p className="text-slate-400 text-xs text-center">Risk scoring is based on structured GRC methodologies aligned with ISO 27005, NIST CSF, and healthcare and AI governance standards.</p>
           </div>
         </div>
       </footer>
