@@ -29,22 +29,27 @@ export default function GRCReport() {
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [demoError, setDemoError] = useState(false);
 
   useEffect(() => {
-    loadAssessments();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === '1') {
+      // Demo mode: load instantly from static data, no API calls
+      try {
+        if (!DEMO_ASSESSMENT || !DEMO_ASSESSMENT.system_name) throw new Error('Invalid demo data');
+        setAssessments([DEMO_ASSESSMENT]);
+        setSelectedAssessment(DEMO_ASSESSMENT);
+      } catch (e) {
+        setDemoError(true);
+      }
+      setIsLoading(false);
+    } else {
+      loadAssessments();
+    }
   }, []);
 
   const loadAssessments = async () => {
     try {
-      // Check for demo parameter in URL
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('demo') === '1') {
-        setAssessments([DEMO_ASSESSMENT]);
-        setSelectedAssessment(DEMO_ASSESSMENT);
-        setIsLoading(false);
-        return;
-      }
-
       const isAuth = await base44.auth.isAuthenticated();
       if (!isAuth) {
         setAssessments([]);
@@ -52,7 +57,6 @@ export default function GRCReport() {
       } else {
         const data = await base44.entities.AIRiskAssessment.list('-updated_date', 10);
         setAssessments(data);
-        // Do not auto-select - let user choose or run new assessment
         setSelectedAssessment(null);
       }
     } catch (error) {
@@ -88,9 +92,25 @@ export default function GRCReport() {
   const nistFunctions = ['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'];
 
   if (isLoading) {
+    const params = new URLSearchParams(window.location.search);
+    const isDemo = params.get('demo') === '1';
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        <p className="text-slate-500 text-sm">{isDemo ? 'Loading Example Report...' : 'Loading...'}</p>
+      </div>
+    );
+  }
+
+  if (demoError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+        <AlertCircle className="h-12 w-12 text-red-400" />
+        <h2 className="text-xl font-bold text-slate-900">Unable to load demo</h2>
+        <p className="text-slate-500 text-sm">Please try again.</p>
+        <Link to="/">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">Return Home</Button>
+        </Link>
       </div>
     );
   }
