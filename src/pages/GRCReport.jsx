@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import RiskRegisterTable from '@/components/RiskRegisterTable';
+import RiskSummaryDashboard from '@/components/RiskSummaryDashboard';
 import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
@@ -241,6 +242,9 @@ export default function GRCReport() {
             </CardContent>
           </Card>
         )}
+
+        {/* RISK SUMMARY DASHBOARD */}
+        <RiskSummaryDashboard assessment={assessment} />
 
         {/* EXECUTIVE SUMMARY */}
         <Card className={`border-2 ${riskColor}`}>
