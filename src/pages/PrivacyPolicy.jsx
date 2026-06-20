@@ -161,7 +161,7 @@ const sections = [
 ];
 
 export default function PrivacyPolicy() {
-  useEffect(() => { document.title = 'Privacy Policy | AI Risk Navigator'; }, []);
+  useEffect(() => { document.title = 'Privacy Policy | AI Risk Navigator for Healthcare'; }, []);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">

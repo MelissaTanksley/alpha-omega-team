@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, AlertTriangle, Shield, TrendingUp } from 'lucide-react';
 
 export default function ExecutiveReportView() {
-  const [assessments, setAssessments] = useState([]);
-  const [selectedAssessment, setSelectedAssessment] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+   useEffect(() => { document.title = 'Executive Report | AI Risk Navigator for Healthcare'; }, []);
+   const [assessments, setAssessments] = useState([]);
+   const [selectedAssessment, setSelectedAssessment] = useState(null);
+   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadAssessments();
-  }, []);
+   useEffect(() => {
+     loadAssessments();
+   }, []);
 
   const loadAssessments = async () => {
     try {

@@ -11,7 +11,7 @@ import RiskRegisterTable from '@/components/RiskRegisterTable';
 import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 
 export default function RiskRegister() {
-  useEffect(() => { document.title = 'Risk Register | AI Risk Navigator'; }, []);
+  useEffect(() => { document.title = 'Risk Register | AI Risk Navigator for Healthcare'; }, []);
   const [generatedRisks, setGeneratedRisks] = useState([]);
   const [manualRisks, setManualRisks] = useState([]);
   const [assessments, setAssessments] = useState([]);
