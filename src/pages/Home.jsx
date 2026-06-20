@@ -214,20 +214,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── EXAMPLE WORKFLOW TEASER ── */}
+      {/* ── TWO PATHS TEASER ── */}
       <section className="py-16 bg-white border-y border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">Example Workflow</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">See the Framework in Action</h2>
-          <p className="text-slate-600 max-w-2xl mx-auto mb-8">
-            See how AI risks are identified, scored, and mapped to compliance frameworks like HIPAA and NIST CSF — from asset identification all the way through recovery.
-          </p>
-          <Link to="/ExampleWorkflow">
-            <Button size="lg" className="bg-slate-900 hover:bg-slate-700 text-white px-8 h-12 text-base font-semibold">
-              View Example
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-slate-100 text-slate-700 border border-slate-200 text-xs px-3 py-1 rounded-full">Explore the Platform</Badge>
+            <h2 className="text-3xl font-bold text-slate-900 mb-3">Two Ways to Get Started</h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-sm">
+              See how AI risks are identified, scored, and mapped to compliance frameworks like HIPAA and NIST CSF — or jump straight into a live demo report.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Demo path */}
+            <div className="border border-teal-200 bg-teal-50 rounded-2xl p-7 flex flex-col gap-4">
+              <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-teal-700 mb-1">Try Demo</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">See the Results</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Jump into a pre-loaded risk report — risk scores, executive summary, top risks, and the risk register. No setup required.</p>
+              </div>
+              <Link to="/GRCReport?demo=1" className="mt-auto">
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full">
+                  <Zap className="mr-2 h-4 w-4" />
+                  View Demo Report
+                </Button>
+              </Link>
+            </div>
+            {/* Workflow path */}
+            <div className="border border-blue-200 bg-blue-50 rounded-2xl p-7 flex flex-col gap-4">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                <BarChart3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-700 mb-1">Example Workflow</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Understand How It Works</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Walk through how AI risks are identified, scored, and mapped to HIPAA safeguards and NIST CSF functions — step by step.</p>
+              </div>
+              <Link to="/ExampleWorkflow" className="mt-auto">
+                <Button variant="outline" className="border-blue-600 text-blue-700 hover:bg-blue-100 w-full">
+                  View Example Workflow
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

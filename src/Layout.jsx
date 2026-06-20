@@ -30,6 +30,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'GRC Report', path: '/GRCReport', page: 'GRCReport' },
     { name: 'Risk Register', path: '/RiskRegister', page: 'RiskRegister' },
     { name: 'Checklists', path: '/ComplianceChecklists', page: 'ComplianceChecklists' },
+    { name: 'Example Workflow', path: '/ExampleWorkflow', page: 'ExampleWorkflow' },
   ];
 
   return (

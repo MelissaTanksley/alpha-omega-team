@@ -21,24 +21,26 @@ export default function ExampleWorkflow() {
           <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
             Example AI Risk Workflow
           </Badge>
-          <h1 className="text-4xl font-bold mb-3">See How AI Risks Are Identified & Mapped</h1>
+          <h1 className="text-4xl font-bold mb-3">Understand How the System Works</h1>
           <p className="text-slate-300 text-lg max-w-2xl">
-            A complete walkthrough of how AI risks are detected, scored, and mapped to compliance frameworks like HIPAA and NIST CSF 2.0 — from identification through recovery.
+            A step-by-step walkthrough of how AI risks are identified, scored, and mapped to HIPAA safeguards and NIST CSF functions — from asset identification through recovery.
           </p>
-          <div className="flex flex-wrap gap-3 mt-6">
+          <div className="flex flex-wrap items-center gap-3 mt-6">
             <Link to="/RiskAssessment">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 Run Your Own Assessment
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
+            <span className="text-slate-500 text-sm">or</span>
             <Link to="/GRCReport?demo=1">
               <Button variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300">
                 <Zap className="mr-2 h-4 w-4" />
-                View Demo Report
+                Skip to Demo Report
               </Button>
             </Link>
           </div>
+          <p className="text-slate-500 text-xs mt-3">Demo = see results instantly · Workflow = understand the methodology</p>
         </div>
       </div>
 
