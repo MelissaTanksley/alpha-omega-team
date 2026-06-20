@@ -218,8 +218,8 @@ export default function TermsOfUse() {
         </div>
         <p className="text-sm text-slate-600 mb-1">For questions regarding these Terms, contact:</p>
         <p className="text-sm font-semibold text-slate-800">Melissa Tanksley</p>
-        <a href="mailto:missy.tanksley@gmail.com" className="text-sm text-teal-600 hover:underline">
-          missy.tanksley@gmail.com
+        <a href="mailto:melissa.tanksley@gmail.com" className="text-sm text-teal-600 hover:underline">
+          melissa.tanksley@gmail.com
         </a>
       </div>
 

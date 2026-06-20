@@ -187,7 +187,7 @@ export default function PrivacyPolicy() {
           </h2>
           <p className="mb-2">For questions regarding this Privacy Policy, please contact:</p>
           <p className="font-medium text-slate-900">Melissa Tanksley</p>
-          <a href="mailto:missy.tanksley@gmail.com" className="text-blue-600 hover:underline">missy.tanksley@gmail.com</a>
+          <a href="mailto:melissa.tanksley@gmail.com" className="text-blue-600 hover:underline">melissa.tanksley@gmail.com</a>
         </section>
       </div>
     </div>
