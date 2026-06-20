@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { Shield, Lock, Brain, CheckCircle } from 'lucide-react';
+import { Shield, Lock, Brain, CheckCircle, ShieldAlert } from 'lucide-react';
 import FrameworkChecklist from '@/components/FrameworkChecklist';
 
 const FRAMEWORKS = {
@@ -97,6 +97,82 @@ const FRAMEWORKS = {
       }
     ]
   },
+  hicp: {
+    label: 'Healthcare Cybersecurity Practices',
+    icon: ShieldAlert,
+    color: 'text-teal-600',
+    bg: 'bg-teal-50',
+    border: 'border-teal-200',
+    badge: 'bg-teal-100 text-teal-700',
+    barColor: 'bg-teal-500',
+    activeBg: 'bg-teal-600',
+    ringColor: 'ring-teal-300',
+    items: [
+      {
+        name: 'HHS HICP',
+        sections: [
+          {
+            title: 'Email & Phishing Protection',
+            items: [
+              'Deploy email filtering with anti-phishing and anti-spam controls',
+              'Enable DMARC, DKIM, and SPF to prevent email spoofing',
+              'Implement phishing-resistant MFA for all user accounts',
+              'Conduct regular phishing simulation exercises for staff',
+              'Establish a process for reporting and analyzing suspicious emails',
+              'Block malicious URLs and attachments at the email gateway',
+            ]
+          },
+          {
+            title: 'Ransomware Protection',
+            items: [
+              'Maintain offline, tested backups of critical systems and clinical data',
+              'Segment clinical and AI system networks to limit lateral movement',
+              'Disable unnecessary services and ports on all systems',
+              'Deploy endpoint detection and response (EDR) on all devices',
+              'Develop and rehearse a ransomware-specific incident response playbook',
+              'Patch operating systems and software within defined SLA windows',
+              'Restrict administrative privileges and use dedicated admin accounts',
+            ]
+          },
+          {
+            title: 'Data Protection',
+            items: [
+              'Encrypt ePHI and sensitive data at rest and in transit',
+              'Implement data loss prevention (DLP) controls on endpoints and email',
+              'Define and enforce data retention and disposal policies',
+              'Classify data by sensitivity and apply handling rules accordingly',
+              'Restrict removable media use on systems that process ePHI',
+              'Monitor and log access to sensitive data repositories',
+            ]
+          },
+          {
+            title: 'Network & System Security',
+            items: [
+              'Maintain a current inventory of all hardware and software assets',
+              'Deploy next-generation firewall with intrusion prevention (IPS)',
+              'Implement network segmentation between clinical, administrative, and AI systems',
+              'Disable or restrict remote desktop protocol (RDP) where not required',
+              'Conduct regular vulnerability scans and remediate critical findings',
+              'Perform annual penetration testing on internet-facing and critical systems',
+              'Monitor network traffic for anomalies and unauthorized connections',
+            ]
+          },
+          {
+            title: 'Access Management',
+            items: [
+              'Enforce the principle of least privilege for all user accounts',
+              'Require multi-factor authentication (MFA) for remote access and privileged accounts',
+              'Review and recertify user access rights at least quarterly',
+              'Disable or remove inactive accounts within 30 days',
+              'Use privileged access management (PAM) for administrative accounts',
+              'Implement single sign-on (SSO) with centralized identity management',
+              'Log and alert on failed login attempts and privilege escalation events',
+            ]
+          },
+        ]
+      }
+    ]
+  },
   ai: {
     label: 'AI Governance & Safety',
     icon: Brain,
@@ -173,8 +249,13 @@ function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) 
         <div className={`w-10 h-10 ${cat.bg} rounded-xl flex items-center justify-center`}>
           <Icon className={`h-5 w-5 ${cat.color}`} />
         </div>
-        <div>
-          <h2 className="font-bold text-slate-900 text-lg">{cat.label}</h2>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="font-bold text-slate-900 text-lg">{cat.label}</h2>
+            {categoryKey === 'hicp' && (
+              <span className="text-xs font-medium bg-teal-100 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full">HHS Supporting Guidance · Not a Regulatory Requirement</span>
+            )}
+          </div>
           <div className="flex gap-2 mt-1 flex-wrap">
             {cat.items.map(f => (
               <Badge key={f.name} className={`${cat.badge} text-xs px-2 py-0.5`}>{f.name}</Badge>
@@ -182,6 +263,11 @@ function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) 
           </div>
         </div>
       </div>
+      {categoryKey === 'hicp' && (
+        <p className="text-xs text-slate-500 bg-teal-50 border border-teal-100 rounded-lg p-3 mb-5">
+          These threat-based practices are drawn from the HHS Health Industry Cybersecurity Practices (HICP) publication. They complement formal compliance frameworks by focusing on real-world threat mitigation specific to healthcare environments.
+        </p>
+      )}
       {cat.items.map(framework => (
         <FrameworkChecklist key={framework.name} framework={framework} checked={checked} onToggle={onToggle} notes={notes} onNoteChange={onNoteChange} />
       ))}
@@ -202,16 +288,18 @@ export default function ComplianceChecklists() {
     privacy: getCategoryStats('privacy', checked),
     cyber: getCategoryStats('cyber', checked),
     ai: getCategoryStats('ai', checked),
+    hicp: getCategoryStats('hicp', checked),
   }), [checked]);
 
-  const overallDone = stats.privacy.done + stats.cyber.done + stats.ai.done;
-  const overallTotal = stats.privacy.total + stats.cyber.total + stats.ai.total;
+  const overallDone = stats.privacy.done + stats.cyber.done + stats.ai.done + stats.hicp.done;
+  const overallTotal = stats.privacy.total + stats.cyber.total + stats.ai.total + stats.hicp.total;
   const overallPct = overallTotal ? Math.round((overallDone / overallTotal) * 100) : 0;
 
   const categories = [
     { key: 'privacy', label: 'Healthcare Privacy & Security', icon: Shield, color: 'text-blue-600', activeBg: 'bg-blue-600', barColor: 'bg-blue-500', border: 'border-blue-200' },
     { key: 'cyber', label: 'Cybersecurity & Risk Management', icon: Lock, color: 'text-violet-600', activeBg: 'bg-violet-600', barColor: 'bg-violet-500', border: 'border-violet-200' },
     { key: 'ai', label: 'AI Governance & Safety', icon: Brain, color: 'text-emerald-600', activeBg: 'bg-emerald-600', barColor: 'bg-emerald-500', border: 'border-emerald-200' },
+    { key: 'hicp', label: 'Healthcare Cybersecurity Practices', icon: ShieldAlert, color: 'text-teal-600', activeBg: 'bg-teal-600', barColor: 'bg-teal-500', border: 'border-teal-200' },
   ];
 
   return (
@@ -229,7 +317,7 @@ export default function ComplianceChecklists() {
         </div>
         <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 via-violet-500 to-emerald-500 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-blue-500 via-violet-500 via-emerald-500 to-teal-500 rounded-full transition-all duration-500"
             style={{ width: `${overallPct}%` }}
           />
         </div>
@@ -241,7 +329,7 @@ export default function ComplianceChecklists() {
       </div>
 
       {/* Category selector cards with progress */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {categories.map(cat => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.key;
