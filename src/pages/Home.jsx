@@ -4,8 +4,6 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, BarChart3, CheckCircle, ArrowRight, Brain, Activity, Target, Zap, AlertTriangle, Building2, Users, FileText, Mail, Download } from 'lucide-react';
-import NISTExampleCard from '@/components/NISTExampleCard';
-import AssetComplianceExample from '@/components/AssetComplianceExample';
 import InstallPrompt from '@/components/InstallPrompt';
 
 const mockScores = [
@@ -216,28 +214,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── EXAMPLE WORKFLOWS ── */}
-      <section className="py-20 bg-white border-y border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* NIST Example */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">Example Workflow</Badge>
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">See NIST CSF 2.0 in Action</h2>
-              <p className="text-slate-600 max-w-2xl mx-auto">A complete risk from identification through recovery, mapped to all six NIST functions.</p>
-            </div>
-            <NISTExampleCard />
-          </div>
-
-          {/* Asset Compliance Example */}
-          <div>
-            <div className="text-center mb-12">
-              <Badge className="mb-4 bg-purple-50 text-purple-700 border border-purple-200 text-xs px-3 py-1 rounded-full">Real-World Example</Badge>
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">Asset → Compliance Traceability</h2>
-              <p className="text-slate-600 max-w-2xl mx-auto">Map protected assets to HIPAA safeguard types and NIST CSF functions with detailed justifications.</p>
-            </div>
-            <AssetComplianceExample />
-          </div>
+      {/* ── EXAMPLE WORKFLOW TEASER ── */}
+      <section className="py-16 bg-white border-y border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">Example Workflow</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">See the Framework in Action</h2>
+          <p className="text-slate-600 max-w-2xl mx-auto mb-8">
+            See how AI risks are identified, scored, and mapped to compliance frameworks like HIPAA and NIST CSF — from asset identification all the way through recovery.
+          </p>
+          <Link to="/ExampleWorkflow">
+            <Button size="lg" className="bg-slate-900 hover:bg-slate-700 text-white px-8 h-12 text-base font-semibold">
+              View Example
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </section>
 

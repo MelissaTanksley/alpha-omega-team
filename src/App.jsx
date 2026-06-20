@@ -12,6 +12,7 @@ import ExecutiveReportView from './pages/ExecutiveReportView';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import RiskRegister from './pages/RiskRegister';
+import ExampleWorkflow from './pages/ExampleWorkflow';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -86,6 +87,11 @@ const AuthenticatedApp = () => {
       <Route path="/TermsOfUse" element={
         <LayoutWrapper currentPageName="TermsOfUse">
           <TermsOfUse />
+        </LayoutWrapper>
+      } />
+      <Route path="/ExampleWorkflow" element={
+        <LayoutWrapper currentPageName="ExampleWorkflow">
+          <ExampleWorkflow />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
