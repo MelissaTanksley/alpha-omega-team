@@ -215,10 +215,6 @@ export default function GRCReport() {
               <File className="h-4 w-4" />
               Download Executive Brief
             </Button>
-            <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-2">
-              <Printer className="h-4 w-4" />
-              Print
-            </Button>
             <Button variant="outline" size="sm" onClick={() => { try { window.print(); } catch(e) { alert('Use Print (Ctrl+P / Cmd+P) to save this report as PDF'); } }} className="gap-2 print:hidden">
               <Download className="h-4 w-4" />
               Export / Print PDF
