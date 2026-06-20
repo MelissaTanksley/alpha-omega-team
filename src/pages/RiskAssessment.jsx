@@ -214,7 +214,7 @@ function exportToPDF(formData, results) {
 }
 
 export default function RiskAssessment() {
-  useEffect(() => { document.title = 'Assess AI System | AI Risk Navigator'; }, []);
+  useEffect(() => { document.title = 'Risk Assessment | AI Risk Navigator for Healthcare'; }, []);
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
