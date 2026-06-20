@@ -33,7 +33,7 @@ export default function ExampleWorkflow() {
               </Button>
             </Link>
             <Link to="/GRCReport?demo=1">
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white">
+              <Button variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300">
                 <Zap className="mr-2 h-4 w-4" />
                 View Demo Report
               </Button>
