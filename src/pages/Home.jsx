@@ -77,7 +77,7 @@ export default function Home() {
                 <span className="block text-blue-400">for Healthcare</span>
               </h1>
               <p className="text-xl md:text-2xl text-slate-200 font-medium leading-snug mb-3 max-w-xl">
-                Identify, measure, and manage AI risks using leading healthcare and cybersecurity frameworks
+                Identify, measure, and manage AI risks using<br />leading healthcare and cybersecurity frameworks
               </p>
               <p className="text-sm text-slate-400 mb-8 tracking-wide">
                 HIPAA&nbsp;&nbsp;•&nbsp;&nbsp;GDPR&nbsp;&nbsp;•&nbsp;&nbsp;NIST CSF 2.0&nbsp;&nbsp;•&nbsp;&nbsp;NIST RMF&nbsp;&nbsp;•&nbsp;&nbsp;ISO 27005&nbsp;&nbsp;•&nbsp;&nbsp;ISO/IEC 42001
