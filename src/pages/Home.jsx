@@ -97,12 +97,7 @@ export default function Home() {
                 <span className="font-semibold text-slate-300">Privacy Note:</span> Designed with data privacy in mind. Analysis is<br/>session-based and not used to train models or shared between users.
               </p>
 
-              <div className="mt-5 pt-5 border-t border-slate-700/60">
-                <p className="text-xs text-slate-500 mb-2">Interested in a deeper walkthrough?</p>
-                <a href="#request-demo" className="text-sm text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors">
-                  Request a guided demo →
-                </a>
-              </div>
+
             </div>
 
             {/* Mock risk score card */}
