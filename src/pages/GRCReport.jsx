@@ -204,7 +204,7 @@ export default function GRCReport() {
             <h1 className="text-4xl font-bold text-slate-900 mb-2">GRC Report</h1>
             <p className="text-slate-600">Comprehensive Governance, Risk & Compliance Assessment</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 print:hidden">
             <Button variant="outline" size="sm" onClick={() => {
               const briefContent = `EXECUTIVE BRIEF\n\n${assessment.system_name}\n\nRisk Level: ${riskLevel.toUpperCase()}\nScore: ${assessment.overall_risk_score || 0}/100\n\nTop Risks:\n1. AI-generated errors impacting clinical decision-making\n2. Unauthorized access to ePHI\n3. External threats from vendor dependencies\n\nRecommended Actions:\n- Implement human-in-the-loop validation\n- Strengthen access controls and encryption\n- Deploy monitoring for AI outputs\n\nGenerated: ${new Date().toLocaleDateString()}`;
               const element = document.createElement('a');
@@ -219,9 +219,9 @@ export default function GRCReport() {
               <Printer className="h-4 w-4" />
               Print
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" onClick={() => { try { window.print(); } catch(e) { alert('Use Print (Ctrl+P / Cmd+P) to save this report as PDF'); } }} className="gap-2 print:hidden">
               <Download className="h-4 w-4" />
-              Export PDF
+              Export / Print PDF
             </Button>
           </div>
         </div>

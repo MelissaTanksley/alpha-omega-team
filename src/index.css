@@ -86,3 +86,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  header,
+  footer,
+  nav,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .min-h-screen {
+    min-height: unset !important;
+  }
+
+  * {
+    box-shadow: none !important;
+  }
+}
