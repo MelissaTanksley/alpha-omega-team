@@ -67,7 +67,7 @@ export default function Home() {
           backgroundSize: '64px 64px'
         }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div>
               <Badge className="mb-6 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
                 Healthcare AI Governance Platform
