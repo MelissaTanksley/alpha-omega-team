@@ -134,10 +134,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator Logo" className="w-9 h-9 object-contain" />
-              <div>
-                <div className="text-white font-semibold text-sm">AI Risk Navigator for Healthcare</div>
-                <div className="text-slate-400 text-xs">AI Governance · Risk Scoring · Decision Support</div>
-              </div>
+              <div className="text-white font-semibold text-sm">AI Risk Navigator for Healthcare</div>
             </div>
             <div className="flex gap-6">
               <Link to="/RiskAssessment" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Start Assessment</Link>
