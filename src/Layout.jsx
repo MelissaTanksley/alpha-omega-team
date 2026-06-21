@@ -148,16 +148,16 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Global Feedback Button - Fixed Position */}
-      {showFeedbackButton && (
-        <button
-          onClick={() => setFeedbackModalOpen(true)}
-          className="fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap opacity-0 animate-in fade-in duration-300"
-          style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
-        >
-          <MessageCircle className="h-4 w-4" />
-          ✉ Give Feedback
-        </button>
-      )}
+      <button
+        onClick={() => setFeedbackModalOpen(true)}
+        className={`fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap ${
+          showFeedbackButton ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        } duration-300`}
+        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
+      >
+        <MessageCircle className="h-4 w-4" />
+        ✉ Give Feedback
+      </button>
       <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Footer */}
