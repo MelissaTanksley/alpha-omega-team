@@ -63,14 +63,14 @@ export default function Home() {
         {/* Compass background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
-          backgroundSize: '50%',
+          backgroundSize: '40%',
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top center',
-          opacity: 0.35,
+          backgroundPosition: 'top left',
+          opacity: 0.25,
         }} />
-        {/* Fade overlay */}
+        {/* Fade overlay — fades right so the card stays clear */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.3) 50%, rgba(15,23,42,0.85) 100%)',
+          background: 'linear-gradient(to right, rgba(15,23,42,0) 0%, rgba(15,23,42,0.7) 55%, rgba(15,23,42,1) 75%)',
         }} />
         <div className="absolute inset-0 opacity-[0.07]" style={{
           backgroundImage: 'linear-gradient(rgba(59,130,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,1) 1px, transparent 1px)',
