@@ -235,9 +235,12 @@ export default function RiskRegister() {
   const isDemoActive = isDemoMode();
 
   const allRisks = [...generatedRisks, ...manualRisks];
-  const totalCritical = allRisks.filter(r => r.risk_level?.toLowerCase() === 'critical').length;
-  const totalHigh = allRisks.filter(r => r.risk_level?.toLowerCase() === 'high').length;
-  const totalMedium = allRisks.filter(r => r.risk_level?.toLowerCase() === 'medium').length;
+  // Generated risks use `riskLevel`; manual risks use `risk_level` — normalise both
+  const getRiskLevel = (r) => (r.riskLevel || r.risk_level || '').toLowerCase();
+  const totalCritical = allRisks.filter(r => getRiskLevel(r) === 'critical').length;
+  const totalHigh = allRisks.filter(r => getRiskLevel(r) === 'high').length;
+  const totalMedium = allRisks.filter(r => getRiskLevel(r) === 'medium').length;
+  const totalLow = allRisks.filter(r => getRiskLevel(r) === 'low').length;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -270,7 +273,7 @@ export default function RiskRegister() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
@@ -279,27 +282,39 @@ export default function RiskRegister() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-red-200">
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-2xl font-bold text-red-600">{totalCritical}</p>
                 <p className="text-sm text-slate-600">Critical</p>
+                <p className="text-xs text-slate-400 mt-0.5">Score 76–100</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-orange-200">
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-2xl font-bold text-orange-600">{totalHigh}</p>
                 <p className="text-sm text-slate-600">High</p>
+                <p className="text-xs text-slate-400 mt-0.5">Score 51–75</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-amber-200">
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-2xl font-bold text-amber-600">{totalMedium}</p>
                 <p className="text-sm text-slate-600">Medium</p>
+                <p className="text-xs text-slate-400 mt-0.5">Score 26–50</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-emerald-200">
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-emerald-600">{totalLow}</p>
+                <p className="text-sm text-slate-600">Low</p>
+                <p className="text-xs text-slate-400 mt-0.5">Score 0–25</p>
               </div>
             </CardContent>
           </Card>

@@ -24,12 +24,13 @@ const scoreToLabel = (n) => {
   return 'Low';
 };
 
-// Derive risk level from likelihood × impact
+// Derive risk level from likelihood × impact, normalized to 0–100
 const deriveRiskLevel = (l, i) => {
-  const score = l * i;
-  if (score >= 20) return 'critical';
-  if (score >= 12) return 'high';
-  if (score >= 6) return 'medium';
+  // l and i are 1–5; max product = 25; normalize to 0–100
+  const score = Math.round((l * i / 25) * 100);
+  if (score > 75) return 'critical';
+  if (score > 50) return 'high';
+  if (score > 25) return 'medium';
   return 'low';
 };
 
