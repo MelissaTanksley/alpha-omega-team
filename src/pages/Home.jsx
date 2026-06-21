@@ -290,9 +290,9 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <Badge className="mb-4 bg-white/20 text-white border border-white/30 text-xs px-3 py-1 rounded-full">Available Now</Badge>
-            <h2 className="text-3xl font-bold text-white mb-4">A Functional AI Risk Assessment Platform</h2>
-            <p className="text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              This is a working, healthcare-focused AI risk and compliance platform designed to demonstrate structured risk analysis, compliance mapping, and reporting capabilities aligned with leading frameworks, including HIPAA, GDPR, NIST CSF 2.0, NIST RMF, ISO/IEC 27005, and ISO/IEC 42001, along with HHS Health Industry Cybersecurity Practices (HICP).<br /><br />The platform showcases a complete workflow, including assessment, risk analysis, executive reporting, and risk register integration.
+            <h2 className="text-3xl font-bold text-white mb-4">Request a Demo</h2>
+            <p className="text-blue-100 max-w-xl mx-auto">
+              Explore assessment workflow and reporting.
             </p>
           </div>
 

@@ -25,17 +25,17 @@ export default function GRCReport() {
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
     executive: true,
-    overview: true,
-    analysis: true,
-    compliance: true,
-    controls: true,
-    threats: true,
-    lifecycle: true,
-    rmf: true,
-    rmf_controls: true,
-    iso42001: true,
-    hicp: true,
-    threatmodel: true,
+    overview: false,
+    analysis: false,
+    compliance: false,
+    controls: false,
+    threats: false,
+    lifecycle: false,
+    rmf: false,
+    rmf_controls: false,
+    iso42001: false,
+    hicp: false,
+    threatmodel: false,
     register: true
   });
   const [isLoading, setIsLoading] = useState(true);
