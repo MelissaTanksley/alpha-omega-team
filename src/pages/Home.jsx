@@ -58,7 +58,22 @@ export default function Home() {
     <div>
       <InstallPrompt />
 
-
+      {/* ── LOGO TRANSITION ── */}
+      <div
+        className="pointer-events-none select-none"
+        style={{
+          width: '100vw',
+          marginLeft: 'calc(50% - 50vw)',
+          height: '280px',
+          backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          opacity: 0.22,
+          maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+        }}
+      />
 
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
