@@ -81,8 +81,8 @@ export default function Home() {
                 HIPAA&nbsp;&nbsp;•&nbsp;&nbsp;GDPR&nbsp;&nbsp;•&nbsp;&nbsp;NIST CSF 2.0&nbsp;&nbsp;•&nbsp;&nbsp;NIST RMF&nbsp;&nbsp;•&nbsp;&nbsp;ISO 27005&nbsp;&nbsp;•&nbsp;&nbsp;ISO/IEC 42001
               </p>
               <p className="text-sm text-slate-400 mb-3">Run a full AI risk &amp; compliance analysis anytime</p>
-              <div className="mb-6">
-                <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator" className="w-14 h-14 object-contain opacity-80" />
+              <div className="mb-6 flex justify-start">
+                <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator" className="w-14 h-14 object-contain opacity-75" />
               </div>
               <div className="flex flex-wrap gap-3">
                 <Link to="/RiskAssessment">
