@@ -205,7 +205,7 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
       `Classification: Confidential — For Internal Use Only`,
       '',
       `OVERALL RISK LEVEL: ${overall.toUpperCase()}`,
-      `Total Risks Identified: ${results.length}  |  High/Critical: ${highCount}  |  Medium: ${medCount}  |  Low: ${lowCount}`,
+      `Total Risks Evaluated: ${results.length}  |  High/Critical: ${highCount}  |  Medium: ${medCount}  |  Low: ${lowCount}`,
       '',
       '───────────────────────────────────────────────────────────',
       'TOP RISKS',
@@ -258,7 +258,7 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
   const copyReport = () => {
     const text = [
       `GRC Risk Assessment — Overall Risk: ${overall}`,
-      `${results.length} risks identified.`,
+      `${results.length} risks assessed.`,
       '',
       'Top Risks:',
       ...topRisks.map((r, i) => `  ${i + 1}. ${r.risk} [${r.likelihood}]`),
@@ -306,7 +306,7 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
             <p className="text-sm text-slate-300 font-medium">ISO 27005 · HIPAA · HITECH · NIST CSF 2.0</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-widest">Risks Identified</p>
+            <p className="text-xs text-slate-500 uppercase tracking-widest">Risks Evaluated</p>
             <p className="text-sm text-slate-300 font-medium">{results.length} total</p>
           </div>
           <div>
@@ -384,7 +384,7 @@ export default function GRCAnalysisReport({ results, rawJson, onCopy, copied, on
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="md:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-5">
               <p className="text-sm text-slate-700 leading-relaxed mb-3">
-                This assessment identified <strong>{results.length} risks</strong> across the evaluated AI system, with <strong>{highCount} high or critical findings</strong> requiring prompt remediation. The overall exposure profile is rated <strong>{overall}</strong> based on likelihood and clinical impact.
+                This assessment — conducted through structured questions, risk scoring, and mapping to regulatory standards — surfaced <strong>{results.length} risks</strong> across the evaluated AI system, with <strong>{highCount} high or critical findings</strong> requiring prompt remediation. The overall exposure profile is rated <strong>{overall}</strong> based on likelihood and clinical impact.
               </p>
               <p className="text-sm text-slate-600 leading-relaxed mb-3">
                 Primary risk vectors include {topRisks.slice(0,2).map(r => r.affected_asset || 'AI system components').join(' and ')}-related threats. Implementing the identified controls will materially reduce exposure across HIPAA and NIST CSF 2.0 domains.

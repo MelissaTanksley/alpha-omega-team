@@ -515,7 +515,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
         <div className="text-center">
           <p className="text-slate-700 font-semibold text-lg">Analyzing…</p>
-          <p className="text-slate-400 text-sm mt-1">Running risk analysis against selected frameworks</p>
+          <p className="text-slate-400 text-sm mt-1">Evaluating risks through structured scoring and framework mapping…</p>
         </div>
       </div>
     );
@@ -682,7 +682,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
             <div className="bg-blue-50 rounded-lg p-3">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Risk Profile</p>
               <p className="text-sm text-slate-700">
-                <strong>{risk.label}</strong> — {formData.system_name} has identified risks across {Object.keys(dimScores).length} dimensions. See dimension breakdown below for specific risk areas.
+                <strong>{risk.label}</strong> — {formData.system_name} has been assessed across {Object.keys(dimScores).length} risk dimensions. See the breakdown below for domain-specific findings.
               </p>
             </div>
           </CardContent>
@@ -790,6 +790,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                 <span className="inline-flex items-center justify-center w-6 h-6 bg-orange-600 text-white text-xs font-bold rounded-full">4</span>
                 Detect
               </CardTitle>
+
             </CardHeader>
             <CardContent>
               <div className="bg-orange-50 rounded-lg p-3 space-y-2 text-xs">
@@ -943,7 +944,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
           <Card className="mb-8">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-orange-700 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" /> Governance Gaps Identified
+                <AlertTriangle className="h-4 w-4" /> Governance Gaps Surfaced
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
