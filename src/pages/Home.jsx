@@ -60,18 +60,7 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
-        {/* Compass background */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
-          backgroundSize: '40%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top left',
-          opacity: 0.25,
-        }} />
-        {/* Fade overlay — fades right so the card stays clear */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'linear-gradient(to right, rgba(15,23,42,0) 0%, rgba(15,23,42,0.7) 55%, rgba(15,23,42,1) 75%)',
-        }} />
+
         <div className="absolute inset-0 opacity-[0.07]" style={{
           backgroundImage: 'linear-gradient(rgba(59,130,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,1) 1px, transparent 1px)',
           backgroundSize: '64px 64px'
