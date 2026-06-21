@@ -34,6 +34,7 @@ const assetOptions = [
 
 const inferredAssets = {
   diagnostic_imaging: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  diagnostic_labs: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
   clinical_decision_support: ['clinical_ai', 'ai_model', 'ephi', 'api'],
   nlp_documentation: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
   predictive_analytics: ['ai_model', 'ephi', 'api', 'vendor'],
@@ -1015,6 +1016,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                     <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="diagnostic_imaging">Diagnostic Imaging (Radiology, Pathology AI)</SelectItem>
+                      <SelectItem value="diagnostic_labs">Diagnostic Labs / Clinical Data Interpretation (Lab Analysis, Abnormal Value Detection)</SelectItem>
                       <SelectItem value="clinical_decision_support">Clinical Decision Support (CDS)</SelectItem>
                       <SelectItem value="nlp_documentation">AI Clinical Documentation / Ambient Scribe</SelectItem>
                       <SelectItem value="predictive_analytics">Predictive Analytics (Risk Scoring, Readmission, Sepsis)</SelectItem>
