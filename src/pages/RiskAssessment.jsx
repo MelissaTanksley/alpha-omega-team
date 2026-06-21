@@ -275,7 +275,8 @@ export default function RiskAssessment() {
     key_assets: [], custom_asset: '',
     data_sources: [], population_diversity: '', bias_testing: '', data_documented: '',
     security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '',
-    fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: ''
+    fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '',
+    disaster_recovery_plan: '', backups_tested: ''
   });
 
   useEffect(() => {
@@ -367,6 +368,8 @@ Key Assets: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' 
 - Data encryption status: ${formData.encryption}
 - Penetration testing: ${formData.pen_testing}
 - HIPAA Business Associate Agreement: ${formData.hipaa_baa}
+- Disaster recovery / business continuity plan: ${formData.disaster_recovery_plan}
+- Backups performed & tested: ${formData.backups_tested}
 
 === DOMAIN 4: GOVERNANCE & COMPLIANCE ===
 - FDA oversight status: ${formData.fda_status}
@@ -396,7 +399,7 @@ Domain mapping:
 
 SUMMARY: 3–4 sentences. Healthcare-specific. Reference the system name, key assets, and specific risk drivers identified. Mention sensitivity modifier if ePHI is involved.
 
-RECOMMENDATIONS: Return 5–7 objects. Each must be actionable, specific to healthcare, and traceable to input data:
+RECOMMENDATIONS: Return 5–7 objects. Each must be actionable, specific to healthcare, and traceable to input data. Include disaster recovery / business continuity recommendations if DR plan is missing or untested:
 { "recommendation": "<specific action>", "affected_asset": "<asset from list>", "domain": "<Data & Privacy | AI Model Behavior | Security & Infrastructure | Governance & Compliance | Third-Party Risk>", "priority": "<immediate | short-term | ongoing>" }
 
 GOVERNANCE GAPS: Return 5–8 objects. Each gap must name a specific control requirement, cite the exact regulatory clause where possible, and be traceable to user inputs:
@@ -406,6 +409,7 @@ Rules for governance_gaps:
 - At least 1 HIPAA gap referencing a specific safeguard section
 - At least 1 NIST CSF gap referencing a specific subcategory (e.g. PR.DS-1, DE.CM-4)
 - At least 1 NIST RMF gap naming the specific RMF step (Categorize/Select/Implement/Assess/Authorize/Monitor)
+- If no tested disaster recovery plan, include 1 gap referencing NIST CSF RC (Recover) function or ISO 27005 availability/recovery controls
 - If ePHI present, include at least 1 GDPR gap referencing Article 30 or Article 35 (DPIA)
 - All gaps must be traceable to the user's input (e.g. "No bias testing reported" → reference bias_testing field)
 
@@ -1292,20 +1296,50 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Penetration Testing Status</Label>
-                  <Select value={formData.pen_testing} onValueChange={v => update('pen_testing', v)}>
-                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes_recent">Yes — Within Past 12 Months</SelectItem>
-                      <SelectItem value="yes_older">Yes — Over 12 Months Ago</SelectItem>
-                      <SelectItem value="planned">Planned</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="unknown">Unknown</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Penetration Testing Status</Label>
+                   <Select value={formData.pen_testing} onValueChange={v => update('pen_testing', v)}>
+                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="yes_recent">Yes — Within Past 12 Months</SelectItem>
+                       <SelectItem value="yes_older">Yes — Over 12 Months Ago</SelectItem>
+                       <SelectItem value="planned">Planned</SelectItem>
+                       <SelectItem value="no">No</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+
+                {/* Disaster Recovery & Backup */}
+                <div className="border-t border-slate-100 pt-5 mt-5">
+                   <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4 text-orange-600">Business Continuity & Disaster Recovery</p>
+                 </div>
+                <div>
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Disaster Recovery or Business Continuity Plan</Label>
+                   <Select value={formData.disaster_recovery_plan} onValueChange={v => update('disaster_recovery_plan', v)}>
+                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="yes_documented">Yes — Documented & Tested</SelectItem>
+                       <SelectItem value="yes_informal">Yes — Informal / In Development</SelectItem>
+                       <SelectItem value="no">No</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+                <div>
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Backups Regularly Performed & Tested</Label>
+                   <Select value={formData.backups_tested} onValueChange={v => update('backups_tested', v)}>
+                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="yes_regular">Yes — Regular Testing (Monthly or More)</SelectItem>
+                       <SelectItem value="yes_occasional">Yes — Occasional Testing</SelectItem>
+                       <SelectItem value="yes_untested">Yes — Backups Performed But Not Tested</SelectItem>
+                       <SelectItem value="no">No Regular Backups</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+                </>
+                )}
 
             {/* Step 5 — Compliance */}
             {step === 5 && (
