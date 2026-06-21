@@ -137,10 +137,11 @@ export default function Layout({ children, currentPageName }) {
       {/* Global Feedback Button */}
       <button
         onClick={() => setFeedbackModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 py-2 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-medium text-sm"
+        className="fixed z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap"
+        style={{ bottom: '80px', right: '20px' }}
       >
         <MessageCircle className="h-4 w-4" />
-        Give Feedback
+        ✉ Give Feedback
       </button>
       <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
