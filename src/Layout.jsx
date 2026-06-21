@@ -17,13 +17,9 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight;
-      const winHeight = window.innerHeight;
-      const scrollFromBottom = docHeight - (scrollTop + winHeight);
-      
-      // Show button when within 200px of bottom
-      setShowFeedbackButton(scrollFromBottom < 200);
+      // Show button when within 300px of bottom
+      const isNearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+      setShowFeedbackButton(isNearBottom);
     };
 
     window.addEventListener('scroll', handleScroll);
