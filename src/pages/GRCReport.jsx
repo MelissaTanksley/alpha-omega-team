@@ -130,6 +130,7 @@ export default function GRCReport() {
   }
 
   if (!selectedAssessment) {
+    const isSignedIn = assessments !== null;
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <FileText className="h-16 w-16 text-slate-300 mx-auto mb-6" />
@@ -166,6 +167,20 @@ export default function GRCReport() {
             </select>
           )}
         </div>
+
+        {/* Sign in to access saved reports */}
+        {assessments.length === 0 && (
+          <div className="mt-10 max-w-sm mx-auto bg-slate-50 border border-slate-200 rounded-xl p-6">
+            <p className="text-sm font-semibold text-slate-700 mb-1">Access your saved assessments</p>
+            <p className="text-xs text-slate-500 mb-4">Sign in to view, manage, and revisit your previous AI risk reports.</p>
+            <Button
+              onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+              className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+            >
+              Sign In to View Reports
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
