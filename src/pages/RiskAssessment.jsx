@@ -288,10 +288,19 @@ export default function RiskAssessment() {
 
   const loadRecentAssessments = async () => {
     try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        setRecentAssessments([]);
+        return;
+      }
+      // Filter assessments to only show ones created by current user
       const data = await base44.entities.AIRiskAssessment.list('-updated_date', 5);
-      setRecentAssessments(data);
+      const user = await base44.auth.me();
+      const userAssessments = data.filter(a => a.created_by_id === user.id);
+      setRecentAssessments(userAssessments);
     } catch (error) {
       console.error('Failed to load recent assessments:', error);
+      setRecentAssessments([]);
     }
   };
 

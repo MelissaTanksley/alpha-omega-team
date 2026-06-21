@@ -1,11 +1,56 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, ChevronRight } from 'lucide-react';
+import { FileText, ChevronRight, Lock } from 'lucide-react';
 
 export default function RecentAssessments({ assessments = [] }) {
-  if (!assessments.length) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) {
+          const userData = await base44.auth.me();
+          setUser(userData);
+        }
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  // Show sign-in prompt if not authenticated
+  if (!loading && !user) {
+    return (
+      <Card className="border border-slate-200">
+        <CardContent className="p-8 flex flex-col items-center justify-center gap-4">
+          <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+            <Lock className="h-6 w-6 text-slate-400" />
+          </div>
+          <div className="text-center max-w-sm">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Sign in to view your assessments</h3>
+            <p className="text-sm text-slate-500 mb-4">Access your saved risk assessments, reports, and analysis history.</p>
+            <Button
+              size="sm"
+              onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Sign In
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (loading || !assessments.length) {
     return null;
   }
 

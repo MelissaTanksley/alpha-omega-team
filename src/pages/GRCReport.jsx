@@ -59,8 +59,11 @@ export default function GRCReport() {
         setAssessments([]);
         setSelectedAssessment(null);
       } else {
+        const user = await base44.auth.me();
         const data = await base44.entities.AIRiskAssessment.list('-updated_date', 10);
-        setAssessments(data);
+        // Filter to only show assessments created by current user
+        const userAssessments = data.filter(a => a.created_by_id === user.id);
+        setAssessments(userAssessments);
         setSelectedAssessment(null);
       }
     } catch (error) {

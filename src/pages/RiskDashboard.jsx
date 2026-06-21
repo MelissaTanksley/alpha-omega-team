@@ -287,28 +287,49 @@ export default function RiskDashboard() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [newAlerts, setNewAlerts] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    base44.entities.AIRiskAssessment.list('-created_date', 50)
-      .then(setAssessments)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const loadData = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (!isAuth) {
+          setAssessments([]);
+          setLoading(false);
+          return;
+        }
+        const userData = await base44.auth.me();
+        setUser(userData);
+        
+        const data = await base44.entities.AIRiskAssessment.list('-created_date', 50);
+        // Filter to only show assessments created by current user
+        const userAssessments = data.filter(a => a.created_by_id === userData.id);
+        setAssessments(userAssessments);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        setAssessments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
 
     // Real-time sync
     const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
-      if (event.type === 'create') {
+      if (event.type === 'create' && user && event.data?.created_by_id === user.id) {
         setAssessments(prev => [event.data, ...prev]);
         if (event.data?.risk_level === 'critical' || event.data?.risk_level === 'high') {
           setNewAlerts(prev => [event.data, ...prev].slice(0, 5));
         }
-      } else if (event.type === 'update') {
+      } else if (event.type === 'update' && user && event.data?.created_by_id === user.id) {
         setAssessments(prev => prev.map(a => a.id === event.data.id ? event.data : a));
       } else if (event.type === 'delete') {
         setAssessments(prev => prev.filter(a => a.id !== event.entity_id));
       }
     });
     return unsubscribe;
-  }, []);
+  }, [user]);
 
   const filtered = filter === 'all' ? assessments : assessments.filter(a => a.risk_level === filter);
 
