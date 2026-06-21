@@ -250,7 +250,7 @@ export default function Home() {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-blue-700 mb-1">Example Workflow</p>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">Understand How It Works</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">Walk through how AI risks are identified, scored, and mapped to HIPAA safeguards and NIST CSF functions — step by step.</p>
+                <p className="text-slate-600 text-sm leading-relaxed">Walk through how AI risks are assessed through structured questions, risk scoring, and mapping to HIPAA and NIST standards — step by step.</p>
               </div>
               <Link to="/ExampleWorkflow" className="mt-auto">
                 <Button variant="outline" className="border-blue-600 text-blue-700 hover:bg-blue-100 w-full">

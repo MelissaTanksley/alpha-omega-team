@@ -23,7 +23,7 @@ export default function ExampleWorkflow() {
           </Badge>
           <h1 className="text-4xl font-bold mb-3">Understand How the System Works</h1>
           <p className="text-slate-300 text-lg max-w-2xl">
-            A step-by-step walkthrough of how AI risks are identified, scored, and mapped to HIPAA safeguards and NIST CSF functions — from asset identification through recovery.
+            A step-by-step walkthrough of how AI risks are assessed through structured questions, risk scoring, and mapping to HIPAA and NIST standards — from asset identification through recovery.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-6">
             <Link to="/RiskAssessment">
