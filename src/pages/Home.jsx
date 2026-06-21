@@ -59,17 +59,20 @@ export default function Home() {
       <InstallPrompt />
 
       {/* ── LOGO TRANSITION ── */}
-      <div className="relative w-full flex justify-center overflow-hidden pointer-events-none select-none bg-slate-900" style={{ height: '180px', marginTop: '-1px' }}>
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 20%, transparent 80%, transparent 100%)' }} />
-        <div className="absolute inset-x-0 top-0 h-12" style={{ background: 'linear-gradient(to bottom, #0f172a, transparent)' }} />
+      <div className="relative w-full flex justify-center overflow-hidden pointer-events-none select-none bg-slate-900" style={{ height: '260px' }}>
         <img
           src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png"
           alt=""
           aria-hidden="true"
-          className="w-auto h-full object-contain"
-          style={{ opacity: 0.07, maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)' }}
+          style={{
+            width: '75%',
+            height: '100%',
+            objectFit: 'contain',
+            opacity: 0.18,
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%)'
+          }}
         />
-        <div className="absolute inset-x-0 bottom-0 h-12" style={{ background: 'linear-gradient(to top, #0f172a, transparent)' }} />
       </div>
 
       {/* ── HERO ── */}
