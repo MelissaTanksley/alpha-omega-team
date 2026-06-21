@@ -400,7 +400,7 @@ Key Assets: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' 
 - HIPAA compliance status: ${formData.hipaa_compliance}
 - Internal AI governance policy: ${formData.governance_policy}
 - Processes EU personal data (GDPR applicable): ${formData.eu_personal_data}
-- Cross-border data transfers: ${formData.cross_border_transfers}
+- Cross-border data transfers (data stored/processed/accessed outside primary country): ${formData.cross_border_transfers === 'unknown' ? 'Unknown — treat as moderate compliance risk' : formData.cross_border_transfers}
 
 === DOMAIN 5: THIRD-PARTY / VENDOR RISK ===
 - Vendor: ${formData.vendor || 'Not specified'}
@@ -1431,19 +1431,28 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                      </SelectContent>
                    </Select>
                  </div>
-                 {formData.eu_personal_data === 'yes' && (
-                   <div>
-                     <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Does the system involve cross-border data transfers outside the EU?</Label>
-                     <Select value={formData.cross_border_transfers} onValueChange={v => update('cross_border_transfers', v)}>
-                       <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                       <SelectContent>
-                         <SelectItem value="yes">Yes</SelectItem>
-                         <SelectItem value="no">No</SelectItem>
-                         <SelectItem value="unknown">Unknown</SelectItem>
-                       </SelectContent>
-                     </Select>
-                   </div>
-                 )}
+                 <div>
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Does the system involve cross-border data transfers (e.g., data stored, processed, or accessed outside its primary country of operation)?</Label>
+                   <Select value={formData.cross_border_transfers} onValueChange={v => update('cross_border_transfers', v)}>
+                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="yes">Yes</SelectItem>
+                       <SelectItem value="no">No</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
+                   </Select>
+                   <p className="text-xs text-slate-500 mt-1.5">Examples include cloud storage in another country, external vendors, or cross-border access to data.</p>
+                   {formData.cross_border_transfers === 'yes' && formData.eu_personal_data === 'yes' && (
+                     <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-amber-800">
+                       <strong>⚠ GDPR Note:</strong> Cross-border transfers of EU personal data require appropriate safeguards (e.g., Standard Contractual Clauses or adequacy decisions) under GDPR Article 44–46.
+                     </div>
+                   )}
+                   {formData.cross_border_transfers === 'unknown' && (
+                     <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700">
+                       <strong>ℹ Moderate risk assumed:</strong> Unknown cross-border transfer status will be treated as a potential compliance gap in your assessment.
+                     </div>
+                   )}
+                 </div>
 
                  <div className="border-t border-slate-100 pt-5 mt-5">
                    <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4">Regulatory Oversight</p>
