@@ -286,51 +286,82 @@ export default function RiskAssessment() {
   const handleSubmit = async () => {
     setLoading(true);
     const effectiveAssets = getEffectiveAssets();
+
+    // Compute sensitivity modifier based on assets and data sources
+    const hasEPHI = effectiveAssets.some(a => a.toLowerCase().includes('ephi') || a.toLowerCase().includes('patient'));
+    const hasHighSensitivity = formData.data_sources.some(s => ['Medical Imaging', 'Genomic Data', 'Lab Results'].includes(s));
+    const sensitivityModifier = hasEPHI ? 1.5 : hasHighSensitivity ? 1.2 : 1.0;
+
     try {
-      const prompt = `You are a senior healthcare AI risk analyst. Analyze the following AI system and return a structured risk assessment with scores from 0–100 where higher = more risk.
+      const prompt = `You are a senior healthcare AI Governance, Risk, and Compliance (GRC) analyst. Perform a structured, defensible risk assessment aligned with ISO 27005, NIST CSF 2.0, HIPAA, and healthcare AI governance best practices.
 
-AI System: ${formData.system_name} (${formData.system_type})
+=== SYSTEM UNDER ASSESSMENT ===
+System Name: ${formData.system_name}
+System Type: ${formData.system_type}
 Vendor: ${formData.vendor || 'Not specified'}
-Deployment: ${formData.deployment_context}
+Deployment Context: ${formData.deployment_context}
+Key Assets: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' (inferred from system type)' : ''}
 
-Key Assets Involved: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' (inferred from system type)' : ''}
-
-Bias & Data:
-- Data sources: ${formData.data_sources.join(', ') || 'None specified'}
-- Population diversity: ${formData.population_diversity}
-- Bias testing: ${formData.bias_testing}
+=== DOMAIN 1: DATA & PRIVACY ===
+- Data sources used: ${formData.data_sources.join(', ') || 'None specified'}
+- ePHI or sensitive data present: ${hasEPHI ? 'YES — Sensitivity Modifier: 1.5×' : hasHighSensitivity ? 'YES (high-sensitivity data) — Sensitivity Modifier: 1.2×' : 'No — Sensitivity Modifier: 1.0×'}
 - Training data documented: ${formData.data_documented}
 
-Security:
-- Controls: ${formData.security_controls.join(', ') || 'None specified'}
-- Data encryption: ${formData.encryption}
-- HIPAA BAA: ${formData.hipaa_baa}
+=== DOMAIN 2: AI MODEL BEHAVIOR ===
+- Population diversity in training data: ${formData.population_diversity}
+- Bias testing performed: ${formData.bias_testing}
+- Clinical validation studies: ${formData.clinical_validation}
+
+=== DOMAIN 3: SECURITY & INFRASTRUCTURE ===
+- Security controls in place: ${formData.security_controls.join(', ') || 'None specified'}
+- Data encryption status: ${formData.encryption}
 - Penetration testing: ${formData.pen_testing}
+- HIPAA Business Associate Agreement: ${formData.hipaa_baa}
 
-Compliance:
-- FDA oversight: ${formData.fda_status}
-- HIPAA compliance: ${formData.hipaa_compliance}
-- Governance policy: ${formData.governance_policy}
-- Clinical validation: ${formData.clinical_validation}
+=== DOMAIN 4: GOVERNANCE & COMPLIANCE ===
+- FDA oversight status: ${formData.fda_status}
+- HIPAA compliance status: ${formData.hipaa_compliance}
+- Internal AI governance policy: ${formData.governance_policy}
 
-IMPORTANT: Reference the key assets (${effectiveAssets.join(', ')}) specifically in:
-- Risk descriptions (e.g. "The AI Model and ePHI are exposed to...")
-- Threat scenarios (e.g. "Unauthorized access to the EHR System could...")
-- Compliance gaps (e.g. "The API Integrations lack...")
+=== DOMAIN 5: THIRD-PARTY / VENDOR RISK ===
+- Vendor: ${formData.vendor || 'Not specified'}
+- BAA status: ${formData.hipaa_baa}
+- External data sources: ${formData.data_sources.filter(s => ['External Datasets', 'Wearable Devices'].includes(s)).join(', ') || 'None'}
 
-Return scores for each dimension, overall risk, risk level, a 2-3 sentence summary, and FAIR-informed financial exposure estimate.
+=== SCORING METHODOLOGY ===
+Score each domain using: Risk Score = Likelihood (1–5) × Impact (1–5) × Sensitivity Modifier (${sensitivityModifier}), normalized to 0–100.
 
-For recommendations: Return objects with { recommendation: "text", affected_asset: "asset name from the provided list" }. Each recommendation MUST specify which key asset it applies to.
+Likelihood scale: 1=Very Unlikely, 2=Unlikely, 3=Possible, 4=Likely, 5=Very Likely (base on missing controls, exposure level, and threat presence).
+Impact scale: 1=Negligible, 2=Minor, 3=Moderate, 4=Major, 5=Severe (consider patient safety risk, regulatory penalty, and operational disruption).
+Sensitivity modifier applied: ${sensitivityModifier} (${hasEPHI ? 'ePHI present' : hasHighSensitivity ? 'high-sensitivity health data' : 'standard sensitivity'}).
 
-For governance_gaps: Return objects with { gap: "text", affected_asset: "asset name", control_framework: "HIPAA/NIST CSF/GDPR/NIST RMF/FDA" }. Where personal or identifiable data is involved, include GDPR-specific gaps (data minimization, accountability, data protection by design). Always include at least one NIST RMF gap referencing the appropriate RMF stage (Categorize/Select/Implement/Assess/Authorize/Monitor).
+Domain mapping:
+- bias_score: derived from Domain 1 (Data & Privacy) + Domain 2 (AI Model Behavior)
+- cybersecurity_score: derived from Domain 3 (Security & Infrastructure)
+- compliance_score: derived from Domain 4 (Governance & Compliance)
+- clinical_impact_score: derived from Domain 2 (AI Model Behavior) + patient safety risk from all domains
+- overall_risk_score: weighted average — clinical_impact 30%, cybersecurity 25%, compliance 25%, bias 20%
 
-Example:
-- { "gap": "ePHI lacks encryption at rest", "affected_asset": "Patient Data (ePHI)", "control_framework": "HIPAA" }
-- { "gap": "Data processing activities not documented per GDPR Article 30", "affected_asset": "Patient Data (ePHI)", "control_framework": "GDPR" }
-- { "gap": "System has not completed NIST RMF Assess step — controls not independently evaluated", "affected_asset": "AI Model & Training Data", "control_framework": "NIST RMF" }
-- { "recommendation": "Implement role-based access control for the AI Model", "affected_asset": "AI Model & Training Data" }
+=== OUTPUT REQUIREMENTS ===
 
-Be specific, asset-aware, and realistic for healthcare.`;
+SUMMARY: 3–4 sentences. Healthcare-specific. Reference the system name, key assets, and specific risk drivers identified. Mention sensitivity modifier if ePHI is involved.
+
+RECOMMENDATIONS: Return 5–7 objects. Each must be actionable, specific to healthcare, and traceable to input data:
+{ "recommendation": "<specific action>", "affected_asset": "<asset from list>", "domain": "<Data & Privacy | AI Model Behavior | Security & Infrastructure | Governance & Compliance | Third-Party Risk>", "priority": "<immediate | short-term | ongoing>" }
+
+GOVERNANCE GAPS: Return 5–8 objects. Each gap must name a specific control requirement, cite the exact regulatory clause where possible, and be traceable to user inputs:
+{ "gap": "<specific gap description with regulatory reference>", "affected_asset": "<asset>", "control_framework": "<HIPAA §164.xxx | NIST CSF PR.DS | ISO 27005 | NIST RMF | FDA 21 CFR>", "risk_domain": "<domain name>" }
+
+Rules for governance_gaps:
+- At least 1 HIPAA gap referencing a specific safeguard section
+- At least 1 NIST CSF gap referencing a specific subcategory (e.g. PR.DS-1, DE.CM-4)
+- At least 1 NIST RMF gap naming the specific RMF step (Categorize/Select/Implement/Assess/Authorize/Monitor)
+- If ePHI present, include at least 1 GDPR gap referencing Article 30 or Article 35 (DPIA)
+- All gaps must be traceable to the user's input (e.g. "No bias testing reported" → reference bias_testing field)
+
+FINANCIAL EXPOSURE: FAIR-informed estimate. Reference specific regulatory penalty ranges (HIPAA: up to $1.9M per violation category per year; OCR settlements) and operational cost ranges for healthcare AI incidents.
+
+Be specific, realistic, and clinically grounded. Avoid generic AI risk language.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -350,7 +381,9 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 type: 'object',
                 properties: {
                   recommendation: { type: 'string' },
-                  affected_asset: { type: 'string' }
+                  affected_asset: { type: 'string' },
+                  domain: { type: 'string' },
+                  priority: { type: 'string' }
                 }
               }
             },
@@ -361,7 +394,8 @@ Be specific, asset-aware, and realistic for healthcare.`;
                 properties: {
                   gap: { type: 'string' },
                   affected_asset: { type: 'string' },
-                  control_framework: { type: 'string' }
+                  control_framework: { type: 'string' },
+                  risk_domain: { type: 'string' }
                 }
               }
             },
@@ -409,6 +443,14 @@ Be specific, asset-aware, and realistic for healthcare.`;
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-1">Assessment Complete</h1>
           <p className="text-slate-500 text-sm">{formData.system_name}</p>
+        </div>
+
+        {/* Scoring Methodology Note */}
+        <div className="mb-4 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
+          <span className="text-blue-500 text-xs mt-0.5 flex-shrink-0">ℹ️</span>
+          <p className="text-xs text-blue-700 leading-relaxed">
+            <strong>Scoring Methodology:</strong> Risk scores are derived from a structured methodology combining likelihood (1–5), impact (1–5), and data sensitivity factors (ePHI = 1.5×, high-sensitivity data = 1.2×, standard = 1.0×), normalized to a 0–100 scale. This approach is aligned with ISO 27005 and healthcare-specific AI risk considerations including HIPAA, NIST CSF 2.0, and FDA guidance.
+          </p>
         </div>
 
         {/* Framework Alignment Header */}
@@ -756,14 +798,22 @@ Be specific, asset-aware, and realistic for healthcare.`;
                   tagText = 'text-purple-700';
                 }
 
+                const priority = typeof r === 'object' && r.priority ? r.priority : null;
+                const domain = typeof r === 'object' && r.domain ? r.domain : null;
+                const priorityColors = { immediate: 'bg-red-100 text-red-700', 'short-term': 'bg-amber-100 text-amber-700', ongoing: 'bg-slate-100 text-slate-600' };
+
                 return (
-                  <div key={i} className="flex gap-2 items-start text-sm">
+                  <div key={i} className="flex gap-2 items-start text-sm border border-slate-100 rounded-lg p-2.5 bg-white">
                     <span className={`${tagBg} ${tagText} text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 mt-0.5`}>
                       {nistFn}
                     </span>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="text-slate-700">{recText}</div>
-                      {asset && <div className="text-xs text-blue-600 mt-1">📍 Affects: {asset}</div>}
+                      <div className="flex flex-wrap gap-2 mt-1.5">
+                        {asset && <span className="text-xs text-blue-600">📍 {asset}</span>}
+                        {domain && <span className="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{domain}</span>}
+                        {priority && <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${priorityColors[priority] || 'bg-slate-100 text-slate-600'}`}>{priority}</span>}
+                      </div>
                     </div>
                   </div>
                 );
@@ -810,6 +860,8 @@ Be specific, asset-aware, and realistic for healthcare.`;
                   responseAction = 'Establish governance policies and procedures.';
                 }
 
+                const riskDomain = typeof g === 'object' && g.risk_domain ? g.risk_domain : null;
+
                 return (
                   <div key={i} className="border border-orange-100 rounded-lg p-3 bg-orange-50">
                     <div className="flex items-start gap-2 mb-2">
@@ -826,6 +878,7 @@ Be specific, asset-aware, and realistic for healthcare.`;
                     <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
                       {asset && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Asset:</strong> {asset}</span>}
                       {framework && <span className="inline-flex items-center gap-1"><span className="w-1 h-1 bg-orange-400 rounded-full"></span> <strong>Framework:</strong> {framework}</span>}
+                      {riskDomain && <span className="inline-flex items-center gap-1 bg-white border border-orange-200 px-1.5 py-0.5 rounded text-orange-700">{riskDomain}</span>}
                     </div>
                   </div>
                 );
