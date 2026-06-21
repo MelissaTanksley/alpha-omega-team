@@ -96,11 +96,12 @@ function Checkbox({ label, checked, onChange }) {
   );
 }
 
+// Severity-based color scale: 0–30 Low, 31–60 Moderate, 61–80 High, 81–100 Critical
 function getRiskColor(score) {
-  if (score < 26) return { text: 'text-emerald-600', bg: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Low Risk' };
-  if (score < 51) return { text: 'text-amber-600', bg: 'bg-amber-500', badge: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Medium Risk' };
-  if (score < 76) return { text: 'text-orange-600', bg: 'bg-orange-500', badge: 'bg-orange-100 text-orange-700 border-orange-200', label: 'High Risk' };
-  return { text: 'text-red-600', bg: 'bg-red-500', badge: 'bg-red-100 text-red-700 border-red-200', label: 'Critical Risk' };
+  if (score <= 30) return { text: 'text-emerald-600', bg: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Low Risk', severityLabel: 'Low' };
+  if (score <= 60) return { text: 'text-amber-600', bg: 'bg-amber-500', badge: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Moderate Risk', severityLabel: 'Moderate' };
+  if (score <= 80) return { text: 'text-orange-600', bg: 'bg-orange-500', badge: 'bg-orange-100 text-orange-700 border-orange-200', label: 'High Risk', severityLabel: 'High' };
+  return { text: 'text-red-600', bg: 'bg-red-500', badge: 'bg-red-100 text-red-700 border-red-200', label: 'Critical Risk', severityLabel: 'Critical' };
 }
 
 function exportToPDF(formData, results) {
@@ -175,7 +176,7 @@ function exportToPDF(formData, results) {
     doc.setFontSize(10);
     doc.text(label, 14, y);
     const sc = score ?? 0;
-    const sc2 = sc < 26 ? [16,185,129] : sc < 51 ? [245,158,11] : sc < 76 ? [249,115,22] : [239,68,68];
+    const sc2 = sc <= 30 ? [16,185,129] : sc <= 60 ? [245,158,11] : sc <= 80 ? [249,115,22] : [239,68,68];
     doc.setTextColor(...sc2);
     doc.setFont('helvetica', 'bold');
     doc.text(String(sc), pageW - 14, y, { align: 'right' });
@@ -755,27 +756,31 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         </Card>
 
         {/* Risk Dimension Breakdown (Under Identify/Protect) */}
-        <Card className="mb-6">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Risk Dimension Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {dimScores.map((dim) => {
-              const c = getRiskColor(dim.score);
-              return (
-                <div key={dim.label}>
-                  <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-slate-700 font-medium">{dim.label}</span>
-                    <span className={`font-bold ${c.text}`}>{dim.score}</span>
-                  </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`h-full ${c.bg} rounded-full`} style={{ width: `${dim.score}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+         <Card className="mb-6">
+           <CardHeader className="pb-2">
+             <CardTitle className="text-base">Risk Dimension Breakdown</CardTitle>
+             <p className="text-xs text-slate-500 mt-0.5">Colors indicate severity: <span className="text-emerald-600 font-semibold">Green = Low (0–30)</span> · <span className="text-amber-600 font-semibold">Yellow = Moderate (31–60)</span> · <span className="text-orange-600 font-semibold">Orange = High (61–80)</span> · <span className="text-red-600 font-semibold">Red = Critical (81–100)</span></p>
+           </CardHeader>
+           <CardContent className="space-y-4">
+             {dimScores.map((dim) => {
+               const c = getRiskColor(dim.score);
+               return (
+                 <div key={dim.label}>
+                   <div className="flex justify-between text-sm mb-1.5">
+                     <span className="text-slate-700 font-medium">{dim.label}</span>
+                     <div className="flex items-center gap-2">
+                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${c.badge}`}>{c.severityLabel}</span>
+                       <span className={`font-bold ${c.text}`}>{dim.score}</span>
+                     </div>
+                   </div>
+                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                     <div className={`h-full ${c.bg} rounded-full transition-all`} style={{ width: `${dim.score}%` }} />
+                   </div>
+                 </div>
+               );
+             })}
+           </CardContent>
+         </Card>
 
         {/* 4. DETECT + 5. RESPOND */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
