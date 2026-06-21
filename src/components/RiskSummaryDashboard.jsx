@@ -73,7 +73,7 @@ export default function RiskSummaryDashboard({ assessment }) {
 
         {/* Summary Footer */}
         <div className="mt-5 pt-5 border-t border-slate-700 text-xs text-slate-400">
-          ⚠ {(assessment?.governance_gaps?.length || 0)} governance gaps identified · {(assessment?.recommendations?.length || 0)} recommendations generated
+          ⚠ {(assessment?.governance_gaps?.length || 0)} governance gaps surfaced · {(assessment?.recommendations?.length || 0)} control recommendations generated
         </div>
       </div>
     </div>

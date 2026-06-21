@@ -94,7 +94,7 @@ export default function NISTExampleCard() {
         <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex gap-2">
           <AlertTriangle className="h-4 w-4 text-slate-500 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-slate-600">
-            This example shows how a single risk is mapped across all six NIST CSF 2.0 functions—from initial identification through recovery—providing a complete governance lifecycle.
+            This example shows how a single risk — assessed through structured questions, scored for likelihood and impact, and mapped to standards — is traced across all six NIST CSF 2.0 functions, from initial identification through recovery.
           </p>
         </div>
       </CardContent>

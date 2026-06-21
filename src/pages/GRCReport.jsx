@@ -317,7 +317,7 @@ export default function GRCReport() {
                   The use of AI-driven clinical documentation systems introduces significant risks to patient safety, data integrity, and regulatory compliance. In healthcare environments, these systems operate within strict HIPAA requirements and must ensure the confidentiality, integrity, and availability of electronic protected health information (ePHI).
                 </p>
                 <p className="text-sm text-slate-700 leading-relaxed">
-                  This assessment identifies an overall <strong>{riskLevel.toUpperCase()} RISK</strong> level associated with {assessment.system_name}. Key concerns include the potential for AI-generated clinical inaccuracies (hallucinations), insufficient access controls over sensitive patient data, and reliance on third-party vendors without adequate oversight.
+                This assessment, conducted through structured questions, risk scoring, and mapping to regulatory standards, identifies an overall <strong>{riskLevel.toUpperCase()} RISK</strong> level associated with {assessment.system_name}. Key concerns include the potential for AI-generated clinical inaccuracies (hallucinations), insufficient access controls over sensitive patient data, and reliance on third-party vendors without adequate oversight.
                 </p>
               </div>
 
@@ -718,7 +718,7 @@ export default function GRCReport() {
           {expandedSections.threatmodel && (
             <CardContent className="space-y-5">
               <p className="text-xs text-slate-500 leading-relaxed">
-                This platform incorporates structured threat modeling techniques, including <strong className="text-slate-700">STRIDE</strong> and <strong className="text-slate-700">MITRE ATT&CK</strong>, to identify and categorize potential risks affecting AI systems. STRIDE supports identification of system-level threats (e.g., spoofing, tampering), while MITRE ATT&CK provides insight into adversary tactics and techniques. These methods are used as supporting technical analysis tools — not compliance frameworks.
+                This platform incorporates structured threat modeling techniques, including <strong className="text-slate-700">STRIDE</strong> and <strong className="text-slate-700">MITRE ATT&CK</strong>, to systematically evaluate potential risks affecting AI systems. STRIDE supports structured analysis of system-level threats (e.g., spoofing, tampering), while MITRE ATT&CK provides insight into adversary tactics and techniques. These methods serve as supporting technical analysis tools — not compliance frameworks.
               </p>
 
               {/* STRIDE */}
@@ -797,7 +797,7 @@ export default function GRCReport() {
                 {[
                   {
                     title: 'Identify',
-                    description: 'Assets and threats assessed through structured questions and risk scoring, documented for remediation planning'
+                    description: 'Assets and threats are assessed through structured questions and risk scoring, then documented for governance review and remediation planning'
                   },
                   {
                     title: 'Protect',
@@ -1109,7 +1109,7 @@ export default function GRCReport() {
                 <strong>Note:</strong> This assessment reflects the current state of the AI system. Regular reassessment is recommended after implementing recommended controls to measure residual risk reduction.
               </p>
               <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                This assessment reflects a structured AI governance approach — risks assessed through structured questions, risk scoring, and mapping to applicable regulatory frameworks.
+                This assessment reflects a structured AI governance approach — each risk area was evaluated through structured questions, quantitative risk scoring, and mapping to applicable regulatory frameworks including HIPAA, NIST CSF 2.0, and ISO/IEC 27005.
               </p>
             </div>
           </CardContent>
