@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +14,34 @@ import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import RecentAssessments from '@/components/RecentAssessments';
+
+class ResultsErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err) { console.error('Results render error:', err); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-[40vh] flex flex-col items-center justify-center gap-4 px-4">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
+            <AlertTriangle className="h-8 w-8 text-amber-500" />
+          </div>
+          <div className="text-center max-w-md">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Assessment complete, but results failed to load.</h2>
+            <p className="text-slate-500 text-sm mb-6">Your assessment was saved. You can view it in the GRC Report or start a new assessment.</p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => window.location.href = '/GRCReport'} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                <FileText className="h-4 w-4 mr-2" /> View Report
+              </Button>
+              <Button variant="outline" onClick={() => window.location.reload()}>Start New Assessment</Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const steps = [
   { id: 1, title: 'System Info', icon: Shield },
@@ -420,7 +448,9 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
       } catch (saveErr) {
         console.warn('Could not save assessment to database:', saveErr);
       }
-      setResults({ ...response, id: savedId, selectedFrameworks });
+      const finalResults = { ...response, id: savedId, selectedFrameworks };
+      console.log('Assessment complete. Results:', finalResults);
+      setResults(finalResults);
     } catch (err) {
       console.error('Assessment failed:', err);
       setSubmitError('Analysis failed. Please check your connection and try again.');
@@ -469,7 +499,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
 
   if (results) {
     const risk = getRiskColor(results.overall_risk_score ?? 50);
-    return (
+    const resultsContent = (
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -805,9 +835,10 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
             </CardHeader>
             <CardContent className="space-y-2.5">
               {results.recommendations.map((r, i) => {
-                const recText = typeof r === 'string' ? r : r.recommendation;
-                const asset = typeof r === 'object' && r.affected_asset ? r.affected_asset : null;
-                
+                const recText = (typeof r === 'string' ? r : r?.recommendation) || '';
+                const asset = typeof r === 'object' && r?.affected_asset ? r.affected_asset : null;
+                if (!recText) return null;
+
                 // Determine NIST CSF 2.0 function based on recommendation text
                 let nistFn = 'Protect';
                 let tagBg = 'bg-emerald-100';
@@ -869,10 +900,11 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
             </CardHeader>
             <CardContent className="space-y-3">
               {results.governance_gaps.map((g, i) => {
-                const gapText = typeof g === 'string' ? g : g.gap;
-                const asset = typeof g === 'object' && g.affected_asset ? g.affected_asset : null;
-                const framework = typeof g === 'object' && g.control_framework ? g.control_framework : null;
-                
+                const gapText = (typeof g === 'string' ? g : g?.gap) || '';
+                const asset = typeof g === 'object' && g?.affected_asset ? g.affected_asset : null;
+                const framework = typeof g === 'object' && g?.control_framework ? g.control_framework : null;
+                if (!gapText) return null;
+
                 // Tag governance gaps with NIST function and response action
                 const lowerGap = gapText.toLowerCase();
                 let nistFn = 'Govern';
@@ -990,7 +1022,9 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         </div>
       </div>
     );
+    return <ResultsErrorBoundary>{resultsContent}</ResultsErrorBoundary>;
   }
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
