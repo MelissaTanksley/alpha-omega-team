@@ -468,11 +468,11 @@ export default function GRCReport() {
           {expandedSections.analysis && (
             <CardContent>
               <ComprehensiveRiskCard
-                asset="AI Model + ePHI"
-                threat="Model hallucination producing incorrect clinical documentation"
-                risk="Incorrect clinical documentation leading to misdiagnosis"
-                control="Implement human-in-the-loop validation and output monitoring"
-                nistFunctions={['Identify', 'Protect', 'Detect']}
+                asset="AI Model & Patient Data (ePHI)"
+                threat="NLP model hallucination generating inaccurate clinical documentation that enters the EHR without clinician validation"
+                risk="Inaccurate AI-generated clinical notes may cause misdiagnosis, inappropriate treatment decisions, or delayed care — and introduce ePHI integrity violations under HIPAA §164.312(c)(1)"
+                control="Implement mandatory human-in-the-loop (HITL) validation before any AI-generated output enters clinical workflows. Deploy real-time output monitoring and model drift alerting."
+                nistFunctions={['Govern', 'Identify', 'Protect', 'Detect']}
                 hipaaType="Technical Safeguards"
                 riskLevel={riskLevel}
                 compact={false}
@@ -483,11 +483,13 @@ export default function GRCReport() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-white p-3 rounded border border-orange-200">
                     <p className="text-xs font-semibold text-slate-600 mb-1">Clinical Impact</p>
-                    <p className="text-sm text-slate-900 font-semibold">Misdiagnosis, treatment errors</p>
+                    <p className="text-sm text-slate-900 font-semibold">Misdiagnosis, delayed care, adverse patient outcomes</p>
+                    <p className="text-xs text-slate-500 mt-1">AI outputs entering the EHR unvalidated create direct patient safety risk</p>
                   </div>
                   <div className="bg-white p-3 rounded border border-orange-200">
                     <p className="text-xs font-semibold text-slate-600 mb-1">Compliance Impact</p>
-                    <p className="text-sm text-slate-900 font-semibold">HIPAA integrity violation</p>
+                    <p className="text-sm text-slate-900 font-semibold">HIPAA §164.312(c)(1) — Integrity; NIST CSF DE.CM-4</p>
+                    <p className="text-xs text-slate-500 mt-1">Lack of output validation violates HIPAA integrity requirements and NIST Detect controls</p>
                   </div>
                 </div>
               </div>
@@ -1034,7 +1036,7 @@ export default function GRCReport() {
             <CardContent>
               {viewMode === 'executive' ? (
                 <>
-                  <p className="text-sm text-slate-600 mb-4">Top risks identified from this assessment.</p>
+                  <p className="text-sm text-slate-600 mb-4">Highest-priority risks identified from this assessment. Expand each item for full traceability, impact analysis, and recommended controls.</p>
                   <RiskRegisterTable risks={getRisks().slice(0, 5)} compact={true} />
                   {getRisks().length > 5 && (
                     <button onClick={() => setViewMode('full')} className="mt-3 text-sm text-blue-600 hover:underline font-medium">
@@ -1045,7 +1047,7 @@ export default function GRCReport() {
               ) : (
                 <>
                   <p className="text-sm text-slate-600 mb-4">
-                    The following risks have been automatically identified from this assessment. This register serves as an audit-ready record aligned with healthcare GRC practices.
+                    The following risks were identified through structured assessment of system inputs, governance conditions, and control gaps. Each entry includes traceability to input conditions, likelihood and impact scores (1–5), a recommended control, and framework alignment. This register is designed to serve as an audit-ready record aligned with HIPAA, NIST CSF 2.0, and ISO/IEC 27005.
                   </p>
                   <RiskRegisterTable risks={getRisks()} compact={true} />
                 </>
@@ -1067,7 +1069,7 @@ export default function GRCReport() {
               Risk scores are generated using a structured model that combines qualitative assessment aligned with <strong>ISO/IEC 27005</strong> and quantitative scoring (0–100 scale) based on likelihood and impact.
             </p>
             <p className="text-sm text-slate-700 leading-relaxed">
-              Domain-specific scores (e.g., bias, cybersecurity, patient safety) reflect identified threats, asset sensitivity, and control gaps, producing an overall risk profile aligned with <strong>NIST CSF</strong> and healthcare compliance considerations.
+              Domain-specific scores (Algorithmic Bias, Cybersecurity, Regulatory Compliance, Clinical Impact) are derived from identified threats, asset sensitivity, and control gaps. Where ePHI is present, a sensitivity modifier of 1.5× is applied. Scores produce an overall risk profile aligned with <strong>NIST CSF 2.0</strong>, <strong>HIPAA</strong>, and healthcare AI governance considerations.
             </p>
             <div className="bg-white border border-slate-200 rounded-lg p-3 mt-4">
               <p className="text-xs text-slate-600">
