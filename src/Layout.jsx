@@ -134,11 +134,11 @@ export default function Layout({ children, currentPageName }) {
         {children}
       </main>
 
-      {/* Global Feedback Button */}
+      {/* Global Feedback Button - Fixed Position */}
       <button
         onClick={() => setFeedbackModalOpen(true)}
-        className="fixed z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap"
-        style={{ bottom: '80px', right: '20px' }}
+        className="fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap"
+        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
       >
         <MessageCircle className="h-4 w-4" />
         ✉ Give Feedback
