@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Shield, BarChart3, LogOut, LogIn, User, Menu, X, Activity, Brain, MessageCircle } from 'lucide-react';
+import FeedbackModal from '@/components/FeedbackModal';
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   useEffect(() => {
     loadUser();
   }, []);
@@ -133,13 +135,14 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Global Feedback Button */}
-      <a
-        href="mailto:melissa.tanksley@gmail.com?subject=AI Risk Navigator Feedback"
+      <button
+        onClick={() => setFeedbackModalOpen(true)}
         className="fixed bottom-6 right-6 z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg transition-all hover:shadow-xl hover:scale-110 flex items-center justify-center"
-        title="Send feedback"
+        title="Give feedback"
       >
         <MessageCircle className="h-5 w-5" />
-      </a>
+      </button>
+      <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 mt-auto">

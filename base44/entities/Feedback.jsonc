@@ -1,0 +1,27 @@
+{
+  "name": "Feedback",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "bug",
+        "suggestion",
+        "general"
+      ],
+      "default": "general",
+      "description": "Feedback category"
+    },
+    "message": {
+      "type": "string",
+      "description": "Feedback message"
+    },
+    "email": {
+      "type": "string",
+      "description": "User's email (optional)"
+    }
+  },
+  "required": [
+    "message"
+  ]
+}
