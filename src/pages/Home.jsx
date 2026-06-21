@@ -58,6 +58,27 @@ export default function Home() {
     <div>
       <InstallPrompt />
 
+      {/* ── LOGO BAND ── */}
+      <div
+        className="pointer-events-none select-none relative"
+        style={{
+          width: '100vw',
+          marginLeft: 'calc(50% - 50vw)',
+          height: '360px',
+          backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
+          backgroundSize: '120%',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'top center',
+          backgroundColor: '#0f172a',
+        }}
+      >
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.95) 100%)',
+        }} />
+      </div>
+
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.07]" style={{
