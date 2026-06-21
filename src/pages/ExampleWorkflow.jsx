@@ -7,7 +7,7 @@ import NISTExampleCard from '@/components/NISTExampleCard';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
 
 export default function ExampleWorkflow() {
-  useEffect(() => { document.title = 'Example AI Risk Workflow | AI Risk Navigator for Healthcare'; }, []);
+  useEffect(() => { document.title = 'Example Workflow | AI Risk Navigator'; }, []);
 
   return (
     <div className="min-h-screen bg-white">

@@ -221,7 +221,7 @@ function exportToPDF(formData, results) {
 
 export default function RiskAssessment() {
   useEffect(() => {
-    const title = 'Risk Assessment | AI Risk Navigator for Healthcare';
+    const title = 'Risk Assessment | AI Risk Navigator';
     document.title = title;
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
     document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);

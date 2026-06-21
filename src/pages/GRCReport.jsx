@@ -13,7 +13,7 @@ import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
 export default function GRCReport() {
-  useEffect(() => { document.title = 'GRC Report | AI Risk Navigator for Healthcare'; }, []);
+  useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
   const [assessments, setAssessments] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
