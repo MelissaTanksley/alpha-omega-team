@@ -795,7 +795,7 @@ export default function GRCReport() {
                 {[
                   {
                     title: 'Identify',
-                    description: 'Assets, risks, and threats have been identified and documented through comprehensive risk assessment'
+                    description: 'Assets and threats assessed through structured questions and risk scoring, documented for remediation planning'
                   },
                   {
                     title: 'Protect',
@@ -1107,7 +1107,7 @@ export default function GRCReport() {
                 <strong>Note:</strong> This assessment reflects the current state of the AI system. Regular reassessment is recommended after implementing recommended controls to measure residual risk reduction.
               </p>
               <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                This assessment reflects a structured AI governance approach incorporating risk identification, accountability, and alignment with applicable regulatory frameworks.
+                This assessment reflects a structured AI governance approach — risks assessed through structured questions, risk scoring, and mapping to applicable regulatory frameworks.
               </p>
             </div>
           </CardContent>
