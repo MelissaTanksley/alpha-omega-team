@@ -43,7 +43,10 @@ export default function Layout({ children, currentPageName }) {
             <Link to="/" className="flex items-center gap-3 flex-shrink-0">
               <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator Logo" className="w-10 h-10 object-contain" />
               <div>
-                <div className="text-white font-bold text-sm leading-tight">AI Risk Navigator</div>
+                <div className="text-white font-bold text-sm leading-tight flex items-center gap-2">
+                  AI Risk Navigator
+                  <span className="text-xs bg-slate-600 text-slate-200 px-1.5 py-0.5 rounded-full font-normal">Beta</span>
+                </div>
                 <div className="text-blue-400 text-xs leading-tight">for Healthcare</div>
               </div>
             </Link>
@@ -148,8 +151,9 @@ export default function Layout({ children, currentPageName }) {
             </div>
             <p className="text-slate-300 text-xs">© 2026 AI Risk Navigator for Healthcare</p>
           </div>
-          <div className="pt-4">
+          <div className="pt-4 space-y-2">
             <p className="text-slate-400 text-xs text-center">Risk scoring is based on structured GRC methodologies aligned with ISO 27005, NIST CSF, and healthcare and AI governance standards.</p>
+            <p className="text-slate-500 text-xs text-center">Beta version — features and functionality may evolve.</p>
           </div>
         </div>
       </footer>
