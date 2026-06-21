@@ -316,12 +316,9 @@ export default function Home() {
             )}
           </div>
 
-          <div className="text-center mt-8">
-            <Link to="/RiskAssessment">
-              <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 px-8 h-12 text-base">
-                Or Start Assessing Now
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+          <div className="text-center mt-6">
+            <Link to="/RiskAssessment" className="text-blue-200 hover:text-white text-sm font-medium inline-flex items-center gap-1 transition-colors">
+              or start assessing now <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
