@@ -278,7 +278,8 @@ export default function RiskAssessment() {
     data_sources: [], population_diversity: '', bias_testing: '', data_documented: '',
     security_controls: [], encryption: '', hipaa_baa: '', pen_testing: '',
     fda_status: '', hipaa_compliance: '', governance_policy: '', clinical_validation: '',
-    disaster_recovery_plan: '', backups_tested: ''
+    disaster_recovery_plan: '', backups_tested: '',
+    eu_personal_data: '', cross_border_transfers: ''
   });
 
   useEffect(() => {
@@ -390,6 +391,8 @@ Key Assets: ${effectiveAssets.join(', ')}${formData.key_assets.length === 0 ? ' 
 - FDA oversight status: ${formData.fda_status}
 - HIPAA compliance status: ${formData.hipaa_compliance}
 - Internal AI governance policy: ${formData.governance_policy}
+- Processes EU personal data (GDPR applicable): ${formData.eu_personal_data}
+- Cross-border data transfers: ${formData.cross_border_transfers}
 
 === DOMAIN 5: THIRD-PARTY / VENDOR RISK ===
 - Vendor: ${formData.vendor || 'Not specified'}
@@ -425,7 +428,7 @@ Rules for governance_gaps:
 - At least 1 NIST CSF gap referencing a specific subcategory (e.g. PR.DS-1, DE.CM-4)
 - At least 1 NIST RMF gap naming the specific RMF step (Categorize/Select/Implement/Assess/Authorize/Monitor)
 - If no tested disaster recovery plan, include 1 gap referencing NIST CSF RC (Recover) function or ISO 27005 availability/recovery controls
-- If ePHI present, include at least 1 GDPR gap referencing Article 30 or Article 35 (DPIA)
+- If system processes EU personal data, include at least 1 GDPR gap referencing Article 30 (Records of Processing Activities), Article 35 (DPIA), or Article 44 (International Transfers)
 - All gaps must be traceable to the user's input (e.g. "No bias testing reported" → reference bias_testing field)
 
 FINANCIAL EXPOSURE: FAIR-informed estimate. Reference specific regulatory penalty ranges (HIPAA: up to $1.9M per violation category per year; OCR settlements) and operational cost ranges for healthcare AI incidents.
@@ -565,12 +568,12 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
           <div className="border-t border-slate-200 pt-3">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Compliance Frameworks Assessed</p>
             <div className="flex flex-wrap gap-2">
-              {results.selectedFrameworks?.hipaa && <span className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-1 rounded-full font-medium">HIPAA</span>}
-              {results.selectedFrameworks?.nist_csf && <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full font-medium">NIST CSF 2.0</span>}
-              {results.selectedFrameworks?.iso_27005 && <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>}
-              {results.selectedFrameworks?.gdpr && <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>}
-              {results.selectedFrameworks?.nist_rmf && <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>}
-            </div>
+               {results.selectedFrameworks?.hipaa && <span className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-1 rounded-full font-medium">HIPAA</span>}
+               {results.selectedFrameworks?.nist_csf && <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full font-medium">NIST CSF 2.0</span>}
+               {results.selectedFrameworks?.iso_27005 && <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>}
+               {(results.selectedFrameworks?.gdpr || formData.eu_personal_data === 'yes') && <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>}
+               {results.selectedFrameworks?.nist_rmf && <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>}
+             </div>
           </div>
         </div>
 
@@ -1398,10 +1401,42 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                 )}
 
             {/* Step 5 — Compliance */}
-            {step === 5 && (
-              <>
-                <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-1.5 block">FDA Oversight Status</Label>
+             {step === 5 && (
+               <>
+                 {/* GDPR Applicability */}
+                 <div className="border-b border-slate-100 pb-5 mb-5">
+                   <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4 text-emerald-600">GDPR & Data Protection</p>
+                 </div>
+                 <div>
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Does this system process personal data of individuals in the European Union?</Label>
+                   <Select value={formData.eu_personal_data} onValueChange={v => update('eu_personal_data', v)}>
+                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="yes">Yes</SelectItem>
+                       <SelectItem value="no">No</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 {formData.eu_personal_data === 'yes' && (
+                   <div>
+                     <Label className="text-sm font-medium text-slate-700 mb-1.5 block">Does the system involve cross-border data transfers outside the EU?</Label>
+                     <Select value={formData.cross_border_transfers} onValueChange={v => update('cross_border_transfers', v)}>
+                       <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="yes">Yes</SelectItem>
+                         <SelectItem value="no">No</SelectItem>
+                         <SelectItem value="unknown">Unknown</SelectItem>
+                       </SelectContent>
+                     </Select>
+                   </div>
+                 )}
+
+                 <div className="border-t border-slate-100 pt-5 mt-5">
+                   <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4">Regulatory Oversight</p>
+                 </div>
+                 <div>
+                   <Label className="text-sm font-medium text-slate-700 mb-1.5 block">FDA Oversight Status</Label>
                   <Select value={formData.fda_status} onValueChange={v => update('fda_status', v)}>
                     <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent>
@@ -1456,23 +1491,30 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                 <div className="border-t border-slate-100 pt-5">
                   <Label className="text-sm font-semibold text-slate-800 mb-1 block">Select Compliance Frameworks</Label>
                   <p className="text-xs text-slate-500 mb-4">Choose which frameworks to include in your report output. Core risk analysis runs regardless of selection.</p>
+                  {formData.eu_personal_data === 'yes' && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                      <p className="text-xs text-green-700"><strong>ℹ️ GDPR Auto-Enabled:</strong> Since this system processes EU personal data, GDPR has been automatically included in your assessment frameworks.</p>
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       { key: 'hipaa', label: 'HIPAA', desc: 'Health Insurance Portability & Accountability Act', checkedCard: 'border-indigo-300 bg-indigo-50', checkedBox: 'bg-indigo-600 border-indigo-600' },
                       { key: 'nist_csf', label: 'NIST CSF 2.0', desc: 'Cybersecurity Framework — Govern, Identify, Protect, Detect, Respond, Recover', checkedCard: 'border-blue-300 bg-blue-50', checkedBox: 'bg-blue-600 border-blue-600' },
                       { key: 'iso_27005', label: 'ISO/IEC 27005', desc: 'Information Security Risk Management standard', checkedCard: 'border-slate-400 bg-slate-100', checkedBox: 'bg-slate-600 border-slate-600' },
-                      { key: 'gdpr', label: 'GDPR', desc: 'EU General Data Protection Regulation — applies when personal data is processed', checkedCard: 'border-green-300 bg-green-50', checkedBox: 'bg-green-600 border-green-600' },
+                      { key: 'gdpr', label: 'GDPR', desc: 'EU General Data Protection Regulation — applies when personal data is processed', checkedCard: 'border-green-300 bg-green-50', checkedBox: 'bg-green-600 border-green-600', disabled: formData.eu_personal_data === 'yes' },
                       { key: 'nist_rmf', label: 'NIST RMF', desc: 'Risk Management Framework — Categorize, Select, Implement, Assess, Authorize, Monitor', checkedCard: 'border-purple-300 bg-purple-50', checkedBox: 'bg-purple-600 border-purple-600' },
-                    ].map(({ key, label, desc, checkedCard, checkedBox }) => {
-                      const checked = selectedFrameworks[key];
+                    ].map(({ key, label, desc, checkedCard, checkedBox, disabled }) => {
+                      const isGdprRequired = key === 'gdpr' && formData.eu_personal_data === 'yes';
+                      const checked = isGdprRequired ? true : selectedFrameworks[key];
                       return (
                         <button
                           key={key}
                           type="button"
-                          onClick={() => setSelectedFrameworks(prev => ({ ...prev, [key]: !prev[key] }))}
+                          onClick={() => !isGdprRequired && setSelectedFrameworks(prev => ({ ...prev, [key]: !prev[key] }))}
+                          disabled={isGdprRequired}
                           className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
                             checked ? checkedCard : 'border-slate-200 bg-white hover:border-slate-300'
-                          }`}
+                          } ${isGdprRequired ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}`}
                         >
                           <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
                             checked ? checkedBox : 'border-slate-300'
