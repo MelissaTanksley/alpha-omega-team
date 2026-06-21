@@ -58,22 +58,7 @@ export default function Home() {
     <div>
       <InstallPrompt />
 
-      {/* ── LOGO TRANSITION ── */}
-      <div className="relative w-full flex justify-center overflow-hidden pointer-events-none select-none bg-slate-900" style={{ height: '260px' }}>
-        <img
-          src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            width: '75%',
-            height: '100%',
-            objectFit: 'contain',
-            opacity: 0.18,
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%)'
-          }}
-        />
-      </div>
+
 
       {/* ── HERO ── */}
       <section className="bg-slate-900 text-white relative overflow-hidden">
