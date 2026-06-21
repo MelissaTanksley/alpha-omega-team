@@ -15,6 +15,13 @@ export default function ExecutiveReportView() {
      loadAssessments();
    }, []);
 
+   // Scroll to top when assessment is loaded
+   useEffect(() => {
+     if (!isLoading && selectedAssessment) {
+       window.scrollTo({ top: 0, behavior: 'smooth' });
+     }
+   }, [isLoading, selectedAssessment]);
+
   const loadAssessments = async () => {
     try {
       const data = await base44.entities.AIRiskAssessment.list('-updated_date', 1);

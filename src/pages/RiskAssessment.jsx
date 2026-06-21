@@ -261,6 +261,13 @@ export default function RiskAssessment() {
   const [emailInput, setEmailInput] = useState('');
    const [emailSending, setEmailSending] = useState(false);
    const [emailSent, setEmailSent] = useState(false);
+
+  // Scroll to top when results are displayed
+  useEffect(() => {
+    if (results) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [results]);
    const [recentAssessments, setRecentAssessments] = useState([]);
    const [submitError, setSubmitError] = useState(null);
    const [user, setUser] = useState(null);

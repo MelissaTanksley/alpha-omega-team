@@ -29,6 +29,13 @@ export default function RiskRegister() {
     loadData();
   }, []);
 
+  // Scroll to top when page loads
+  useEffect(() => {
+    if (!isLoading) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isLoading]);
+
   const loadData = async () => {
     try {
       const isAuth = await base44.auth.isAuthenticated();

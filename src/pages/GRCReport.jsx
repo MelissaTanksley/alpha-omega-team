@@ -14,6 +14,13 @@ import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
 export default function GRCReport() {
   useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
+
+  // Scroll to top when assessment is selected or loaded
+  useEffect(() => {
+    if (selectedAssessment) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedAssessment]);
   const [assessments, setAssessments] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
