@@ -55,7 +55,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 flex-shrink-0">
+            <Link to="/" className="flex items-center gap-3 flex-shrink-0" onClick={() => window.scrollTo(0, 0)}>
               <img src="https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png" alt="AI Risk Navigator Logo" className="w-10 h-10 object-contain" />
               <div>
                 <div className="text-white font-bold text-sm leading-tight flex items-center gap-2">
@@ -69,7 +69,7 @@ export default function Layout({ children, currentPageName }) {
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
-                <Link key={item.page} to={item.path}>
+                <Link key={item.page} to={item.path} onClick={() => window.scrollTo(0, 0)}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -128,7 +128,7 @@ export default function Layout({ children, currentPageName }) {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-800 bg-slate-900 px-4 py-3 space-y-1">
             {navItems.map((item) => (
-              <Link key={item.page} to={item.path} onClick={() => setMobileMenuOpen(false)}>
+              <Link key={item.page} to={item.path} onClick={() => { setMobileMenuOpen(false); window.scrollTo(0, 0); }}>
                 <div className={`px-3 py-2.5 rounded-lg text-sm font-medium ${
                   currentPageName === item.page
                     ? 'text-blue-400 bg-slate-800'
