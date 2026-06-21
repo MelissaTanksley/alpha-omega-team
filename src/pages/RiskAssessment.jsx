@@ -259,10 +259,12 @@ export default function RiskAssessment() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [emailInput, setEmailInput] = useState('');
-  const [emailSending, setEmailSending] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [recentAssessments, setRecentAssessments] = useState([]);
-  const [submitError, setSubmitError] = useState(null);
+   const [emailSending, setEmailSending] = useState(false);
+   const [emailSent, setEmailSent] = useState(false);
+   const [recentAssessments, setRecentAssessments] = useState([]);
+   const [submitError, setSubmitError] = useState(null);
+   const [user, setUser] = useState(null);
+   const [savingSucessMessage, setSaveSuccessMessage] = useState(false);
   const [selectedFrameworks, setSelectedFrameworks] = useState({
     hipaa: true,
     nist_csf: true,
@@ -281,11 +283,24 @@ export default function RiskAssessment() {
 
   useEffect(() => {
     loadRecentAssessments();
+    checkUserAuth();
     const params = new URLSearchParams(window.location.search);
     if (params.get('demo') === '1') {
       runDemoMode();
     }
   }, []);
+
+  const checkUserAuth = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      }
+    } catch (error) {
+      setUser(null);
+    }
+  };
 
   // Scroll to top when step changes
   useEffect(() => {
@@ -985,43 +1000,84 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         </Card>
 
         {/* Email Report */}
-        <Card className="mb-6 border-slate-200">
-          <CardContent className="p-4">
-            <div className="text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><Mail className="h-4 w-4 text-blue-500" /> Email Report</div>
-            <div className="text-xs text-slate-400 mb-3">Send this risk assessment report to a stakeholder via email.</div>
-            <div className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="recipient@hospital.org"
-                value={emailInput}
-                onChange={e => { setEmailInput(e.target.value); setEmailSent(false); }}
-                className="flex-1"
-              />
-              <Button
-                onClick={async () => {
-                  if (!emailInput.trim()) return;
-                  setEmailSending(true);
-                  try {
-                    await base44.functions.invoke('sendAssessmentReport', {
-                      assessmentId: results.id,
-                      recipientEmail: emailInput.trim()
-                    });
-                    setEmailSent(true);
-                    setEmailInput('');
-                  } catch (e) {
-                    alert('Failed to send email. Please try again.');
-                  }
-                  setEmailSending(false);
-                }}
-                disabled={emailSending || !emailInput.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0"
-              >
-                {emailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              </Button>
-            </div>
-            {emailSent && <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> Report sent successfully!</p>}
-          </CardContent>
-        </Card>
+         <Card className="mb-6 border-slate-200">
+           <CardContent className="p-4">
+             <div className="text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><Mail className="h-4 w-4 text-blue-500" /> Email Report</div>
+             <div className="text-xs text-slate-400 mb-3">Send this risk assessment report to a stakeholder via email.</div>
+             <div className="flex gap-2">
+               <Input
+                 type="email"
+                 placeholder="recipient@hospital.org"
+                 value={emailInput}
+                 onChange={e => { setEmailInput(e.target.value); setEmailSent(false); }}
+                 className="flex-1"
+               />
+               <Button
+                 onClick={async () => {
+                   if (!emailInput.trim()) return;
+                   setEmailSending(true);
+                   try {
+                     await base44.functions.invoke('sendAssessmentReport', {
+                       assessmentId: results.id,
+                       recipientEmail: emailInput.trim()
+                     });
+                     setEmailSent(true);
+                     setEmailInput('');
+                   } catch (e) {
+                     alert('Failed to send email. Please try again.');
+                   }
+                   setEmailSending(false);
+                 }}
+                 disabled={emailSending || !emailInput.trim()}
+                 className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0"
+               >
+                 {emailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+               </Button>
+             </div>
+             {emailSent && <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> Report sent successfully!</p>}
+           </CardContent>
+         </Card>
+
+         {/* Save by Signing In */}
+         {!user && (
+           <Card className="mb-6 border-emerald-200 bg-emerald-50">
+             <CardContent className="p-6">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                 <div className="flex-1">
+                   <h3 className="text-sm font-bold text-emerald-900 mb-1">Save Your Assessment</h3>
+                   <p className="text-xs text-emerald-700 leading-relaxed">Sign in to save this assessment and access your reports later from your dashboard. Your work won't be lost.</p>
+                 </div>
+                 <Button
+                   onClick={() => {
+                     // Store assessment data in localStorage before redirect
+                     sessionStorage.setItem('pendingAssessment', JSON.stringify({
+                       formData,
+                       results,
+                       selectedFrameworks
+                     }));
+                     base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+                   }}
+                   className="bg-emerald-600 hover:bg-emerald-700 text-white flex-shrink-0 whitespace-nowrap"
+                 >
+                   Sign In to Save
+                 </Button>
+               </div>
+             </CardContent>
+           </Card>
+         )}
+
+         {/* Success Message */}
+         {savingSucessMessage && (
+           <Card className="mb-6 border-emerald-200 bg-emerald-50">
+             <CardContent className="p-4 flex items-center gap-3">
+               <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+               <div>
+                 <p className="text-sm font-semibold text-emerald-900">Assessment saved successfully</p>
+                 <p className="text-xs text-emerald-700">You can access it from your dashboard anytime.</p>
+               </div>
+             </CardContent>
+           </Card>
+         )}
 
         <div className="flex flex-col sm:flex-row gap-3">
            <Button onClick={() => {

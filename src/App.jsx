@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -6,6 +7,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { base44 } from '@/api/base44Client';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GRCReport from './pages/GRCReport';
 import ExecutiveReportView from './pages/ExecutiveReportView';
@@ -24,6 +26,33 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+
+  // Handle post-login assessment save
+  useEffect(() => {
+    const savePendingAssessment = async () => {
+      const pending = sessionStorage.getItem('pendingAssessment');
+      if (pending) {
+        try {
+          const { formData, results, selectedFrameworks } = JSON.parse(pending);
+          const isAuth = await base44.auth.isAuthenticated();
+          if (isAuth) {
+            // Save the assessment with the formData and results
+            const assessment = { 
+              ...formData, 
+              ...results,
+              key_assets: results.summary ? formData.key_assets : [],
+              selectedFrameworks
+            };
+            await base44.entities.AIRiskAssessment.create(assessment);
+            sessionStorage.removeItem('pendingAssessment');
+          }
+        } catch (error) {
+          console.error('Failed to save pending assessment:', error);
+        }
+      }
+    };
+    savePendingAssessment();
+  }, []);
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
