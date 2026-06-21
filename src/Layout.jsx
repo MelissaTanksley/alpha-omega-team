@@ -9,8 +9,25 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [showFeedbackButton, setShowFeedbackButton] = useState(false);
+
   useEffect(() => {
     loadUser();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
+      const scrollFromBottom = docHeight - (scrollTop + winHeight);
+      
+      // Show button when within 200px of bottom
+      setShowFeedbackButton(scrollFromBottom < 200);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const loadUser = async () => {
@@ -135,14 +152,16 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Global Feedback Button - Fixed Position */}
-      <button
-        onClick={() => setFeedbackModalOpen(true)}
-        className="fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap"
-        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
-      >
-        <MessageCircle className="h-4 w-4" />
-        ✉ Give Feedback
-      </button>
+      {showFeedbackButton && (
+        <button
+          onClick={() => setFeedbackModalOpen(true)}
+          className="fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap opacity-0 animate-in fade-in duration-300"
+          style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
+        >
+          <MessageCircle className="h-4 w-4" />
+          ✉ Give Feedback
+        </button>
+      )}
       <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Footer */}
