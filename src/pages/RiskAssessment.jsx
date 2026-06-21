@@ -286,6 +286,11 @@ export default function RiskAssessment() {
     }
   }, []);
 
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
   const loadRecentAssessments = async () => {
     try {
       const isAuth = await base44.auth.isAuthenticated();
