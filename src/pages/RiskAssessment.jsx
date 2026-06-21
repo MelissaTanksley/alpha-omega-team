@@ -674,7 +674,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                 asset={getEffectiveAssets()[0] + ' + ePHI' || 'AI Model + ePHI'}
                 threat="Model hallucination or incorrect clinical output"
                 risk="Patient safety impact and violation of data integrity requirements"
-                control={results.recommendations[0] || 'Implement human-in-the-loop validation and output monitoring'}
+                control={(typeof results.recommendations[0] === 'string' ? results.recommendations[0] : results.recommendations[0]?.recommendation) || 'Implement human-in-the-loop validation and output monitoring'}
                 nistFunctions={['Identify', 'Protect', 'Detect']}
                 hipaaType="Technical Safeguards"
                 riskLevel={results.risk_level || 'medium'}
