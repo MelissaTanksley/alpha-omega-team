@@ -288,25 +288,16 @@ export default function Home() {
       {/* ── CLOSING + DEMO CTA ── */}
       <section id="request-demo" className="py-20 bg-blue-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <Badge className="mb-4 bg-white/20 text-white border border-white/30 text-xs px-3 py-1 rounded-full">Available Now</Badge>
-            <h2 className="text-3xl font-bold text-white mb-4">Request a Demo</h2>
-            <p className="text-blue-100 max-w-xl mx-auto">
-              Explore assessment workflow and reporting.
-            </p>
-          </div>
-
-          <div className="bg-white/10 border border-white/20 rounded-2xl p-8 max-w-xl mx-auto">
+          <div className="max-w-xl mx-auto text-center">
             {demoSubmitted ? (
-              <div className="text-center py-4">
+              <div className="py-6">
                 <CheckCircle className="h-10 w-10 text-white mx-auto mb-3" />
                 <p className="text-white font-semibold text-lg">Thank you — your demo request has been submitted.</p>
                 <p className="text-blue-100 text-sm mt-1">We'll be in touch at <span className="font-medium">{demoEmail}</span>.</p>
               </div>
             ) : (
               <>
-                <h3 className="text-white font-bold text-lg mb-1 text-center">Request a Demo</h3>
-                <p className="text-blue-100 text-sm text-center mb-5">Explore the assessment workflow, compliance outputs, and reporting features.</p>
+                <p className="text-blue-100 text-base mb-6">Explore how AI risks are identified, scored, and reported.</p>
                 <form onSubmit={handleDemoRequest} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
