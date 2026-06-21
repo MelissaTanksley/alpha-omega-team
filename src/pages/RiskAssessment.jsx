@@ -214,7 +214,12 @@ function exportToPDF(formData, results) {
 }
 
 export default function RiskAssessment() {
-  useEffect(() => { document.title = 'Risk Assessment | AI Risk Navigator for Healthcare'; }, []);
+  useEffect(() => {
+    const title = 'Risk Assessment | AI Risk Navigator for Healthcare';
+    document.title = title;
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
+  }, []);
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
