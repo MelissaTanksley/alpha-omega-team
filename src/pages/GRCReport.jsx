@@ -1047,7 +1047,7 @@ export default function GRCReport() {
               ) : (
                 <>
                   <p className="text-sm text-slate-600 mb-4">
-                    The following risks were identified through structured assessment of system inputs, governance conditions, and control gaps. Each entry includes traceability to input conditions, likelihood and impact scores (1–5), a recommended control, and framework alignment. This register is designed to serve as an audit-ready record aligned with HIPAA, NIST CSF 2.0, and ISO/IEC 27005.
+                    Each risk entry includes a professional title, clinical risk description, impact statement, traceability to assessment inputs ("Based On"), likelihood and impact scores (1–5), a recommended control, and framework alignment to HIPAA, NIST CSF 2.0, and ISO/IEC 27005. Expand any item to view the full detail.
                   </p>
                   <RiskRegisterTable risks={getRisks()} compact={true} />
                 </>

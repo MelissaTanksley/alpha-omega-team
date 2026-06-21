@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getRiskBadgeClass } from '@/utils/riskUtils';
 
 const levelOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+
+const leftBorderClass = {
+  critical: 'border-l-4 border-l-red-500',
+  high: 'border-l-4 border-l-orange-500',
+  medium: 'border-l-4 border-l-amber-400',
+  low: 'border-l-4 border-l-emerald-500',
+};
+
+const borderClass = {
+  critical: 'border-red-200',
+  high: 'border-orange-200',
+  medium: 'border-amber-200',
+  low: 'border-emerald-200',
+};
 
 export default function RiskRegisterTable({ risks = [], compact = false }) {
   const [filterLevel, setFilterLevel] = useState(null);
@@ -47,30 +61,27 @@ export default function RiskRegisterTable({ risks = [], compact = false }) {
       <div className="space-y-2">
         {sorted.map((risk, idx) => {
           const isExpanded = expandedId === (risk.id || idx);
-          const badgeClass = getRiskBadgeClass(risk.riskLevel);
-          const borderClass = {
-            critical: 'border-red-200',
-            high: 'border-orange-200',
-            medium: 'border-amber-200',
-            low: 'border-emerald-200',
-          }[risk.riskLevel?.toLowerCase()] || 'border-slate-200';
+          const badge = getRiskBadgeClass(risk.riskLevel);
+          const border = borderClass[risk.riskLevel?.toLowerCase()] || 'border-slate-200';
+          const leftBorder = leftBorderClass[risk.riskLevel?.toLowerCase()] || 'border-l-4 border-l-slate-300';
 
           return (
-            <div key={risk.id || idx} className={`border ${borderClass} rounded-lg bg-white overflow-hidden`}>
-              {/* Row Header — always visible */}
+            <div key={risk.id || idx} className={`border ${border} ${leftBorder} rounded-lg bg-white overflow-hidden shadow-sm`}>
+
+              {/* Collapsed Header */}
               <button
                 onClick={() => setExpandedId(isExpanded ? null : (risk.id || idx))}
                 className="w-full text-left px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <Badge className={`text-xs font-bold flex-shrink-0 ${badgeClass}`}>
+                  <Badge className={`text-xs font-bold flex-shrink-0 ${badge}`}>
                     {risk.riskLevel?.toUpperCase()}
                   </Badge>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-900 truncate">
                       {risk.title || risk.description?.slice(0, 80)}
                     </p>
-                    <p className="text-xs text-slate-500 mt-0.5 truncate">{risk.asset}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 truncate">{risk.asset} {risk.domain ? `· ${risk.domain}` : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
@@ -92,62 +103,71 @@ export default function RiskRegisterTable({ risks = [], compact = false }) {
 
               {/* Expanded Detail */}
               {isExpanded && (
-                <div className="border-t border-slate-100 px-4 py-4 space-y-4 bg-slate-50">
+                <div className="border-t border-slate-100 divide-y divide-slate-100">
 
                   {/* Description */}
-                  <div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Risk Description</p>
-                    <p className="text-sm text-slate-700 leading-relaxed">{risk.description}</p>
+                  <div className="px-4 py-3 bg-slate-50">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Risk Description</p>
+                    <p className="text-sm text-slate-800 leading-relaxed">{risk.description}</p>
                   </div>
 
-                  {/* Impact */}
-                  {risk.impact && (
-                    <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Impact</p>
-                      <p className="text-sm text-slate-700 leading-relaxed">{risk.impact}</p>
+                  {/* Impact Statement */}
+                  {risk.impactStatement && (
+                    <div className="px-4 py-3 bg-orange-50">
+                      <p className="text-xs font-bold text-orange-700 uppercase tracking-wider mb-1.5">Impact</p>
+                      <p className="text-sm text-orange-900 leading-relaxed">{risk.impactStatement}</p>
                     </div>
                   )}
 
-                  {/* Traceability Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="bg-white border border-slate-200 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Affected Asset</p>
-                      <p className="text-xs font-medium text-slate-800">{risk.asset}</p>
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Likelihood</p>
-                      <p className="text-xs font-bold text-slate-800">{risk.likelihoodNum}/5 — {risk.likelihood}</p>
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Impact</p>
-                      <p className="text-xs font-bold text-slate-800">{risk.impactNum}/5 — {risk.impact_score}</p>
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Status</p>
-                      <p className="text-xs font-medium text-slate-800">{risk.status || 'Open'}</p>
+                  {/* Traceability + Scores */}
+                  <div className="px-4 py-3 bg-white">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Based On</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <ul className="space-y-1">
+                        {(risk.traceability || []).map((item, i) => (
+                          <li key={i} className="text-xs text-slate-700 flex items-start gap-1.5">
+                            <span className="text-slate-400 flex-shrink-0 mt-0.5">•</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-center">
+                          <p className="text-xs text-slate-500 mb-0.5">Likelihood</p>
+                          <p className="text-sm font-bold text-slate-900">{risk.likelihoodNum}/5</p>
+                          <p className="text-xs text-slate-500">{risk.likelihood}</p>
+                        </div>
+                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-center">
+                          <p className="text-xs text-slate-500 mb-0.5">Impact</p>
+                          <p className="text-sm font-bold text-slate-900">{risk.impactNum}/5</p>
+                          <p className="text-xs text-slate-500">{risk.impact_score}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Recommended Control */}
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-                    <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1">Recommended Control</p>
+                  <div className="px-4 py-3 bg-emerald-50">
+                    <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1.5">Recommended Control</p>
                     <p className="text-sm text-emerald-900 leading-relaxed">{risk.control}</p>
                   </div>
 
                   {/* Framework Alignment */}
                   {risk.frameworks && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Framework Alignment</p>
-                      <p className="text-xs text-blue-900 leading-relaxed">{risk.frameworks}</p>
+                    <div className="px-4 py-3 bg-blue-50">
+                      <p className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1.5">Framework Alignment</p>
+                      <p className="text-xs text-blue-900 leading-relaxed font-mono">{risk.frameworks}</p>
                     </div>
                   )}
 
-                  {/* Owner */}
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span className="font-semibold">Owner:</span>
-                    <span>{risk.owner || 'Risk Owner (TBD)'}</span>
-                    {risk.dueDate && <><span className="font-semibold ml-3">Due:</span><span>{risk.dueDate}</span></>}
+                  {/* Footer: Owner / Status */}
+                  <div className="px-4 py-2.5 bg-white flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                    <span><span className="font-semibold text-slate-600">Owner:</span> {risk.owner || 'Risk Owner (TBD)'}</span>
+                    <span><span className="font-semibold text-slate-600">Status:</span> {risk.status || 'Open'}</span>
+                    {risk.dueDate && <span><span className="font-semibold text-slate-600">Due:</span> {risk.dueDate}</span>}
+                    {risk.domain && <span><span className="font-semibold text-slate-600">Domain:</span> {risk.domain}</span>}
                   </div>
+
                 </div>
               )}
             </div>
