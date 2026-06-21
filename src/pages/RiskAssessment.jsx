@@ -34,12 +34,17 @@ const assetOptions = [
 
 const inferredAssets = {
   diagnostic_imaging: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
-  diagnostic_labs: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
   clinical_decision_support: ['clinical_ai', 'ai_model', 'ephi', 'api'],
-  administrative: ['api', 'ehr', 'vendor'],
-  predictive_analytics: ['ai_model', 'ephi', 'api', 'vendor'],
   nlp_documentation: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  predictive_analytics: ['ai_model', 'ephi', 'api', 'vendor'],
+  patient_monitoring: ['clinical_ai', 'ai_model', 'ephi', 'api'],
   medication_management: ['clinical_ai', 'ai_model', 'ephi', 'vendor'],
+  administrative: ['api', 'ehr', 'vendor'],
+  conversational_ai: ['clinical_ai', 'ephi', 'api', 'vendor'],
+  population_health: ['ai_model', 'ephi', 'api'],
+  computer_vision: ['clinical_ai', 'ai_model', 'ephi', 'ehr'],
+  third_party_api: ['api', 'vendor', 'ephi'],
+  research: ['ai_model', 'ephi'],
   other: ['ai_model', 'ephi', 'api'],
 };
 
@@ -1009,13 +1014,18 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                   <Select value={formData.system_type} onValueChange={v => update('system_type', v)}>
                     <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="diagnostic_imaging">Diagnostic Imaging</SelectItem>
-                      <SelectItem value="diagnostic_labs">Diagnostic Labs</SelectItem>
-                      <SelectItem value="clinical_decision_support">Clinical Decision Support</SelectItem>
-                      <SelectItem value="administrative">Administrative / Operational</SelectItem>
-                      <SelectItem value="predictive_analytics">Predictive Analytics</SelectItem>
-                      <SelectItem value="nlp_documentation">NLP / Documentation</SelectItem>
-                      <SelectItem value="medication_management">Medication Management</SelectItem>
+                      <SelectItem value="diagnostic_imaging">Diagnostic Imaging (Radiology, Pathology AI)</SelectItem>
+                      <SelectItem value="clinical_decision_support">Clinical Decision Support (CDS)</SelectItem>
+                      <SelectItem value="nlp_documentation">AI Clinical Documentation / Ambient Scribe</SelectItem>
+                      <SelectItem value="predictive_analytics">Predictive Analytics (Risk Scoring, Readmission, Sepsis)</SelectItem>
+                      <SelectItem value="patient_monitoring">Patient Monitoring / Remote Monitoring</SelectItem>
+                      <SelectItem value="medication_management">Medication Management / Prescribing AI</SelectItem>
+                      <SelectItem value="administrative">Administrative / Operational AI (Scheduling, Billing)</SelectItem>
+                      <SelectItem value="conversational_ai">Conversational AI / Chatbots (Patient Interaction)</SelectItem>
+                      <SelectItem value="population_health">Population Health / Public Health Analytics</SelectItem>
+                      <SelectItem value="computer_vision">Computer Vision (Imaging, Surgical Assistance)</SelectItem>
+                      <SelectItem value="third_party_api">Third-Party AI Service / API Integration</SelectItem>
+                      <SelectItem value="research">Research / Model Development Systems</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>

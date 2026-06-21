@@ -10,12 +10,17 @@
       "type": "string",
       "enum": [
         "diagnostic_imaging",
-        "diagnostic_labs",
         "clinical_decision_support",
-        "administrative",
-        "predictive_analytics",
         "nlp_documentation",
+        "predictive_analytics",
+        "patient_monitoring",
         "medication_management",
+        "administrative",
+        "conversational_ai",
+        "population_health",
+        "computer_vision",
+        "third_party_api",
+        "research",
         "other"
       ],
       "description": "Type of AI system"
@@ -39,14 +44,14 @@
       "items": {
         "type": "string"
       },
-      "description": "Key assets involved (e.g. AI Model, ePHI, EHR System)"
+      "description": "Key assets involved"
     },
     "data_sources": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Data sources used by the system"
+      "description": "Data sources used"
     },
     "population_diversity": {
       "type": "string",
@@ -132,14 +137,14 @@
     "recommendations": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object"
       },
       "description": "Actionable risk reduction recommendations"
     },
     "governance_gaps": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object"
       },
       "description": "Identified governance and compliance gaps"
     }
