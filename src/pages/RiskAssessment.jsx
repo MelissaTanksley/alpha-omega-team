@@ -1077,21 +1077,22 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                   <Select value={formData.system_type} onValueChange={v => update('system_type', v)}>
                     <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="diagnostic_imaging">Diagnostic Imaging (Radiology, Pathology AI)</SelectItem>
-                      <SelectItem value="diagnostic_labs">Diagnostic Labs / Clinical Data Interpretation (Lab Analysis, Abnormal Value Detection)</SelectItem>
-                      <SelectItem value="clinical_decision_support">Clinical Decision Support (CDS)</SelectItem>
-                      <SelectItem value="nlp_documentation">AI Clinical Documentation / Ambient Scribe</SelectItem>
-                      <SelectItem value="predictive_analytics">Predictive Analytics (Risk Scoring, Readmission, Sepsis)</SelectItem>
-                      <SelectItem value="patient_monitoring">Patient Monitoring / Remote Monitoring</SelectItem>
-                      <SelectItem value="medication_management">Medication Management / Prescribing AI</SelectItem>
-                      <SelectItem value="administrative">Administrative / Operational AI (Scheduling, Billing)</SelectItem>
-                      <SelectItem value="conversational_ai">Conversational AI / Chatbots (Patient Interaction)</SelectItem>
-                      <SelectItem value="population_health">Population Health / Public Health Analytics</SelectItem>
-                      <SelectItem value="computer_vision">Computer Vision (Imaging, Surgical Assistance)</SelectItem>
-                      <SelectItem value="third_party_api">Third-Party AI Service / API Integration</SelectItem>
-                      <SelectItem value="research">Research / Model Development Systems</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
+                       <SelectItem value="diagnostic_imaging">Diagnostic Imaging (Radiology, Pathology AI)</SelectItem>
+                       <SelectItem value="diagnostic_labs">Diagnostic Labs / Clinical Data Interpretation (Lab Analysis, Abnormal Value Detection)</SelectItem>
+                       <SelectItem value="clinical_decision_support">Clinical Decision Support (CDS)</SelectItem>
+                       <SelectItem value="nlp_documentation">AI Clinical Documentation / Ambient Scribe</SelectItem>
+                       <SelectItem value="predictive_analytics">Predictive Analytics (Risk Scoring, Readmission, Sepsis)</SelectItem>
+                       <SelectItem value="patient_monitoring">Patient Monitoring / Remote Monitoring</SelectItem>
+                       <SelectItem value="medication_management">Medication Management / Prescribing AI</SelectItem>
+                       <SelectItem value="administrative">Administrative / Operational AI (Scheduling, Billing)</SelectItem>
+                       <SelectItem value="conversational_ai">Conversational AI / Chatbots (Patient Interaction)</SelectItem>
+                       <SelectItem value="population_health">Population Health / Public Health Analytics</SelectItem>
+                       <SelectItem value="computer_vision">Computer Vision (Imaging, Surgical Assistance)</SelectItem>
+                       <SelectItem value="third_party_api">Third-Party AI Service / API Integration</SelectItem>
+                       <SelectItem value="research">Research / Model Development Systems</SelectItem>
+                       <SelectItem value="other">Other</SelectItem>
+                       <SelectItem value="unknown">Unknown</SelectItem>
+                     </SelectContent>
                   </Select>
                 </div>
                 <div>
@@ -1107,6 +1108,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       <SelectItem value="administrative">Administrative / Back Office</SelectItem>
                       <SelectItem value="research">Research / Analytics</SelectItem>
                       <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1271,6 +1273,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="no">No</SelectItem>
                       <SelectItem value="not_applicable">Not Applicable</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1283,6 +1286,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       <SelectItem value="yes_older">Yes — Over 12 Months Ago</SelectItem>
                       <SelectItem value="planned">Planned</SelectItem>
                       <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1326,6 +1330,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       <SelectItem value="yes_formal">Yes — Formal Policy Exists</SelectItem>
                       <SelectItem value="yes_informal">Yes — Informal / In Development</SelectItem>
                       <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1338,6 +1343,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       <SelectItem value="yes_internal">Yes — Internal Only</SelectItem>
                       <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
