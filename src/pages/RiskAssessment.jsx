@@ -234,6 +234,7 @@ export default function RiskAssessment() {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [recentAssessments, setRecentAssessments] = useState([]);
+  const [submitError, setSubmitError] = useState(null);
   const [selectedFrameworks, setSelectedFrameworks] = useState({
     hipaa: true,
     nist_csf: true,
@@ -291,6 +292,7 @@ export default function RiskAssessment() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    setSubmitError(null);
     const effectiveAssets = getEffectiveAssets();
 
     // Compute sensitivity modifier based on assets and data sources
@@ -410,12 +412,18 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         }
       });
 
-      const saved = await base44.entities.AIRiskAssessment.create({ ...formData, key_assets: getEffectiveAssets(), ...response });
-      setResults({ ...response, id: saved.id, selectedFrameworks });
-      loadRecentAssessments();
+      let savedId = null;
+      try {
+        const saved = await base44.entities.AIRiskAssessment.create({ ...formData, key_assets: getEffectiveAssets(), ...response });
+        savedId = saved.id;
+        loadRecentAssessments();
+      } catch (saveErr) {
+        console.warn('Could not save assessment to database:', saveErr);
+      }
+      setResults({ ...response, id: savedId, selectedFrameworks });
     } catch (err) {
-      console.error(err);
-      alert('Analysis failed. Please try again.');
+      console.error('Assessment failed:', err);
+      setSubmitError('Analysis failed. Please check your connection and try again.');
     }
     setLoading(false);
   };
@@ -439,8 +447,28 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
     );
   }
 
+  if (submitError) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+          <AlertTriangle className="h-8 w-8 text-red-500" />
+        </div>
+        <div className="text-center max-w-md">
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Unable to Load Assessment Results</h2>
+          <p className="text-slate-500 text-sm mb-6">{submitError}</p>
+          <Button
+            onClick={() => { setSubmitError(null); setStep(1); }}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Start New Assessment
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (results) {
-    const risk = getRiskColor(results.overall_risk_score);
+    const risk = getRiskColor(results.overall_risk_score ?? 50);
     return (
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="text-center mb-10">
