@@ -297,7 +297,7 @@ export default function Home() {
               </div>
             ) : (
               <>
-                <p className="text-blue-100 text-base mb-6">Explore how AI risks are identified, scored, and reported.</p>
+                <p className="text-blue-100 text-base mb-6">Explore how AI risks are assessed through structured questions, risk scoring, and mapping to standards like HIPAA and NIST.</p>
                 <form onSubmit={handleDemoRequest} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
