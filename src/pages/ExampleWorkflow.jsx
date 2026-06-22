@@ -51,10 +51,10 @@ export default function ExampleWorkflow() {
           <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
             Example AI Risk Workflow
           </Badge>
-          <h1 className="text-4xl font-bold mb-3">Understand How the System Works</h1>
-          <p style={{ opacity: 0.85 }} className="text-lg max-w-2xl">
-            A step-by-step walkthrough of how AI risks are assessed through structured questions, risk scoring, and mapping to HIPAA and NIST standards — from asset identification through recovery.
-          </p>
+          <h1 className="text-4xl font-bold mb-3">AI Risk Assessment Workflow</h1>
+           <p style={{ opacity: 0.85 }} className="text-lg max-w-2xl">
+             A step-by-step walkthrough of how AI risks are assessed through structured questions, risk scoring, and mapping to standards such as HIPAA and NIST — from asset identification through recovery.
+           </p>
           <div className="flex flex-wrap items-center gap-3 mt-6">
             <Link to="/RiskAssessment">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
