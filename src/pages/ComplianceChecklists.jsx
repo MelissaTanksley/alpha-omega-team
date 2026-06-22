@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
 import { Shield, Lock, Brain, CheckCircle, ShieldAlert } from 'lucide-react';
 import FrameworkChecklist from '@/components/FrameworkChecklist';
@@ -277,9 +278,18 @@ function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) 
 
 export default function ComplianceChecklists() {
   useEffect(() => { document.title = 'Compliance Checklists | AI Risk Navigator'; }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
   const [checked, setChecked] = useState({});
   const [notes, setNotes] = useState({});
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+    };
+    checkAuth();
+  }, []);
 
   const toggle = (key) => setChecked(prev => ({ ...prev, [key]: !prev[key] }));
   const handleNoteChange = (key, value) => setNotes(prev => ({ ...prev, [key]: value }));
@@ -323,7 +333,7 @@ export default function ComplianceChecklists() {
           }
         }
       `}</style>
-      <div className="print-watermark" />
+      {!isAuthenticated && <div className="print-watermark" />}
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1">Compliance Checklists</h1>
         <p style={{ opacity: 0.85 }} className="text-sm">Interactive checklists aligned to major healthcare AI governance frameworks.</p>

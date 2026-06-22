@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Zap } from 'lucide-react';
@@ -7,7 +8,16 @@ import NISTExampleCard from '@/components/NISTExampleCard';
 import AssetComplianceExample from '@/components/AssetComplianceExample';
 
 export default function ExampleWorkflow() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => { document.title = 'Example Workflow | AI Risk Navigator'; }, []);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+    };
+    checkAuth();
+  }, []);
 
   return (
     <div className="min-h-screen relative">
@@ -30,7 +40,7 @@ export default function ExampleWorkflow() {
           }
         }
       `}</style>
-      <div className="print-watermark" />
+      {!isAuthenticated && <div className="print-watermark" />}
       {/* Page header */}
       <div style={{ color: '#ffffff' }} className="py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

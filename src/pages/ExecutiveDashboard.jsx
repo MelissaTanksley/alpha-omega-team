@@ -235,7 +235,7 @@ export default function ExecutiveDashboard() {
           }
         }
       `}</style>
-      <div className="print-watermark" />
+      {!isAuthenticated && <div className="print-watermark" />}
       {isDemo && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto flex items-center gap-2">

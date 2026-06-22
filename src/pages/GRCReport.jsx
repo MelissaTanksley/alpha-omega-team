@@ -15,6 +15,7 @@ import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 export default function GRCReport() {
   const [assessments, setAssessments] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     executive: true,
     overview: false,
@@ -63,6 +64,7 @@ export default function GRCReport() {
   const loadAssessments = async () => {
     try {
       const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
       if (!isAuth) {
         setAssessments([]);
         setSelectedAssessment(null);
@@ -238,7 +240,7 @@ export default function GRCReport() {
           }
         }
       `}</style>
-      <div className="print-watermark" />
+      {!isAuthenticated && <div className="print-watermark" />}
       {isDemo && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
           <div className="max-w-6xl mx-auto flex items-center gap-2">
