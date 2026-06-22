@@ -215,7 +215,27 @@ export default function ExecutiveDashboard() {
   const isDemo = isDemoMode();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <style>{`
+        @media print {
+          body { background: white; }
+          .print-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+          }
+        }
+      `}</style>
+      <div className="print-watermark" />
       {isDemo && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto flex items-center gap-2">

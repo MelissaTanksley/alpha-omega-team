@@ -218,7 +218,27 @@ export default function GRCReport() {
   const riskColor = getRiskColor(riskLevel);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 relative">
+      <style>{`
+        @media print {
+          body { background: white; }
+          .print-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+          }
+        }
+      `}</style>
+      <div className="print-watermark" />
       {isDemo && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
           <div className="max-w-6xl mx-auto flex items-center gap-2">

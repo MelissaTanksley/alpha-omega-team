@@ -10,7 +10,27 @@ export default function ExampleWorkflow() {
   useEffect(() => { document.title = 'Example Workflow | AI Risk Navigator'; }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <style>{`
+        @media print {
+          body { background: white; }
+          .print-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+          }
+        }
+      `}</style>
+      <div className="print-watermark" />
       {/* Page header */}
       <div style={{ color: '#ffffff' }} className="py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

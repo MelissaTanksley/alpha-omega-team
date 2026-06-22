@@ -303,7 +303,27 @@ export default function ComplianceChecklists() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10" style={{ color: '#ffffff' }}>
+    <div className="max-w-4xl mx-auto px-4 py-10 relative" style={{ color: '#ffffff' }}>
+      <style>{`
+        @media print {
+          body { background: white; }
+          .print-watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+          }
+        }
+      `}</style>
+      <div className="print-watermark" />
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1">Compliance Checklists</h1>
         <p style={{ opacity: 0.85 }} className="text-sm">Interactive checklists aligned to major healthcare AI governance frameworks.</p>
