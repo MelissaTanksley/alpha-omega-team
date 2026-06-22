@@ -165,7 +165,7 @@ export default function RiskRegister() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Risk Register</h1>
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>Define and track risks across your healthcare AI systems</p>
+              <p style={{ color: 'rgba(255, 255, 255, 0.85) !important' }}>Define and track risks across your healthcare AI systems</p>
             </div>
           </div>
 
