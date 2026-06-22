@@ -215,7 +215,7 @@ export default function ExecutiveDashboard() {
   const isDemo = isDemoMode();
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="min-h-screen">
       {isDemo && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto flex items-center gap-2">
