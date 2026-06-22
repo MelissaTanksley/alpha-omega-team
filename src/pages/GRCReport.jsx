@@ -136,7 +136,7 @@ export default function GRCReport() {
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <FileText className="h-16 w-16 text-slate-300 mx-auto mb-6" />
         <h2 className="text-2xl font-bold text-slate-900 mb-3">No Assessment Selected</h2>
-        <p className="text-slate-600 mb-10 max-w-md mx-auto">Run an AI risk analysis or view a demo report.</p>
+        <p style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="mb-10 max-w-md mx-auto">Run an AI risk analysis or view a demo report.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to="/RiskAssessment">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white h-11 px-6 text-base font-semibold gap-2">
