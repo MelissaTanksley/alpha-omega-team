@@ -161,6 +161,7 @@ const sections = [
 ];
 
 export default function PrivacyPolicy() {
+  React.useEffect(() => { document.title = 'AI Risk Navigator | Privacy Policy'; }, []);
   useEffect(() => { document.title = 'Privacy Policy | AI Risk Navigator for Healthcare'; }, []);
 
   return (

@@ -25,6 +25,8 @@ export default function RiskRegister() {
     risk_level: 'medium', recommended_control: '', owner: '', due_date: '', status: 'open'
   });
 
+  useEffect(() => { document.title = 'AI Risk Navigator | Risk Register'; }, []);
+
   useEffect(() => {
     loadData();
   }, []);

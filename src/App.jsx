@@ -9,12 +9,11 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import GRCReport from './pages/GRCReport';
-import ExecutiveReportView from './pages/ExecutiveReportView';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import RiskRegister from './pages/RiskRegister';
-import ExampleWorkflow from './pages/ExampleWorkflow';
+import Dashboard from './pages/Dashboard';
+import Report from './pages/Report';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -93,19 +92,19 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
-      <Route path="/GRCReport" element={
-        <LayoutWrapper currentPageName="GRCReport">
-          <GRCReport />
+      <Route path="/Dashboard" element={
+        <LayoutWrapper currentPageName="Dashboard">
+          <Dashboard />
+        </LayoutWrapper>
+      } />
+      <Route path="/Report" element={
+        <LayoutWrapper currentPageName="Report">
+          <Report />
         </LayoutWrapper>
       } />
       <Route path="/RiskRegister" element={
         <LayoutWrapper currentPageName="RiskRegister">
           <RiskRegister />
-        </LayoutWrapper>
-      } />
-      <Route path="/ExecutiveReportView" element={
-        <LayoutWrapper currentPageName="ExecutiveReportView">
-          <ExecutiveReportView />
         </LayoutWrapper>
       } />
       <Route path="/PrivacyPolicy" element={
@@ -116,11 +115,6 @@ const AuthenticatedApp = () => {
       <Route path="/TermsOfUse" element={
         <LayoutWrapper currentPageName="TermsOfUse">
           <TermsOfUse />
-        </LayoutWrapper>
-      } />
-      <Route path="/ExampleWorkflow" element={
-        <LayoutWrapper currentPageName="ExampleWorkflow">
-          <ExampleWorkflow />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />

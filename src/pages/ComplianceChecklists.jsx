@@ -4,6 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, Lock, Brain, CheckCircle, ShieldAlert } from 'lucide-react';
 import FrameworkChecklist from '@/components/FrameworkChecklist';
 
+// Set page title
+if (typeof document !== 'undefined') {
+  document.title = 'AI Risk Navigator | Checklists';
+}
+
 const FRAMEWORKS = {
   privacy: {
     label: 'Healthcare Privacy & Security',

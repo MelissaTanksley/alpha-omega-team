@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Shield, Plus, ChevronDown, ChevronUp, Calendar, Building2, Download, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, ChevronDown, ChevronUp, Calendar, Building2, Download, RefreshCw, BarChart3, Layout } from 'lucide-react';
 import RiskMappingCard from '@/components/RiskMappingCard';
-import ComplianceAssetMap from '@/components/ComplianceAssetMap';
 import ComprehensiveRiskCard from '@/components/ComprehensiveRiskCard';
 import { base44 } from '@/api/base44Client';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import moment from 'moment';
 import jsPDF from 'jspdf';
 
@@ -206,73 +205,6 @@ function AssessmentCard({ assessment }) {
                   <p className="text-sm text-slate-600 leading-relaxed">{assessment.summary}</p>
                 </div>
               )}
-              {assessment.key_assets && assessment.key_assets.length > 0 && (
-                <div>
-                  <div className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Complete Risk Assessment</div>
-                  <ComprehensiveRiskCard
-                    asset={assessment.key_assets[0] + ' + ePHI' || 'AI System + ePHI'}
-                    threat={assessment.governance_gaps?.[0] || 'System failure or output error'}
-                    risk={assessment.summary || 'Risk identified'}
-                    control={assessment.recommendations?.[0] || 'Implement security controls'}
-                    nistFunctions={['Identify', 'Protect', 'Detect']}
-                    hipaaType="Technical Safeguards"
-                    riskLevel={assessment.risk_level}
-                    compact={true}
-                  />
-                </div>
-              )}
-
-              {assessment.governance_gaps?.length > 0 && (
-                <div>
-                  <div className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-1 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> Governance Gaps
-                  </div>
-                  <ul className="space-y-1">
-                    {assessment.governance_gaps.map((g, i) => (
-                      <li key={i} className="text-xs text-slate-600 flex gap-1.5"><span className="text-orange-400 mt-0.5">⚠</span>{g}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {assessment.recommendations?.length > 0 && (
-                <div>
-                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">Recommendations (NIST CSF 2.0 Aligned)</div>
-                  <ul className="space-y-1.5">
-                    {assessment.recommendations.slice(0, 3).map((r, i) => {
-                      const recText = typeof r === 'string' ? r : r;
-                      const lowerRec = recText.toLowerCase();
-                      let nistTag = 'Protect';
-                      let tagBg = 'bg-emerald-100';
-                      let tagText = 'text-emerald-600';
-                      
-                      if (lowerRec.includes('monitor') || lowerRec.includes('audit') || lowerRec.includes('log')) {
-                        nistTag = 'Detect';
-                        tagBg = 'bg-orange-100';
-                        tagText = 'text-orange-600';
-                      } else if (lowerRec.includes('policy') || lowerRec.includes('governance') || lowerRec.includes('procedure')) {
-                        nistTag = 'Govern';
-                        tagBg = 'bg-slate-200';
-                        tagText = 'text-slate-700';
-                      } else if (lowerRec.includes('respond') || lowerRec.includes('escalate') || lowerRec.includes('incident')) {
-                        nistTag = 'Respond';
-                        tagBg = 'bg-red-100';
-                        tagText = 'text-red-600';
-                      } else if (lowerRec.includes('recover') || lowerRec.includes('restore') || lowerRec.includes('validate')) {
-                        nistTag = 'Recover';
-                        tagBg = 'bg-purple-100';
-                        tagText = 'text-purple-600';
-                      }
-
-                      return (
-                        <li key={i} className="text-xs text-slate-600 flex gap-1.5 items-start">
-                          <span className={`${tagBg} ${tagText} text-xs font-bold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 mt-0.5`}>{nistTag}</span>
-                          <span className="flex-1">{recText}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -281,8 +213,9 @@ function AssessmentCard({ assessment }) {
   );
 }
 
-export default function RiskDashboard() {
-  useEffect(() => { document.title = 'AI Risk Reports | AI Risk Navigator'; }, []);
+export default function Dashboard() {
+  useEffect(() => { document.title = 'AI Risk Navigator | Dashboard'; }, []);
+  const [view, setView] = useState('risk'); // 'risk' or 'executive'
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -302,7 +235,6 @@ export default function RiskDashboard() {
         setUser(userData);
         
         const data = await base44.entities.AIRiskAssessment.list('-created_date', 50);
-        // Filter to only show assessments created by current user
         const userAssessments = data.filter(a => a.created_by_id === userData.id);
         setAssessments(userAssessments);
       } catch (error) {
@@ -315,7 +247,6 @@ export default function RiskDashboard() {
     
     loadData();
 
-    // Real-time sync
     const unsubscribe = base44.entities.AIRiskAssessment.subscribe((event) => {
       if (event.type === 'create' && user && event.data?.created_by_id === user.id) {
         setAssessments(prev => [event.data, ...prev]);
@@ -354,7 +285,6 @@ export default function RiskDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      {/* Real-time alert banner */}
       {newAlerts.length > 0 && (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -368,25 +298,49 @@ export default function RiskDashboard() {
         </div>
       )}
 
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <h1 className="text-2xl font-bold text-slate-900">Risk Dashboard</h1>
+            <h1 className="text-2xl font-bold text-slate-900">AI Risk Navigator | Dashboard</h1>
             <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
               <RefreshCw className="h-3 w-3" /> Live
             </div>
           </div>
-          <p className="text-slate-500 text-sm">AI system risk assessments and governance insights</p>
+          <p className="text-slate-500 text-sm">View and manage AI system risk assessments</p>
         </div>
-        <Link to="/RiskAssessment">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
-            <Plus className="h-4 w-4" /> New Assessment
-          </Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <div className="flex items-center bg-slate-100 rounded-lg p-1 gap-1">
+            <button
+              onClick={() => setView('risk')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                view === 'risk'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              Risk View
+            </button>
+            <button
+              onClick={() => setView('executive')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                view === 'executive'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Layout className="h-3.5 w-3.5" />
+              Executive View
+            </button>
+          </div>
+          <Link to="/RiskAssessment">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
+              <Plus className="h-4 w-4" /> New Assessment
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <Card className="border-slate-200">
           <CardContent className="p-4">
@@ -414,7 +368,6 @@ export default function RiskDashboard() {
         </Card>
       </div>
 
-      {/* Filter */}
       <div className="flex flex-wrap gap-2 mb-6">
         {filterButtons.map(fb => (
           <button
@@ -431,7 +384,6 @@ export default function RiskDashboard() {
         ))}
       </div>
 
-      {/* Assessments List */}
       {loading ? (
         <div className="text-center py-20 text-slate-400">
           <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3" />

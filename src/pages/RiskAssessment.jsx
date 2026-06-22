@@ -250,7 +250,7 @@ function exportToPDF(formData, results) {
 
 export default function RiskAssessment() {
   useEffect(() => {
-    const title = 'Risk Assessment | AI Risk Navigator';
+    const title = 'AI Risk Navigator | Assessment';
     document.title = title;
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
     document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
@@ -1097,12 +1097,12 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
 
         <div className="flex flex-col sm:flex-row gap-3">
            <Button onClick={() => {
-               const fw = results.selectedFrameworks || {};
-               const params = new URLSearchParams({ id: results.id || '', ...(fw.gdpr ? { gdpr: '1' } : {}), ...(fw.nist_rmf === false ? { no_rmf: '1' } : {}), ...(fw.hipaa === false ? { no_hipaa: '1' } : {}), ...(fw.nist_csf === false ? { no_csf: '1' } : {}), ...(fw.iso_27005 === false ? { no_iso: '1' } : {}) });
-               window.location.href = `/GRCReport?${params.toString()}`;
-             }} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
-             <FileText className="h-4 w-4 mr-2" /> Export GRC Report
-           </Button>
+                const fw = results.selectedFrameworks || {};
+                const params = new URLSearchParams({ id: results.id || '', ...(fw.gdpr ? { gdpr: '1' } : {}), ...(fw.nist_rmf === false ? { no_rmf: '1' } : {}), ...(fw.hipaa === false ? { no_hipaa: '1' } : {}), ...(fw.nist_csf === false ? { no_csf: '1' } : {}), ...(fw.iso_27005 === false ? { no_iso: '1' } : {}) });
+                window.location.href = `/Report?${params.toString()}`;
+              }} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
+              <FileText className="h-4 w-4 mr-2" /> View Report
+            </Button>
           <Button onClick={() => navigate('/RiskRegister')} className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
             <TrendingUp className="h-4 w-4 mr-2" /> View Risk Register
           </Button>
@@ -1124,9 +1124,23 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
           <p style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-sm">Complete all five sections to generate your AI risk score and recommendations.</p>
         </div>
 
+        {/* Load Sample Assessment Button */}
+        <div className="mb-6 bg-teal-50 border border-teal-200 rounded-lg p-4 flex items-start justify-between">
+          <div>
+            <p className="text-sm font-semibold text-teal-900 mb-1">📚 Try a Sample Assessment</p>
+            <p className="text-xs text-teal-700">Experience the full workflow and report with pre-filled AI system data before starting your own assessment.</p>
+          </div>
+          <button
+            onClick={() => window.location.href = '/RiskAssessment?demo=1'}
+            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium whitespace-nowrap flex-shrink-0"
+          >
+            Load Sample
+          </button>
+        </div>
+
         {/* Step Indicator */}
         <div className="flex items-center mb-10">
-          {steps.map((s, i) => (
+           {steps.map((s, i) => (
             <React.Fragment key={s.id}>
               <div className="flex flex-col items-center">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-colors ${

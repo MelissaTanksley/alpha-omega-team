@@ -43,11 +43,10 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', path: '/', page: 'Home' },
     { name: 'Assess AI System', path: '/RiskAssessment', page: 'RiskAssessment' },
-    { name: 'Dashboard', path: '/ExecutiveDashboard', page: 'ExecutiveDashboard' },
-    { name: 'GRC Report', path: '/GRCReport', page: 'GRCReport' },
+    { name: 'Dashboard', path: '/Dashboard', page: 'Dashboard' },
+    { name: 'Report', path: '/Report', page: 'Report' },
     { name: 'Risk Register', path: '/RiskRegister', page: 'RiskRegister' },
     { name: 'Checklists', path: '/ComplianceChecklists', page: 'ComplianceChecklists' },
-    { name: 'Example Workflow', path: '/ExampleWorkflow', page: 'ExampleWorkflow' },
   ];
 
   return (
@@ -188,8 +187,8 @@ export default function Layout({ children, currentPageName }) {
             </div>
             <div className="flex gap-6">
               <Link to="/RiskAssessment" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Start Assessment</Link>
-              <Link to="/ExecutiveDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Executive Dashboard</Link>
-              <Link to="/RiskDashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">All Assessments</Link>
+              <Link to="/Dashboard" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Dashboard</Link>
+              <Link to="/Report" className="text-slate-400 text-sm hover:text-blue-400 transition-colors">Report</Link>
             </div>
             <div className="flex gap-4">
               <Link to="/PrivacyPolicy" className="text-slate-400 text-xs hover:text-blue-400 transition-colors">Privacy Policy</Link>

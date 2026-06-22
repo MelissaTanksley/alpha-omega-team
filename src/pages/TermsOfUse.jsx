@@ -171,6 +171,7 @@ const sections = [
 ];
 
 export default function TermsOfUse() {
+  React.useEffect(() => { document.title = 'AI Risk Navigator | Terms of Use'; }, []);
   useEffect(() => { document.title = 'Terms of Use | AI Risk Navigator for Healthcare'; }, []);
 
   return (
