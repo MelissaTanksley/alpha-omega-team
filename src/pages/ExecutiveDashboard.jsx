@@ -433,11 +433,12 @@ export default function ExecutiveDashboard() {
                 <p className="text-sm text-slate-400 py-4 text-center">No governance gaps identified.</p>
               ) : allGaps.map((item, i) => {
                 const s = getRiskStyle(item.level);
+                const gapText = typeof item.gap === 'string' ? item.gap : (item.gap?.gap || 'Governance gap identified');
                 return (
                   <div key={i} className="flex gap-3 items-start p-2.5 bg-orange-50 rounded-lg border border-orange-100">
                     <AlertTriangle className="h-3.5 w-3.5 text-orange-500 flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-slate-700">{item.gap}</p>
+                      <p className="text-xs text-slate-700">{gapText}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{item.system}</p>
                     </div>
                     <Badge className={`${s.badge} border text-xs px-1.5 py-0 flex-shrink-0`}>{s.label}</Badge>
