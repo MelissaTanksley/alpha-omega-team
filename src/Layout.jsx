@@ -52,22 +52,18 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col relative">
-      {/* Compass background - only on non-homepage */}
-      {!isHomepage && (
-        <>
-          <div className="fixed inset-0 pointer-events-none z-0" style={{
-            backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            filter: 'brightness(1.1) contrast(1.05)',
-          }} />
-          <div className="fixed inset-0 pointer-events-none z-[1]" style={{
-            background: 'linear-gradient(rgba(10, 20, 40, 0.88), rgba(10, 20, 40, 0.92))',
-          }} />
-        </>
-      )}
+      {/* Compass background */}
+      <div className="fixed inset-0 pointer-events-none z-0" style={{
+        backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        filter: 'brightness(1.1) contrast(1.05)',
+      }} />
+      <div className="fixed inset-0 pointer-events-none z-[1]" style={{
+        background: 'linear-gradient(rgba(10, 20, 40, 0.88), rgba(10, 20, 40, 0.92))',
+      }} />
       {/* Header */}
       <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
