@@ -164,7 +164,7 @@ export default function RiskRegister() {
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Risk Register</h1>
+              <h1 style={{ color: '#ffffff !important' }} className="text-4xl font-bold mb-2">Risk Register</h1>
               <p style={{ color: 'rgba(255, 255, 255, 0.85) !important' }}>Define and track risks across your healthcare AI systems</p>
             </div>
           </div>
@@ -255,10 +255,10 @@ export default function RiskRegister() {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
-          <div style={{ background: 'rgba(255, 255, 255, 0.08)', padding: '1.5rem', borderRadius: '0.75rem', border: 'none', outline: 'none', boxShadow: 'none', backdropFilter: 'blur(6px)' }}>
-             <h1 style={{ color: '#ffffff !important' }} className="text-4xl font-bold mb-2">Risk Register</h1>
-             <p style={{ color: 'rgba(255, 255, 255, 0.85)' }}>Define and track risks across your healthcare AI systems</p>
-           </div>
+          <div style={{ background: 'rgba(255, 255, 255, 0.08)', padding: '1.5rem', borderRadius: '0.75rem', border: 'none !important', outline: 'none !important', boxShadow: 'none !important', backdropFilter: 'blur(6px)' }}>
+               <h1 style={{ color: '#ffffff !important' }} className="text-4xl font-bold mb-2">Risk Register</h1>
+               <p style={{ color: 'rgba(255, 255, 255, 0.85) !important' }}>Define and track risks across your healthcare AI systems</p>
+             </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
