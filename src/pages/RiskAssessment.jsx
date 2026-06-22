@@ -1120,8 +1120,8 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
       <div>
         <div className="mb-10">
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">New Assessment</h1>
-          <p className="text-slate-500 text-sm">Complete all five sections to generate your AI risk score and recommendations.</p>
+          <h1 className="text-2xl font-bold text-white !important mb-1">New Assessment</h1>
+          <p style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-sm">Complete all five sections to generate your AI risk score and recommendations.</p>
         </div>
 
         {/* Step Indicator */}
