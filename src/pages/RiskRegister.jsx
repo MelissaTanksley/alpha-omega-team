@@ -255,7 +255,7 @@ export default function RiskRegister() {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
-          <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '1.5rem', borderRadius: '0.75rem' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.08)', padding: '1.5rem', borderRadius: '0.75rem', border: 'none', outline: 'none', boxShadow: 'none', backdropFilter: 'blur(6px)' }}>
              <h1 style={{ color: '#ffffff !important' }} className="text-4xl font-bold mb-2">Risk Register</h1>
              <p style={{ color: 'rgba(255, 255, 255, 0.85)' }}>Define and track risks across your healthcare AI systems</p>
            </div>
