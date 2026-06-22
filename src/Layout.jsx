@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Shield, BarChart3, LogOut, LogIn, User, Menu, X, Activity, Brain, MessageCircle } from 'lucide-react';
 import FeedbackModal from '@/components/FeedbackModal';
 
 export default function Layout({ children, currentPageName }) {
+  const location = useLocation();
+  const isHomepage = location.pathname === '/';
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -49,9 +51,25 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col relative">
+      {/* Compass background - only on non-homepage */}
+      {!isHomepage && (
+        <>
+          <div className="fixed inset-0 pointer-events-none z-0" style={{
+            backgroundImage: 'url(https://media.base44.com/images/public/69552d682a4e973d9943fc93/00c749859_ChatGPTImageJun16202601_11_58PM.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+            filter: 'brightness(1.1) contrast(1.05)',
+          }} />
+          <div className="fixed inset-0 pointer-events-none z-[1]" style={{
+            background: 'linear-gradient(rgba(10, 20, 40, 0.85), rgba(10, 20, 40, 0.9))',
+          }} />
+        </>
+      )}
       {/* Header */}
-      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -143,7 +161,7 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         {children}
       </main>
 
@@ -153,7 +171,7 @@ export default function Layout({ children, currentPageName }) {
         className={`fixed bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-3 shadow-lg transition-all hover:shadow-xl flex items-center gap-2 font-semibold text-sm whitespace-nowrap ${
           showFeedbackButton ? 'opacity-100' : 'opacity-0 pointer-events-none'
         } duration-300`}
-        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}
+        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}
       >
         <MessageCircle className="h-4 w-4" />
         ✉ Give Feedback
@@ -161,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
       <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Footer */}
-      <footer className="bg-slate-900 border-t border-slate-800 mt-auto">
+      <footer className="bg-slate-900 border-t border-slate-800 mt-auto relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-800">
             <div className="flex items-center gap-3">
