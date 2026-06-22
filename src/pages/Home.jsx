@@ -59,7 +59,7 @@ export default function Home() {
       <InstallPrompt />
 
       {/* ── HERO ── */}
-      <section className="bg-slate-900 text-white relative overflow-hidden">
+      <section className="text-white relative overflow-hidden">
 
         <div className="absolute inset-0 opacity-[0.07]" style={{
           backgroundImage: 'linear-gradient(rgba(59,130,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,1) 1px, transparent 1px)',
@@ -151,7 +151,7 @@ export default function Home() {
       </section>
 
       {/* ── PROBLEM ── */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white bg-opacity-95">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-red-50 text-red-700 border border-red-200 text-xs px-3 py-1 rounded-full">The Problem</Badge>
@@ -177,7 +177,7 @@ export default function Home() {
       </section>
 
       {/* ── SOLUTION ── */}
-      <section className="py-20 bg-slate-900">
+      <section className="py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">The Solution</Badge>
@@ -216,7 +216,7 @@ export default function Home() {
       </section>
 
       {/* ── TWO PATHS TEASER ── */}
-      <section className="py-16 bg-white border-y border-slate-200">
+      <section className="py-16 bg-white bg-opacity-95 border-y border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <Badge className="mb-4 bg-slate-100 text-slate-700 border border-slate-200 text-xs px-3 py-1 rounded-full">Explore the Platform</Badge>
@@ -265,7 +265,7 @@ export default function Home() {
       </section>
 
       {/* ── USE CASES ── */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-slate-50 bg-opacity-95">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-slate-200 text-slate-700 border border-slate-300 text-xs px-3 py-1 rounded-full">Who This Is For</Badge>
@@ -287,7 +287,7 @@ export default function Home() {
       </section>
 
       {/* ── CLOSING + DEMO CTA ── */}
-      <section id="request-demo" className="py-20 bg-blue-600">
+      <section id="request-demo" className="py-20 bg-blue-600 bg-opacity-95">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl mx-auto text-center">
             {demoSubmitted ? (
