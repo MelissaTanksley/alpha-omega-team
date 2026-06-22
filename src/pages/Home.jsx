@@ -236,26 +236,26 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-slate-900 mb-1">See the Results</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">Jump into a pre-loaded risk report — risk scores, executive summary, top risks, and the risk register. No setup required.</p>
               </div>
-              <Link to="/GRCReport?demo=1" className="mt-auto">
+              <Link to="/Report?demo=1" className="mt-auto">
                 <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full">
                   <Zap className="mr-2 h-4 w-4" />
                   View Demo Report
                 </Button>
               </Link>
             </div>
-            {/* Workflow path */}
+            {/* Assessment path */}
             <div className="border border-blue-200 bg-blue-50 rounded-2xl p-7 flex flex-col gap-4">
               <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
                 <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-blue-700 mb-1">Example Workflow</p>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">Understand How It Works</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">Walk through how AI risks are assessed through structured questions, risk scoring, and mapping to HIPAA and NIST standards — step by step.</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-700 mb-1">Sample Assessment</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Experience the Workflow</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">Walk through an AI risk assessment with sample data — see how risks are scored, mapped to HIPAA and NIST standards, and turned into recommendations.</p>
               </div>
-              <Link to="/ExampleWorkflow" className="mt-auto">
+              <Link to="/RiskAssessment?demo=1" className="mt-auto">
                 <Button variant="outline" className="border-blue-600 text-blue-700 hover:bg-blue-100 w-full">
-                  View Example Workflow
+                  Load Sample Assessment
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
