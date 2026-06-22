@@ -148,8 +148,8 @@ Generated: ${new Date().toLocaleString()}`;
         {/* HEADER */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">{assessment.system_name}</h1>
-            <p className="text-slate-600 text-sm mt-1">
+            <h1 className="text-3xl font-bold text-white">{assessment.system_name}</h1>
+            <p style={{ color: 'rgba(255, 255, 255, 0.8)' }} className="text-sm mt-1">
               {assessment.system_type?.replace(/_/g, ' ') || 'AI System'} • {assessment.deployment_context || 'Unknown'} Deployment
             </p>
           </div>
@@ -163,9 +163,9 @@ Generated: ${new Date().toLocaleString()}`;
 
         {/* OVERALL RISK LEVEL */}
         <div className={`mb-8 p-6 rounded-lg border-2 ${riskColor.bg} ${riskColor.border}`}>
-          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Overall Risk Level</p>
+          <p className="text-xs font-semibold text-white uppercase tracking-wide mb-2">Overall Risk Level</p>
           <div className="flex items-center gap-4">
-            <div className="text-4xl font-bold text-slate-900">{assessment.overall_risk_score || 0}<span className="text-lg text-slate-600">/100</span></div>
+            <div className="text-4xl font-bold text-white">{assessment.overall_risk_score || 0}<span className="text-lg" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>/100</span></div>
             <Badge className={`text-lg px-4 py-2 font-bold ${riskColor.bg} ${riskColor.text} border-0`}>
               {riskLevel.toUpperCase()}
             </Badge>

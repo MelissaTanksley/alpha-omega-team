@@ -230,8 +230,8 @@ export default function GRCReport() {
         {/* Header with Report Controls */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">GRC Report</h1>
-            <p className="text-slate-600">Comprehensive Governance, Risk & Compliance Assessment</p>
+            <h1 className="text-4xl font-bold text-white mb-2">GRC Report</h1>
+            <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>Comprehensive Governance, Risk & Compliance Assessment</p>
           </div>
           <div className="flex flex-wrap gap-2 print:hidden">
             {/* View mode toggle */}
@@ -280,7 +280,7 @@ export default function GRCReport() {
         {assessments.length > 0 && (
           <Card>
             <CardContent className="pt-6">
-              <label className="text-sm font-semibold text-slate-700 block mb-2">Switch Assessment</label>
+              <label className="text-sm font-semibold text-white block mb-2">Switch Assessment</label>
               <select
                 value={selectedAssessment.id}
                 onChange={(e) => setSelectedAssessment(assessments.find(a => a.id === e.target.value))}

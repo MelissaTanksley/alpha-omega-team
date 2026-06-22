@@ -64,7 +64,7 @@ export default function Layout({ children, currentPageName }) {
             filter: 'brightness(1.1) contrast(1.05)',
           }} />
           <div className="fixed inset-0 pointer-events-none z-[1]" style={{
-            background: 'linear-gradient(rgba(10, 20, 40, 0.85), rgba(10, 20, 40, 0.9))',
+            background: 'linear-gradient(rgba(10, 20, 40, 0.88), rgba(10, 20, 40, 0.92))',
           }} />
         </>
       )}
