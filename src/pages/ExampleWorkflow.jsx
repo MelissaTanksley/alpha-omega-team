@@ -10,7 +10,7 @@ export default function ExampleWorkflow() {
   useEffect(() => { document.title = 'Example Workflow | AI Risk Navigator'; }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Page header */}
       <div className="bg-slate-900 text-white py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
