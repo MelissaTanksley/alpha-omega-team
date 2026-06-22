@@ -12,9 +12,9 @@ export default function ExampleWorkflow() {
   return (
     <div className="min-h-screen">
       {/* Page header */}
-      <div className="text-white py-14">
+      <div style={{ color: '#ffffff' }} className="py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 hover:text-white text-sm mb-6 transition-colors" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
@@ -22,7 +22,7 @@ export default function ExampleWorkflow() {
             Example AI Risk Workflow
           </Badge>
           <h1 className="text-4xl font-bold mb-3">Understand How the System Works</h1>
-          <p className="text-slate-300 text-lg max-w-2xl">
+          <p style={{ opacity: 0.85 }} className="text-lg max-w-2xl">
             A step-by-step walkthrough of how AI risks are assessed through structured questions, risk scoring, and mapping to HIPAA and NIST standards — from asset identification through recovery.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-6">
@@ -32,7 +32,7 @@ export default function ExampleWorkflow() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <span className="text-slate-500 text-sm">or</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-sm">or</span>
             <Link to="/GRCReport?demo=1">
               <Button variant="outline" className="border-slate-600 text-blue-400 hover:bg-slate-800 hover:text-blue-300">
                 <Zap className="mr-2 h-4 w-4" />
@@ -40,14 +40,14 @@ export default function ExampleWorkflow() {
               </Button>
             </Link>
           </div>
-          <p className="text-slate-500 text-xs mt-3">Demo = see results instantly · Workflow = understand the methodology</p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-xs mt-3">Demo = see results instantly · Workflow = understand the methodology</p>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
 
         {/* NIST CSF Workflow */}
-        <section>
+        <section className="bg-white rounded-lg p-8">
           <div className="text-center mb-10">
             <Badge className="mb-4 bg-blue-50 text-blue-700 border border-blue-200 text-xs px-3 py-1 rounded-full">
               NIST CSF 2.0
@@ -61,7 +61,7 @@ export default function ExampleWorkflow() {
         </section>
 
         {/* Asset Compliance Traceability */}
-        <section>
+        <section className="bg-white rounded-lg p-8">
           <div className="text-center mb-10">
             <Badge className="mb-4 bg-purple-50 text-purple-700 border border-purple-200 text-xs px-3 py-1 rounded-full">
               Asset → Compliance Traceability
@@ -75,9 +75,9 @@ export default function ExampleWorkflow() {
         </section>
 
         {/* CTA */}
-        <section className="bg-slate-900 rounded-2xl p-10 text-center">
-          <h2 className="text-2xl font-bold text-white mb-3">Ready to Assess Your AI Systems?</h2>
-          <p className="text-slate-300 mb-6 max-w-xl mx-auto">
+        <section className="bg-slate-900 rounded-2xl p-10 text-center" style={{ color: '#ffffff' }}>
+          <h2 className="text-2xl font-bold mb-3">Ready to Assess Your AI Systems?</h2>
+          <p style={{ opacity: 0.85 }} className="mb-6 max-w-xl mx-auto">
             Run a full assessment in minutes and get a structured GRC report aligned with HIPAA, NIST, and ISO frameworks.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">

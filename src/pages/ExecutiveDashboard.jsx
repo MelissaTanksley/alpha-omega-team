@@ -225,16 +225,16 @@ export default function ExecutiveDashboard() {
         </div>
       )}
       {/* Page Header */}
-      <div className="border-b border-slate-200 border-opacity-20">
+      <div className="border-b border-slate-200 border-opacity-20" style={{ color: '#ffffff' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-xs font-medium uppercase tracking-wide">Live</span>
+                <span style={{ opacity: 0.85 }} className="text-xs font-medium uppercase tracking-wide">Live</span>
               </div>
-              <h1 style={{ color: '#ffffff' }} className="text-2xl font-bold">Executive Risk Dashboard</h1>
-              <p style={{ color: 'rgba(255, 255, 255, 0.85) !important', fontSize: '0.875rem', marginTop: '0.125rem' }}>Portfolio-wide AI governance overview · {total} system{total !== 1 ? 's' : ''} assessed</p>
+              <h1 className="text-2xl font-bold">Executive Risk Dashboard</h1>
+              <p style={{ opacity: 0.85 }} className="text-sm">Portfolio-wide AI governance overview · {total} system{total !== 1 ? 's' : ''} assessed</p>
             </div>
             <Link to="/RiskAssessment">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0">
