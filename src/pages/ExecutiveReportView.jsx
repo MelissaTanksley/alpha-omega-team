@@ -180,7 +180,12 @@ Generated: ${new Date().toLocaleString()}`;
           </h2>
           <div className="space-y-2 ml-7">
             {topRisks.map((risk, i) => {
-              const riskText = typeof risk === 'string' ? risk : risk.gap || risk;
+              let riskText = 'Risk identified';
+              if (typeof risk === 'string') {
+                riskText = risk;
+              } else if (risk?.gap && typeof risk.gap === 'string') {
+                riskText = risk.gap;
+              }
               return (
                 <p key={i} className="text-sm text-slate-700">
                   <span className="font-semibold">{i + 1}.</span> {riskText}
