@@ -13,14 +13,6 @@ import { parseAssessmentToRiskRegister } from '@/utils/riskUtils';
 import { isDemoMode, DEMO_ASSESSMENT } from '@/utils/demoData';
 
 export default function GRCReport() {
-  useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
-
-  // Scroll to top when assessment is selected or loaded
-  useEffect(() => {
-    if (selectedAssessment) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [selectedAssessment]);
   const [assessments, setAssessments] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
@@ -41,6 +33,15 @@ export default function GRCReport() {
   const [isLoading, setIsLoading] = useState(true);
   const [demoError, setDemoError] = useState(false);
   const [viewMode, setViewMode] = useState('executive'); // 'executive' | 'full'
+
+  useEffect(() => { document.title = 'GRC Report | AI Risk Navigator'; }, []);
+
+  // Scroll to top when assessment is selected or loaded
+  useEffect(() => {
+    if (selectedAssessment) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedAssessment]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
