@@ -234,7 +234,7 @@ export default function ExecutiveDashboard() {
                 <span style={{ color: 'rgba(255, 255, 255, 0.85)' }} className="text-xs font-medium uppercase tracking-wide">Live</span>
               </div>
               <h1 style={{ color: '#ffffff' }} className="text-2xl font-bold">Executive Risk Dashboard</h1>
-              <p style={{ color: 'rgba(255, 255, 255, 0.85) !important' }} className="text-sm mt-0.5">Portfolio-wide AI governance overview · {total} system{total !== 1 ? 's' : ''} assessed</p>
+              <p style={{ color: 'rgba(255, 255, 255, 0.85) !important', fontSize: '0.875rem', marginTop: '0.125rem' }}>Portfolio-wide AI governance overview · {total} system{total !== 1 ? 's' : ''} assessed</p>
             </div>
             <Link to="/RiskAssessment">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0">
