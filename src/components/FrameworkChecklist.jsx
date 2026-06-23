@@ -22,9 +22,9 @@ export default function FrameworkChecklist({ framework, checked, onToggle, notes
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-slate-800 text-base">{framework.name}</h3>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">{checkedCount}/{allKeys.length}</span>
+        <h3 className="font-semibold text-slate-900 text-base">{framework.name}</h3>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-600">{checkedCount}/{allKeys.length}</span>
           <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
             <div className="h-full bg-emerald-500 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
           </div>
@@ -44,7 +44,7 @@ export default function FrameworkChecklist({ framework, checked, onToggle, notes
               onClick={() => toggleSection(sectionKey)}
               className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-50 hover:bg-slate-100 transition-colors text-left"
             >
-              <span className="text-sm font-medium text-slate-700">{section.title}</span>
+              <span className="text-sm font-medium text-slate-800">{section.title}</span>
               {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-slate-400" /> : <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
             </button>
 
@@ -71,7 +71,7 @@ export default function FrameworkChecklist({ framework, checked, onToggle, notes
                         </button>
 
                         {/* Item text */}
-                        <span className={`text-sm flex-1 leading-snug transition-colors ${checked[key] ? 'line-through text-slate-400' : 'text-slate-700 group-hover:text-slate-900'}`}>
+                        <span className={`text-sm flex-1 leading-snug transition-colors ${checked[key] ? 'line-through text-slate-400' : 'text-slate-800 group-hover:text-slate-950'}`}>
                           {item}
                         </span>
 

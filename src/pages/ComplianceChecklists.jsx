@@ -250,7 +250,7 @@ function CategoryPanel({ categoryKey, checked, onToggle, notes, onNoteChange }) 
   const cat = FRAMEWORKS[categoryKey];
   const Icon = cat.icon;
   return (
-    <div className={`rounded-2xl border ${cat.border} p-6`}>
+    <div className={`rounded-2xl border ${cat.border} bg-white p-6`}>
       <div className={`flex items-center gap-3 mb-6 pb-4 border-b ${cat.border}`}>
         <div className={`w-10 h-10 ${cat.bg} rounded-xl flex items-center justify-center`}>
           <Icon className={`h-5 w-5 ${cat.color}`} />
