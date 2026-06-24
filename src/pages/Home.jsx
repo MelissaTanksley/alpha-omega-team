@@ -205,7 +205,7 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-10">
-            <Link to="/GRCWorkspace">
+            <Link to="/RiskAssessment">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 text-base font-semibold">
                 <Zap className="mr-2 h-5 w-5" />
                 Run a Full Analysis

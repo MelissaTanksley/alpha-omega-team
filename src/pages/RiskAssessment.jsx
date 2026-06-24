@@ -30,7 +30,7 @@ class ResultsErrorBoundary extends Component {
             <h2 className="text-xl font-bold text-slate-900 mb-2">Assessment complete, but results failed to load.</h2>
             <p className="text-slate-500 text-sm mb-6">Your assessment was saved. You can view it in the GRC Report or start a new assessment.</p>
             <div className="flex gap-3 justify-center">
-              <Button onClick={() => window.location.href = '/GRCReport'} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button onClick={() => window.location.href = '/Report'} className="bg-indigo-600 hover:bg-indigo-700 text-white">
                 <FileText className="h-4 w-4 mr-2" /> View Report
               </Button>
               <Button variant="outline" onClick={() => window.location.reload()}>Start New Assessment</Button>
@@ -346,8 +346,8 @@ export default function RiskAssessment() {
   };
 
   const runDemoMode = () => {
-    // Instantly navigate to GRC Report with prebuilt demo data — no API calls
-    window.location.href = '/GRCReport?demo=1';
+    // Instantly navigate to Report with prebuilt demo data — no API calls
+    window.location.href = '/Report?demo=1';
   };
 
   const getEffectiveAssets = () => {
