@@ -200,6 +200,17 @@ const FRAMEWORKS = {
         ]
       },
       {
+        name: 'MITRE ATLAS',
+        sections: [
+          { title: 'Reconnaissance & Resource Development', items: ['Identify AI system attack surface and exposed endpoints','Document publicly available model information (papers, demos, APIs)','Assess training data exposure and open-source dataset usage','Identify external model access points and third-party integrations'] },
+          { title: 'Initial Access & ML Model Access', items: ['Secure model API endpoints with authentication and rate limiting','Control access to model weights, parameters, and architecture','Validate third-party model and dataset integrations','Restrict access to training pipelines and ML infrastructure'] },
+          { title: 'Execution & Persistence', items: ['Monitor for unauthorized or anomalous model queries','Detect adversarial input injection and prompt injection attempts','Secure ML CI/CD pipelines against tampering','Log and alert on repeated inference requests indicating model probing'] },
+          { title: 'Discovery & Collection', items: ['Audit access to training datasets and data repositories','Monitor for data exfiltration attempts against ePHI stores','Protect model inference logs and metadata','Detect reconnaissance of model behavior via repeated queries'] },
+          { title: 'ML Attack Staging & Exfiltration', items: ['Detect model inversion and extraction attacks','Monitor for membership inference attempts on training data','Prevent model stealing via bulk API abuse','Alert on anomalous output patterns suggesting adversarial probing'] },
+          { title: 'Impact', items: ['Detect model poisoning indicators in training data','Monitor for adversarial examples and evasion attacks','Track degradation of model performance and accuracy drift','Establish response procedures for adversarial AI incidents','Document patient safety impact of adversarial attacks'] },
+        ]
+      },
+      {
         name: 'ISO/IEC 42001',
         sections: [
           { title: 'Governance', items: ['AI policy established','Roles and responsibilities defined','AI inventory maintained'] },

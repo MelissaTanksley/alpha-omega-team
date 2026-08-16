@@ -79,7 +79,7 @@ export default function Home() {
                 Identify, measure, and manage AI risks using<br />leading healthcare and cybersecurity frameworks
               </p>
               <p className="text-sm text-slate-400 mb-8 tracking-wide">
-                HIPAA&nbsp;&nbsp;•&nbsp;&nbsp;GDPR&nbsp;&nbsp;•&nbsp;&nbsp;NIST CSF 2.0&nbsp;&nbsp;•&nbsp;&nbsp;NIST RMF&nbsp;&nbsp;•&nbsp;&nbsp;NIST AI RMF&nbsp;&nbsp;•&nbsp;&nbsp;ISO 27005&nbsp;&nbsp;•&nbsp;&nbsp;ISO/IEC 42001
+                HIPAA&nbsp;&nbsp;•&nbsp;&nbsp;GDPR&nbsp;&nbsp;•&nbsp;&nbsp;NIST CSF 2.0&nbsp;&nbsp;•&nbsp;&nbsp;NIST RMF&nbsp;&nbsp;•&nbsp;&nbsp;NIST AI RMF&nbsp;&nbsp;•&nbsp;&nbsp;MITRE ATLAS&nbsp;&nbsp;•&nbsp;&nbsp;ISO 27005&nbsp;&nbsp;•&nbsp;&nbsp;ISO/IEC 42001
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/RiskAssessment">
@@ -188,7 +188,7 @@ export default function Home() {
             {[
               { icon: BarChart3, color: 'text-blue-400', bg: 'bg-blue-600/20', title: 'AI Risk Scoring', sub: 'ISO 27005', desc: 'Quantified risk scores across bias, cybersecurity, compliance, and clinical impact dimensions — producing a single unified 0–100 risk score per system.', footnote: 'Based on ISO/IEC 27005 likelihood and impact modeling' },
               { icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-600/20', title: 'Compliance Mapping', sub: 'HIPAA · NIST CSF 2.0', desc: 'Auto-maps every identified risk to HIPAA safeguards and NIST CSF 2.0 functions, highlighting regulatory gaps and producing audit-ready documentation.', footnote: 'Aligned with HIPAA safeguards and NIST CSF 2.0 functions' },
-              { icon: Activity, color: 'text-orange-400', bg: 'bg-orange-600/20', title: 'Internal & External Risk Identification', sub: 'Risk Measurement & Monitoring', desc: 'Analyzes both internal vectors (access control, insider misuse, model drift) and external threats (ransomware, MITRE ATT&CK, vendor risks) in a single workflow.', footnote: 'Informed by STRIDE and MITRE ATT&CK threat models' },
+              { icon: Activity, color: 'text-orange-400', bg: 'bg-orange-600/20', title: 'Internal & External Risk Identification', sub: 'Risk Measurement & Monitoring', desc: 'Analyzes both internal vectors (access control, insider misuse, model drift) and external threats (ransomware, MITRE ATT&CK, MITRE ATLAS adversarial AI attacks, vendor risks) in a single workflow.', footnote: 'Informed by STRIDE, MITRE ATT&CK, and MITRE ATLAS threat models' },
               { icon: Target, color: 'text-violet-400', bg: 'bg-violet-600/20', title: 'Structured Governance Outputs', sub: 'NIST AI RMF · Reporting', desc: 'Generates downloadable reports, recommendations, and governance gap summaries aligned with the NIST AI RMF (Govern, Map, Measure, Manage) — suitable for board presentations, audits, and integration into existing GRC programs.', footnote: 'Informed by FAIR-aligned risk prioritization methods' },
             ].map((item, i) => (
               <div key={i} className="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex items-start gap-4">
