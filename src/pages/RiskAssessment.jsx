@@ -279,6 +279,7 @@ export default function RiskAssessment() {
     iso_27005: true,
     gdpr: false,
     nist_rmf: true,
+    nist_ai_rmf: true,
   });
   const [formData, setFormData] = useState({
     system_name: '', system_type: '', vendor: '', deployment_context: '',
@@ -581,7 +582,8 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                {results.selectedFrameworks?.iso_27005 && <span className="text-xs bg-slate-100 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-full font-medium">ISO/IEC 27005</span>}
                {(results.selectedFrameworks?.gdpr || formData.eu_personal_data === 'yes') && <span className="text-xs bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full font-medium">GDPR</span>}
                {results.selectedFrameworks?.nist_rmf && <span className="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-1 rounded-full font-medium">NIST RMF</span>}
-             </div>
+               {results.selectedFrameworks?.nist_ai_rmf && <span className="text-xs bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full font-medium">NIST AI RMF</span>}
+               </div>
           </div>
         </div>
 
@@ -1098,7 +1100,7 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
         <div className="flex flex-col sm:flex-row gap-3">
            <Button onClick={() => {
                 const fw = results.selectedFrameworks || {};
-                const params = new URLSearchParams({ id: results.id || '', ...(fw.gdpr ? { gdpr: '1' } : {}), ...(fw.nist_rmf === false ? { no_rmf: '1' } : {}), ...(fw.hipaa === false ? { no_hipaa: '1' } : {}), ...(fw.nist_csf === false ? { no_csf: '1' } : {}), ...(fw.iso_27005 === false ? { no_iso: '1' } : {}) });
+                const params = new URLSearchParams({ id: results.id || '', ...(fw.gdpr ? { gdpr: '1' } : {}), ...(fw.nist_rmf === false ? { no_rmf: '1' } : {}), ...(fw.nist_ai_rmf === false ? { no_ai_rmf: '1' } : {}), ...(fw.hipaa === false ? { no_hipaa: '1' } : {}), ...(fw.nist_csf === false ? { no_csf: '1' } : {}), ...(fw.iso_27005 === false ? { no_iso: '1' } : {}) });
                 window.location.href = `/Report?${params.toString()}`;
               }} className="bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
               <FileText className="h-4 w-4 mr-2" /> View Report
@@ -1539,7 +1541,8 @@ Be specific, realistic, and clinically grounded. Avoid generic AI risk language.
                       { key: 'iso_27005', label: 'ISO/IEC 27005', desc: 'Information Security Risk Management standard', checkedCard: 'border-slate-400 bg-slate-100', checkedBox: 'bg-slate-600 border-slate-600' },
                       { key: 'gdpr', label: 'GDPR', desc: 'EU General Data Protection Regulation — applies when personal data is processed', checkedCard: 'border-green-300 bg-green-50', checkedBox: 'bg-green-600 border-green-600', disabled: formData.eu_personal_data === 'yes' },
                       { key: 'nist_rmf', label: 'NIST RMF', desc: 'Risk Management Framework — Categorize, Select, Implement, Assess, Authorize, Monitor', checkedCard: 'border-purple-300 bg-purple-50', checkedBox: 'bg-purple-600 border-purple-600' },
-                    ].map(({ key, label, desc, checkedCard, checkedBox, disabled }) => {
+                      { key: 'nist_ai_rmf', label: 'NIST AI RMF', desc: 'AI Risk Management Framework — Govern, Map, Measure, Manage', checkedCard: 'border-emerald-300 bg-emerald-50', checkedBox: 'bg-emerald-600 border-emerald-600' },
+                      ].map(({ key, label, desc, checkedCard, checkedBox, disabled }) => {
                       const isGdprRequired = key === 'gdpr' && formData.eu_personal_data === 'yes';
                       const checked = isGdprRequired ? true : selectedFrameworks[key];
                       return (
