@@ -71,6 +71,7 @@ export default function Home() {
               <Badge className="mb-6 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-3 py-1 rounded-full">
                 Healthcare AI Governance Platform
               </Badge>
+              <p className="text-lg text-slate-300 font-medium mb-5">Hello Graham</p>
               <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-5 tracking-tight">
                 AI Risk Navigator
                 <span className="block text-blue-400">for Healthcare</span>
